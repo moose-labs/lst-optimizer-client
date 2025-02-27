@@ -1,0 +1,8 @@
+env/
+.cache/
+
+# ignore python related
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
