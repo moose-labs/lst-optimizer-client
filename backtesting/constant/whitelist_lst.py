@@ -42,4 +42,14 @@ WEIGHTED_LST = [
     # WeightedSymbol("pawsol", 0.1), # ! outlier
 ]
 
+AVG_LST = [
+    # > 1m SOL
+    WeightedSymbol("jitosol", 1.0),
+    WeightedSymbol("msol", 1.0),
+    WeightedSymbol("jupsol", 1.0),
+    WeightedSymbol("vsol", 1.0),
+    WeightedSymbol("bsol", 1.0),
+    WeightedSymbol("jsol", 1.0),
+]
+
 LST = [WeightedSymbol(w.symbol, 1.0) for w in WEIGHTED_LST]
