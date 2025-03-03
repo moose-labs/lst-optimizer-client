@@ -1,0 +1,130 @@
+2025-03-03T13:03:35Z INFO fetching historical APY data for jupsol
+2025-03-03T13:03:35Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:03:36Z INFO fetching historical APY data for inf
+2025-03-03T13:03:36Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:03:38Z INFO fetching historical APY data for jitosol
+2025-03-03T13:03:38Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:03:39Z INFO fetching historical APY data for hsol
+2025-03-03T13:03:39Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:03:41Z DEBUG Sorted EMAs: [Ema { symbol: "jupsol", ema: 0.10026116024313617 }, Ema { symbol: "inf", ema: 0.08607135447067393 }, Ema { symbol: "hsol", ema: 0.08491458446753172 }, Ema { symbol: "jitosol", ema: 0.08134586263502447 }]
+2025-03-03T13:03:41Z INFO allocated
+2025-03-03T13:10:26Z INFO fetching historical APY data for jupsol
+2025-03-03T13:10:26Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:10:28Z INFO fetching historical APY data for inf
+2025-03-03T13:10:28Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:10:30Z INFO fetching historical APY data for jitosol
+2025-03-03T13:10:30Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:10:31Z INFO fetching historical APY data for hsol
+2025-03-03T13:10:31Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:10:33Z DEBUG Sorted EMAs: [Ema { symbol: "jupsol", ema: 0.10026116024313617 }, Ema { symbol: "inf", ema: 0.08607135447067393 }, Ema { symbol: "hsol", ema: 0.08491458446753172 }, Ema { symbol: "jitosol", ema: 0.08134586263502447 }]
+2025-03-03T13:10:33Z INFO allocated
+2025-03-03T13:10:33Z INFO asset weights applied
+2025-03-03T13:10:33Z INFO Symbol ratio: AllocationRatio { bps: 5000.00, symbol: "jupsol" }
+2025-03-03T13:10:33Z INFO Target lamports: 1000000000000.00
+2025-03-03T13:10:33Z INFO Symbol ratio: AllocationRatio { bps: 5000.00, symbol: "inf" }
+2025-03-03T13:10:33Z INFO Target lamports: 1000000000000.00
+2025-03-03T13:10:33Z INFO Target lamports per symbol: {"jupsol": 1000000000000, "inf": 1000000000000}
+2025-03-03T13:10:33Z INFO Changes: {"jupsol": 1000000000000, "inf": 1000000000000}
+2025-03-03T13:10:33Z INFO Current pool allocations: PoolAllocations { assets: [PoolAsset { symbol: "hsol", lamports: 1000000000000 }, PoolAsset { symbol: "jitosol", lamports: 1000000000000 }] }
+2025-03-03T13:10:33Z INFO New pool allocations: PoolAllocations { assets: [PoolAsset { symbol: "inf", lamports: 1000000000000 }, PoolAsset { symbol: "hsol", lamports: 0 }, PoolAsset { symbol: "jupsol", lamports: 1000000000000 }, PoolAsset { symbol: "jitosol", lamports: 0 }] }
+2025-03-03T13:30:46Z INFO fetching historical APY data for jupsol
+2025-03-03T13:30:46Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:30:48Z INFO fetching historical APY data for inf
+2025-03-03T13:30:48Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:30:50Z INFO fetching historical APY data for jitosol
+2025-03-03T13:30:50Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:30:51Z INFO fetching historical APY data for hsol
+2025-03-03T13:30:51Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:30:53Z DEBUG Sorted EMAs: [Ema { symbol: "jupsol", ema: 0.10026116024313617 }, Ema { symbol: "inf", ema: 0.08607135447067393 }, Ema { symbol: "hsol", ema: 0.08491458446753172 }, Ema { symbol: "jitosol", ema: 0.08134586263502447 }]
+2025-03-03T13:30:53Z INFO allocated
+2025-03-03T13:30:53Z INFO asset weights applied
+2025-03-03T13:30:53Z INFO calculate target lamports per symbol: {"jupsol": 1000000000000, "inf": 1000000000000}
+2025-03-03T13:30:53Z INFO Changes: {"jupsol": 1000000000000, "inf": 1000000000000}
+2025-03-03T13:30:53Z INFO Current pool allocations: PoolAllocations { assets: [PoolAsset { symbol: "hsol", lamports: 1000000000000 }, PoolAsset { symbol: "jitosol", lamports: 1000000000000 }] }
+2025-03-03T13:30:53Z INFO New pool allocations: PoolAllocations { assets: [PoolAsset { symbol: "jupsol", lamports: 1000000000000 }, PoolAsset { symbol: "jitosol", lamports: 0 }, PoolAsset { symbol: "inf", lamports: 1000000000000 }, PoolAsset { symbol: "hsol", lamports: 0 }] }
+2025-03-03T13:31:38Z INFO fetching historical APY data for jupsol
+2025-03-03T13:31:38Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:31:40Z INFO fetching historical APY data for inf
+2025-03-03T13:31:40Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:31:41Z INFO fetching historical APY data for jitosol
+2025-03-03T13:31:41Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:31:43Z INFO fetching historical APY data for hsol
+2025-03-03T13:31:43Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:31:44Z DEBUG Sorted EMAs: [Ema { symbol: "jupsol", ema: 0.10026116024313617 }, Ema { symbol: "inf", ema: 0.08607135447067393 }, Ema { symbol: "hsol", ema: 0.08491458446753172 }, Ema { symbol: "jitosol", ema: 0.08134586263502447 }]
+2025-03-03T13:31:48Z INFO allocated
+2025-03-03T13:31:48Z INFO asset weights applied
+2025-03-03T13:31:48Z INFO calculate target lamports per symbol: {"inf": 1000000000000, "jupsol": 1000000000000}
+2025-03-03T13:31:48Z INFO calculate changes: {"inf": 1000000000000, "jupsol": 1000000000000}
+2025-03-03T13:36:31Z INFO fetching historical APY data for jupsol
+2025-03-03T13:36:31Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:36:33Z INFO fetching historical APY data for inf
+2025-03-03T13:36:33Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:36:35Z INFO fetching historical APY data for jitosol
+2025-03-03T13:36:35Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:36:37Z INFO fetching historical APY data for hsol
+2025-03-03T13:36:37Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:36:38Z DEBUG Sorted EMAs: [Ema { symbol: "jupsol", ema: 0.10026116024313617 }, Ema { symbol: "inf", ema: 0.08607135447067393 }, Ema { symbol: "hsol", ema: 0.08491458446753172 }, Ema { symbol: "jitosol", ema: 0.08134586263502447 }]
+2025-03-03T13:36:38Z INFO allocated
+2025-03-03T13:36:38Z INFO asset weights applied
+2025-03-03T13:36:38Z INFO calculate target lamports per symbol: {"jupsol": 1000000000000, "inf": 1000000000000}
+2025-03-03T13:36:38Z INFO calculate changes: {"jupsol": 1000000000000, "inf": 1000000000000}
+2025-03-03T13:41:25Z INFO fetching historical APY data for jupsol
+2025-03-03T13:41:25Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:41:26Z INFO fetching historical APY data for inf
+2025-03-03T13:41:26Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:41:28Z INFO fetching historical APY data for jitosol
+2025-03-03T13:41:28Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:41:30Z INFO fetching historical APY data for hsol
+2025-03-03T13:41:30Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:41:31Z DEBUG Sorted EMAs: [Ema { symbol: "jupsol", ema: 0.10026116024313617 }, Ema { symbol: "inf", ema: 0.08607135447067393 }, Ema { symbol: "hsol", ema: 0.08491458446753172 }, Ema { symbol: "jitosol", ema: 0.08134586263502447 }]
+2025-03-03T13:41:31Z INFO allocated
+2025-03-03T13:41:31Z INFO asset weights applied
+2025-03-03T13:41:31Z INFO calculate target lamports per symbol: {"jupsol": 1000000000000, "inf": 1000000000000}
+2025-03-03T13:41:31Z INFO calculate changes: {"jupsol": 1000000000000, "inf": 1000000000000}
+2025-03-03T13:41:31Z INFO Current pool allocations: PoolAllocations { assets: [PoolAsset { symbol: "hsol", lamports: 1000000000000 }, PoolAsset { symbol: "jitosol", lamports: 1000000000000 }] }
+2025-03-03T13:41:31Z INFO New pool allocations: PoolAllocationChanges { assets: [PoolAsset { symbol: "hsol", lamports: -1000000000000 }, PoolAsset { symbol: "jitosol", lamports: -1000000000000 }, PoolAsset { symbol: "jupsol", lamports: 1000000000000 }, PoolAsset { symbol: "inf", lamports: 1000000000000 }] }
+2025-03-03T13:51:41Z INFO fetching historical APY data for jupsol
+2025-03-03T13:51:41Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:51:43Z INFO fetching historical APY data for inf
+2025-03-03T13:51:43Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:51:45Z INFO fetching historical APY data for jitosol
+2025-03-03T13:51:45Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:51:46Z INFO fetching historical APY data for hsol
+2025-03-03T13:51:46Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:51:48Z DEBUG Sorted EMAs: [Ema { symbol: "jupsol", ema: 0.10026116024313617 }, Ema { symbol: "inf", ema: 0.08607135447067393 }, Ema { symbol: "hsol", ema: 0.08491458446753172 }, Ema { symbol: "jitosol", ema: 0.08134586263502447 }]
+2025-03-03T13:51:48Z INFO allocated
+2025-03-03T13:51:48Z INFO asset weights applied
+2025-03-03T13:51:48Z INFO calculate target lamports per symbol: {"inf": 1000000000000, "jupsol": 1000000000000}
+2025-03-03T13:51:48Z INFO calculate changes: {"jupsol": 1000000000000, "inf": 1000000000000}
+2025-03-03T13:51:48Z INFO Current pool allocations: PoolAllocations { assets: [PoolAsset { symbol: "hsol", lamports: 1000000000000 }, PoolAsset { symbol: "jitosol", lamports: 1000000000000 }] }
+2025-03-03T13:51:48Z INFO New pool allocations: PoolAllocationChanges { assets: [PoolAsset { symbol: "jitosol", lamports: -1000000000000 }, PoolAsset { symbol: "inf", lamports: 1000000000000 }, PoolAsset { symbol: "hsol", lamports: -1000000000000 }, PoolAsset { symbol: "jupsol", lamports: 1000000000000 }] }
+2025-03-03T13:52:49Z INFO fetching historical APY data for jupsol
+2025-03-03T13:52:49Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:52:51Z INFO fetching historical APY data for inf
+2025-03-03T13:52:51Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:52:53Z INFO fetching historical APY data for jitosol
+2025-03-03T13:52:53Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:52:54Z INFO fetching historical APY data for hsol
+2025-03-03T13:52:54Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:52:56Z DEBUG Sorted EMAs: [Ema { symbol: "jupsol", ema: 0.10026116024313617 }, Ema { symbol: "inf", ema: 0.08607135447067393 }, Ema { symbol: "hsol", ema: 0.08491458446753172 }, Ema { symbol: "jitosol", ema: 0.08134586263502447 }]
+2025-03-03T13:52:56Z INFO allocated
+2025-03-03T13:52:56Z INFO asset weights applied
+2025-03-03T13:52:56Z INFO calculate target lamports per symbol: {"jupsol": 1000000000000, "inf": 1000000000000}
+2025-03-03T13:52:56Z INFO calculate added changes: {"jupsol": 1000000000000, "jitosol": -1000000000000, "inf": 1000000000000, "hsol": -1000000000000}
+2025-03-03T13:52:56Z INFO Current pool allocations: PoolAllocations { assets: [PoolAsset { symbol: "hsol", lamports: 1000000000000 }, PoolAsset { symbol: "jitosol", lamports: 1000000000000 }] }
+2025-03-03T13:52:56Z INFO New pool allocations: PoolAllocationChanges { assets: [PoolAsset { symbol: "jupsol", lamports: 1000000000000 }, PoolAsset { symbol: "jitosol", lamports: -1000000000000 }, PoolAsset { symbol: "inf", lamports: 1000000000000 }, PoolAsset { symbol: "hsol", lamports: -1000000000000 }] }
+2025-03-03T13:53:59Z INFO fetching historical APY data for jupsol
+2025-03-03T13:53:59Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:54:01Z INFO fetching historical APY data for inf
+2025-03-03T13:54:01Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:54:03Z INFO fetching historical APY data for jitosol
+2025-03-03T13:54:03Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:54:05Z INFO fetching historical APY data for hsol
+2025-03-03T13:54:05Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:54:06Z DEBUG Sorted EMAs: [Ema { symbol: "jupsol", ema: 0.10026116024313617 }, Ema { symbol: "inf", ema: 0.08607135447067393 }, Ema { symbol: "hsol", ema: 0.08491458446753172 }, Ema { symbol: "jitosol", ema: 0.08134586263502447 }]
+2025-03-03T13:54:06Z INFO allocated
+2025-03-03T13:54:06Z INFO asset weights applied
+2025-03-03T13:54:06Z INFO calculate target lamports per symbol: {"inf": 1000000000000, "jupsol": 1000000000000}
+2025-03-03T13:54:06Z INFO calculate added changes: {"jitosol": -1000000000000, "jupsol": 1000000000000, "inf": 1000000000000, "hsol": -1000000000000}
+2025-03-03T13:54:06Z INFO pool allocations: PoolAllocations { assets: [PoolAsset { symbol: "hsol", lamports: 1000000000000 }, PoolAsset { symbol: "jitosol", lamports: 1000000000000 }] }
+2025-03-03T13:54:06Z INFO pool allocation changes: PoolAllocationChanges { assets: [PoolAsset { symbol: "jitosol", lamports: -1000000000000 }, PoolAsset { symbol: "jupsol", lamports: 1000000000000 }, PoolAsset { symbol: "inf", lamports: 1000000000000 }, PoolAsset { symbol: "hsol", lamports: -1000000000000 }] }

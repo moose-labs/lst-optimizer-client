@@ -1,0 +1,2 @@
+# ignore Rust related files
+target/

@@ -1,0 +1,13 @@
+[package]
+name = "lst_optimizer_std"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rust_decimal = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+async-trait = { workspace = true }
+fern = { workspace = true }
+log = { workspace = true }
+humantime = { workspace = true }

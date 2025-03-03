@@ -1,0 +1,16 @@
+[package]
+name = "lst_optimizer_client"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+lst_optimizer_std = { path = "../lst-optimizer-std" }
+rust_decimal = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+async-trait = { workspace = true }
+log = { workspace = true }
+reqwest = { version = "0.12.12", features = ["json"] }
+serde = { version = "1.0.218", features = ["derive"] }
+ta = "0.5.0"
