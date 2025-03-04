@@ -1,12 +1,12 @@
 use core::time;
 
 use anyhow::Result;
-use log::info;
+use log::{ debug, info };
 use lst_optimizer_std::{
     allocator::Allocator,
     fetcher::fetcher::Fetcher,
     pool::Pool,
-    types::{ datapoint::SymbolData, weighted_symbol::WeightedSymbol },
+    types::{ datapoint::SymbolData, asset::Asset },
 };
 
 use crate::{
@@ -25,23 +25,23 @@ impl OptimizerApp {
 
     pub async fn keep_rebalance(
         &self,
-        weighted_symbols: &Vec<WeightedSymbol>,
+        assets: &Vec<Asset>,
         interval: time::Duration
     ) -> Result<()> {
         loop {
-            self.rebalance(weighted_symbols).await?;
+            self.rebalance(assets).await?;
             tokio::time::sleep(interval).await;
         }
     }
 
-    pub async fn rebalance(&self, weighted_symbols: &Vec<WeightedSymbol>) -> Result<()> {
+    pub async fn rebalance(&self, assets: &Vec<Asset>) -> Result<()> {
         let fetcher = SanctumHistoricalApyFetcher::new();
         let mut symbol_datas = vec![];
 
-        for weighted_symbol in weighted_symbols {
-            let datapoints = fetcher.fetch(&weighted_symbol.symbol).await?;
+        for asset in assets {
+            let datapoints = fetcher.fetch(&asset.symbol).await?;
             symbol_datas.push(SymbolData {
-                symbol: weighted_symbol.symbol.clone(),
+                symbol: asset.symbol.clone(),
                 datapoints,
             });
         }
@@ -50,7 +50,7 @@ impl OptimizerApp {
         let mut allocations = allocator.allocate(symbol_datas)?;
         allocations.validate()?;
 
-        allocations.apply_weights(weighted_symbols);
+        allocations.apply_weights(assets);
         allocations.validate()?;
 
         let pool = MaxPool::new("");
@@ -60,8 +60,8 @@ impl OptimizerApp {
             &allocations
         )?;
 
-        info!("pool allocations: {:?}", current_pool_allocations);
-        info!("pool allocation changes: {:?}", pool_allocation_changes);
+        debug!("pool allocations: {:?}", current_pool_allocations);
+        debug!("pool allocation changes: {:?}", pool_allocation_changes);
 
         Ok(())
     }

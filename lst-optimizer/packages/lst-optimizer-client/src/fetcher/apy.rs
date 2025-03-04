@@ -26,7 +26,7 @@ impl SanctumHistoricalApyFetcher {
 #[async_trait::async_trait]
 impl Fetcher<Apy> for SanctumHistoricalApyFetcher {
     async fn fetch(&self, symbol: &str) -> Result<Vec<Apy>> {
-        info!("fetching historical APY data for {}", symbol);
+        info!("fetching historical APY data for {}", symbol.to_uppercase());
 
         let client = reqwest::Client::new();
         let url = format!("https://extra-api.sanctum.so/v1/apy/indiv-epochs?lst={}&n=300", symbol);

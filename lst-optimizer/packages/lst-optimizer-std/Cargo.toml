@@ -9,5 +9,6 @@ anyhow = { workspace = true }
 thiserror = { workspace = true }
 async-trait = { workspace = true }
 fern = { workspace = true }
+colored = { workspace = true }
 log = { workspace = true }
 humantime = { workspace = true }

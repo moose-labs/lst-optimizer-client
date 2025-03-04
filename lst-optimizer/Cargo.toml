@@ -8,6 +8,8 @@ thiserror = "2.0.12"
 rust_decimal = "1.36"
 tokio = { version = "1.43.0", features = ["rt-multi-thread", "macros"] }
 async-trait = "0.1.86"
-fern = "0.7.1"
-log = { version = "0.4.26", features = ["std"] }
+# loggings
+fern = { version = "0.7.1", features = ["colored"] }
 humantime = "2.1.0"
+colored = { version = "2.1.0" }
+log = { version = "0.4.26", features = ["std"] }

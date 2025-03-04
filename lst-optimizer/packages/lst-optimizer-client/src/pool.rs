@@ -68,7 +68,7 @@ impl Pool for MaxPool {
 
         // Calculate target lamports per symbol
         let mut target_lamports_per_symbol: HashMap<String, i128> = HashMap::new();
-        for symbol_ratio in new_allocation_ratios.symbol_ratios.iter() {
+        for symbol_ratio in new_allocation_ratios.asset_alloc_ratios.iter() {
             let symbol_bps = symbol_ratio.bps;
             let target_lamports = self.calculate_lamports_per_symbol(total_lamports, symbol_bps)?;
             target_lamports_per_symbol.insert(symbol_ratio.symbol.clone(), target_lamports);
@@ -97,7 +97,7 @@ impl Pool for MaxPool {
                 changes.insert(symbol.clone(), -asset.lamports);
             }
         }
-        info!("calculate added changes: {:?}", changes);
+        info!("calculate changes: {:?}", changes);
 
         Ok(PoolAllocationChanges {
             assets: changes
@@ -157,12 +157,9 @@ mod tests {
                 PoolAsset::new("inf", 0)
             ],
         };
-        let new_allocation_ratios = AllocationRatios {
-            symbol_ratios: vec![
-                AllocationRatio::new("jupsol", 5000),
-                AllocationRatio::new("inf", 5000)
-            ],
-        };
+        let new_allocation_ratios = AllocationRatios::new(
+            vec![AllocationRatio::new("jupsol", 5000), AllocationRatio::new("inf", 5000)]
+        );
         let changes = pool
             .get_allocation_changes(&pool_allocations, &new_allocation_ratios)
             .unwrap();

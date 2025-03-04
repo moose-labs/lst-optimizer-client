@@ -1,6 +1,5 @@
-use lst_optimizer_client::app::base_app::OptimizerApp;
-use lst_optimizer_std::{ logger::setup_global_logger, types::weighted_symbol::WeightedSymbol };
-use rust_decimal::Decimal;
+use lst_optimizer_client::app::OptimizerApp;
+use lst_optimizer_std::{ logger::setup_global_logger, types::asset::Asset };
 
 #[tokio::main]
 async fn main() {
@@ -9,22 +8,10 @@ async fn main() {
     }
 
     let symbols = vec![
-        WeightedSymbol {
-            symbol: "jupsol".to_string(),
-            weight: Decimal::from(1),
-        },
-        WeightedSymbol {
-            symbol: "inf".to_string(),
-            weight: Decimal::from(1),
-        },
-        WeightedSymbol {
-            symbol: "jitosol".to_string(),
-            weight: Decimal::new(5, 1),
-        },
-        WeightedSymbol {
-            symbol: "hsol".to_string(),
-            weight: Decimal::new(5, 1),
-        }
+        Asset::new_with_weight("jupsol", 1.0),
+        Asset::new_with_weight("inf", 1.0),
+        Asset::new_with_weight("jitosol", 0.5),
+        Asset::new_with_weight("hsol", 0.5)
     ];
     let interval = std::time::Duration::from_secs(6000);
 

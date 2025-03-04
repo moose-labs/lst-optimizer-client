@@ -1,11 +1,7 @@
 use anyhow::Result;
 use rust_decimal::{ prelude::Zero, Decimal };
 
-use crate::types::{
-    pool_allocation::MAX_ALLOCATION_BPS,
-    datapoint::SymbolData,
-    weighted_symbol::WeightedSymbol,
-};
+use crate::types::{ pool_allocation::MAX_ALLOCATION_BPS, datapoint::SymbolData, asset::Asset };
 
 pub trait Allocator<T> {
     fn allocate(&self, symbol_datas: Vec<SymbolData<T>>) -> Result<AllocationRatios>;
@@ -28,41 +24,41 @@ impl AllocationRatio {
 
 #[derive(Debug, Clone)]
 pub struct AllocationRatios {
-    pub symbol_ratios: Vec<AllocationRatio>,
+    pub asset_alloc_ratios: Vec<AllocationRatio>,
 }
 
 impl AllocationRatios {
-    pub fn new(symbol_ratios: Vec<AllocationRatio>) -> Self {
-        Self { symbol_ratios }
+    pub fn new(asset_alloc_ratios: Vec<AllocationRatio>) -> Self {
+        Self { asset_alloc_ratios }
     }
 
-    pub fn apply_weights(&mut self, weights: &Vec<WeightedSymbol>) {
+    pub fn apply_weights(&mut self, assets: &Vec<Asset>) {
         let max_allocation_bps = Decimal::from(MAX_ALLOCATION_BPS);
 
         // Filter out weights that are not in the allocation ratios
-        let weights: &Vec<WeightedSymbol> = &weights
+        let assets: &Vec<Asset> = &assets
             .iter()
-            .filter(|weighted_symbol| {
-                let ws = &weighted_symbol.symbol.to_lowercase();
-                self.symbol_ratios.iter().any(|symbol_ratio| {
+            .filter(|asset| {
+                let s = &asset.symbol.to_lowercase();
+                self.asset_alloc_ratios.iter().any(|symbol_ratio| {
                     let sr = &symbol_ratio.symbol.to_lowercase();
-                    sr.eq(ws)
+                    sr.eq(s)
                 })
             })
             .cloned()
             .collect();
 
-        // Calculate total weight of all weighted symbols
+        // Calculate total weight of all assets
         let mut total_weight = Decimal::zero();
-        for weighted_symbol in weights {
-            total_weight += weighted_symbol.weight;
+        for asset in assets {
+            total_weight += asset.weight;
         }
 
         // Adjust allocation ratios based on weights
-        for symbol_ratio in self.symbol_ratios.iter_mut() {
-            for weights in weights.iter() {
-                if symbol_ratio.symbol == weights.symbol {
-                    symbol_ratio.bps = (weights.weight / total_weight) * max_allocation_bps;
+        for symbol_ratio in self.asset_alloc_ratios.iter_mut() {
+            for asset in assets.iter() {
+                if symbol_ratio.symbol == asset.symbol {
+                    symbol_ratio.bps = (asset.weight / total_weight) * max_allocation_bps;
                 }
             }
         }
@@ -70,7 +66,7 @@ impl AllocationRatios {
 
     pub fn validate(&self) -> Result<()> {
         let mut total_allocation = Decimal::zero();
-        for symbol_ratio in self.symbol_ratios.iter() {
+        for symbol_ratio in self.asset_alloc_ratios.iter() {
             total_allocation += symbol_ratio.bps;
         }
 
@@ -97,9 +93,9 @@ mod tests {
 
     #[test]
     fn test_allocation_apply_weight_success() {
-        let weighted_symbols = vec![
-            WeightedSymbol::new("jupsol", 0.8),
-            WeightedSymbol::new("inf", 0.2)
+        let assets = vec![
+            Asset::new_with_weight("jupsol", 0.8),
+            Asset::new_with_weight("inf", 0.2)
         ];
         let mut allocation = AllocationRatios::new(
             vec![
@@ -113,30 +109,30 @@ mod tests {
                 }
             ]
         );
-        allocation.apply_weights(&weighted_symbols);
-        assert_eq!(allocation.symbol_ratios[0].bps, (8000).into());
-        assert_eq!(allocation.symbol_ratios[1].bps, (2000).into());
+        allocation.apply_weights(&assets);
+        assert_eq!(allocation.asset_alloc_ratios[0].bps, (8000).into());
+        assert_eq!(allocation.asset_alloc_ratios[1].bps, (2000).into());
     }
 
     #[test]
     fn test_allocation_apply_weight_success_edge() {
-        let weighted_symbols = vec![WeightedSymbol::new("jupsol", 0.1)];
+        let assets = vec![Asset::new_with_weight("jupsol", 0.1)];
         let mut allocation = AllocationRatios::new(
             vec![AllocationRatio {
                 bps: (10000).into(),
                 symbol: "jupsol".to_string(),
             }]
         );
-        allocation.apply_weights(&weighted_symbols);
-        assert_eq!(allocation.symbol_ratios[0].bps, (10000).into());
+        allocation.apply_weights(&assets);
+        assert_eq!(allocation.asset_alloc_ratios[0].bps, (10000).into());
     }
 
     #[test]
     fn test_allocation_apply_weight_success_edge_unrelated_weights() {
         // Should apply only allocated asset's weight
-        let weighted_symbols = vec![
-            WeightedSymbol::new("jupsol", 0.1),
-            WeightedSymbol::new("jitosol", 0.9) // This should be ignored
+        let assets = vec![
+            Asset::new_with_weight("jupsol", 0.1),
+            Asset::new_with_weight("jitosol", 0.9) // This should be ignored
         ];
         let mut allocation = AllocationRatios::new(
             vec![AllocationRatio {
@@ -144,8 +140,8 @@ mod tests {
                 symbol: "jupsol".to_string(),
             }]
         );
-        allocation.apply_weights(&weighted_symbols);
-        assert_eq!(allocation.symbol_ratios[0].bps, (10000).into());
+        allocation.apply_weights(&assets);
+        assert_eq!(allocation.asset_alloc_ratios[0].bps, (10000).into());
     }
 
     #[test]
