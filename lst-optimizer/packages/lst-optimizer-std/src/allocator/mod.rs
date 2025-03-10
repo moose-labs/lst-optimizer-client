@@ -10,14 +10,14 @@ pub trait Allocator<T> {
 #[derive(Debug, Clone, PartialEq)]
 pub struct AllocationRatio {
     pub bps: Decimal,
-    pub symbol: String,
+    pub mint: String,
 }
 
 impl AllocationRatio {
-    pub fn new(symbol: &str, bps: i128) -> Self {
+    pub fn new(mint: &str, bps: i128) -> Self {
         Self {
+            mint: mint.to_string(),
             bps: Decimal::from(bps),
-            symbol: symbol.to_string(),
         }
     }
 }
@@ -41,7 +41,7 @@ impl AllocationRatios {
             .filter(|asset| {
                 let s = &asset.symbol.to_lowercase();
                 self.asset_alloc_ratios.iter().any(|symbol_ratio| {
-                    let sr = &symbol_ratio.symbol.to_lowercase();
+                    let sr = &symbol_ratio.mint.to_lowercase();
                     sr.eq(s)
                 })
             })
@@ -57,7 +57,7 @@ impl AllocationRatios {
         // Adjust allocation ratios based on weights
         for symbol_ratio in self.asset_alloc_ratios.iter_mut() {
             for asset in assets.iter() {
-                if symbol_ratio.symbol == asset.symbol {
+                if symbol_ratio.mint == asset.mint {
                     symbol_ratio.bps = (asset.weight / total_weight) * max_allocation_bps;
                 }
             }
@@ -101,11 +101,11 @@ mod tests {
             vec![
                 AllocationRatio {
                     bps: (5000).into(),
-                    symbol: "jupsol".to_string(),
+                    mint: "jupsol".to_string(),
                 },
                 AllocationRatio {
                     bps: (5000).into(),
-                    symbol: "inf".to_string(),
+                    mint: "inf".to_string(),
                 }
             ]
         );
@@ -120,7 +120,7 @@ mod tests {
         let mut allocation = AllocationRatios::new(
             vec![AllocationRatio {
                 bps: (10000).into(),
-                symbol: "jupsol".to_string(),
+                mint: "jupsol".to_string(),
             }]
         );
         allocation.apply_weights(&assets);
@@ -137,7 +137,7 @@ mod tests {
         let mut allocation = AllocationRatios::new(
             vec![AllocationRatio {
                 bps: (10000).into(),
-                symbol: "jupsol".to_string(),
+                mint: "jupsol".to_string(),
             }]
         );
         allocation.apply_weights(&assets);
@@ -150,11 +150,11 @@ mod tests {
             vec![
                 AllocationRatio {
                     bps: (5000).into(),
-                    symbol: "jupsol".to_string(),
+                    mint: "jupsol".to_string(),
                 },
                 AllocationRatio {
                     bps: (5000).into(),
-                    symbol: "inf".to_string(),
+                    mint: "inf".to_string(),
                 }
             ]
         );
@@ -167,11 +167,11 @@ mod tests {
             vec![
                 AllocationRatio {
                     bps: (1000).into(),
-                    symbol: "jupsol".to_string(),
+                    mint: "jupsol".to_string(),
                 },
                 AllocationRatio {
                     bps: (1000).into(),
-                    symbol: "inf".to_string(),
+                    mint: "inf".to_string(),
                 }
             ]
         );

@@ -12,3 +12,5 @@ fern = { workspace = true }
 colored = { workspace = true }
 log = { workspace = true }
 humantime = { workspace = true }
+serde = { workspace = true }
+toml = "0.8.20"

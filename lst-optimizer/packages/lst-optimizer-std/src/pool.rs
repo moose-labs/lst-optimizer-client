@@ -4,7 +4,11 @@ use thiserror::Error;
 
 use crate::{
     allocator::AllocationRatios,
-    types::{ pool_allocation::PoolAllocations, pool_allocation_changes::PoolAllocationChanges },
+    types::{
+        context::Context,
+        pool_allocation::PoolAllocations,
+        pool_allocation_changes::{ PoolAllocationChanges, PoolAllocationLamportsChanges },
+    },
 };
 
 #[derive(Debug, Error)]
@@ -21,9 +25,16 @@ pub enum PoolError {
 }
 
 pub trait Pool {
-    fn get_allocation(&self) -> Result<PoolAllocations>;
+    fn get_allocation(&self, context: &Context) -> Result<PoolAllocations>;
+    fn get_allocation_lamports_changes(
+        &self,
+        context: &Context,
+        pool_allocations: &PoolAllocations,
+        new_allocation_ratios: &AllocationRatios
+    ) -> Result<PoolAllocationLamportsChanges>;
     fn get_allocation_changes(
         &self,
+        context: &Context,
         pool_allocations: &PoolAllocations,
         new_allocation_ratios: &AllocationRatios
     ) -> Result<PoolAllocationChanges>;

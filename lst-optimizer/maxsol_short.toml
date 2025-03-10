@@ -1,0 +1,39 @@
+[[lst_list]]
+weight = 1.0
+name = "Drift Staked SOL"
+symbol = "dSOL"
+mint = "Dso1bDeDjCQxTrWHqUUi63oBvV7Mdm6WaobLbQ7gnPQ"
+decimals = 9
+token_program = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+program = "SanctumSpl"
+pool = "9mhGNSPArRMHpLDMSmxAvuoizBqtBGqYdT8WGuqgxNdn"
+
+# Spl
+[[lst_list]]
+weight = 1.0
+name = "Binance Staked SOL"
+symbol = "BNSOL"
+mint = "BNso1VUJnh4zcfpZa6986Ea66P6TCp59hvtNJ8b1X85"
+decimals = 9
+token_program = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+program = "Spl"
+pool = "Hr9pzexrBge3vgmBNRR8u42CNQgBXdHm4UkUN2DH4a7r"
+
+# Legacy
+[[sanctum_lst_list]]
+weight = 1.0
+name = "Lido Staked SOL"
+symbol = "stSOL"
+mint = "7dHbWXmci3dT8UFYWYZweBLXgycu7Y3iL6trKn1Y7ARj"
+decimals = 9
+token_program = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+program = "Lido"
+
+[[sanctum_lst_list]]
+weight = 1.0
+name = "Marinade staked SOL"
+symbol = "mSOL"
+mint = "mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So"
+decimals = 9
+token_program = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+program = "Marinade"

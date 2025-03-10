@@ -7,6 +7,7 @@ pub trait Datapoint {
 }
 
 pub struct SymbolData<T> {
+    pub mint: String,
     pub symbol: String,
     pub datapoints: Vec<T>,
 }

@@ -11,7 +11,7 @@ use thiserror::Error;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Ema {
-    pub symbol: String,
+    pub mint: String,
     pub ema: f64,
 }
 
@@ -68,7 +68,7 @@ impl EmaAllocator {
         for ema in emas {
             let ratio = AllocationRatio {
                 bps: bps_per_symbol,
-                symbol: ema.symbol,
+                mint: ema.mint,
             };
             ratios.push(ratio);
         }
@@ -83,7 +83,7 @@ impl Allocator<Apy> for EmaAllocator {
             let datapoints = &symbol_data.datapoints;
             let emas = self.calculate_emas(datapoints, self.period.unwrap_or(5))?;
             latest_emas.push(Ema {
-                symbol: symbol_data.symbol.clone(),
+                mint: symbol_data.mint.clone(),
                 ema: emas.last().unwrap().to_owned(),
             });
         }
@@ -104,23 +104,23 @@ mod tests {
     fn test_datapoints_asc() -> Vec<Apy> {
         vec![
             Apy {
-                symbol: "".to_string(),
+                mint: "".to_string(),
                 apy: 1.0,
             },
             Apy {
-                symbol: "".to_string(),
+                mint: "".to_string(),
                 apy: 2.0,
             },
             Apy {
-                symbol: "".to_string(),
+                mint: "".to_string(),
                 apy: 3.0,
             },
             Apy {
-                symbol: "".to_string(),
+                mint: "".to_string(),
                 apy: 4.0,
             },
             Apy {
-                symbol: "".to_string(),
+                mint: "".to_string(),
                 apy: 5.0,
             }
         ]
@@ -129,23 +129,23 @@ mod tests {
     fn test_emas() -> Vec<Ema> {
         vec![
             Ema {
-                symbol: "".to_string(),
+                mint: "".to_string(),
                 ema: 1.0,
             },
             Ema {
-                symbol: "".to_string(),
+                mint: "".to_string(),
                 ema: 2.0,
             },
             Ema {
-                symbol: "".to_string(),
+                mint: "".to_string(),
                 ema: 3.0,
             },
             Ema {
-                symbol: "".to_string(),
+                mint: "".to_string(),
                 ema: 4.0,
             },
             Ema {
-                symbol: "".to_string(),
+                mint: "".to_string(),
                 ema: 5.0,
             }
         ]
@@ -189,23 +189,23 @@ mod tests {
             sorted_emas,
             vec![
                 Ema {
-                    symbol: "".to_string(),
+                    mint: "".to_string(),
                     ema: 5.0,
                 },
                 Ema {
-                    symbol: "".to_string(),
+                    mint: "".to_string(),
                     ema: 4.0,
                 },
                 Ema {
-                    symbol: "".to_string(),
+                    mint: "".to_string(),
                     ema: 3.0,
                 },
                 Ema {
-                    symbol: "".to_string(),
+                    mint: "".to_string(),
                     ema: 2.0,
                 },
                 Ema {
-                    symbol: "".to_string(),
+                    mint: "".to_string(),
                     ema: 1.0,
                 }
             ]
@@ -220,15 +220,15 @@ mod tests {
             truncated_emas,
             vec![
                 Ema {
-                    symbol: "".to_string(),
+                    mint: "".to_string(),
                     ema: 1.0,
                 },
                 Ema {
-                    symbol: "".to_string(),
+                    mint: "".to_string(),
                     ema: 2.0,
                 },
                 Ema {
-                    symbol: "".to_string(),
+                    mint: "".to_string(),
                     ema: 3.0,
                 }
             ]
@@ -244,23 +244,23 @@ mod tests {
             vec![
                 AllocationRatio {
                     bps: Decimal::from(2000),
-                    symbol: "".to_string(),
+                    mint: "".to_string(),
                 },
                 AllocationRatio {
                     bps: Decimal::from(2000),
-                    symbol: "".to_string(),
+                    mint: "".to_string(),
                 },
                 AllocationRatio {
                     bps: Decimal::from(2000),
-                    symbol: "".to_string(),
+                    mint: "".to_string(),
                 },
                 AllocationRatio {
                     bps: Decimal::from(2000),
-                    symbol: "".to_string(),
+                    mint: "".to_string(),
                 },
                 AllocationRatio {
                     bps: Decimal::from(2000),
-                    symbol: "".to_string(),
+                    mint: "".to_string(),
                 }
             ]
         );

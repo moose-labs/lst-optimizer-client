@@ -1,5 +1,10 @@
+use controller_lib::controller;
 use lst_optimizer_client::app::OptimizerApp;
-use lst_optimizer_std::{ logger::setup_global_logger, types::asset::Asset };
+use lst_optimizer_std::{
+    helper::config::asset_repository_from_toml,
+    logger::setup_global_logger,
+    types::context::Context,
+};
 
 #[tokio::main]
 async fn main() {
@@ -7,15 +12,18 @@ async fn main() {
         eprintln!("Error while setting up logger: {:?}", err);
     }
 
-    let symbols = vec![
-        Asset::new_with_weight("jupsol", 1.0),
-        Asset::new_with_weight("inf", 1.0),
-        Asset::new_with_weight("jitosol", 0.5),
-        Asset::new_with_weight("hsol", 0.5)
-    ];
+    let asset_repository = asset_repository_from_toml("./maxsol_short.toml").unwrap();
+    // TODO: change interval to 2 day interval (~1 epoch)
     let interval = std::time::Duration::from_secs(6000);
 
-    let err = OptimizerApp::new().keep_rebalance(&symbols, interval).await;
+    let context = Context::default();
+    let program_id = controller::ID.to_string();
+    let err = OptimizerApp::new(program_id).keep_rebalance(
+        context
+            .with_asset_repository(asset_repository)
+            .with_payer("86naSVEnAUH1C9b4WktPqohydNhW5c1Tnt2foQqnZKb1".to_string()),
+        interval
+    ).await;
     if let Err(err) = err {
         eprintln!("{:?}", err);
     }

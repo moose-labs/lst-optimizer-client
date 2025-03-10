@@ -2,7 +2,7 @@ use std::{ collections::HashMap, thread::sleep };
 
 use anyhow::Result;
 use log::info;
-use lst_optimizer_std::fetcher::{ apy::Apy, fetcher::Fetcher };
+use lst_optimizer_std::{ fetcher::{ apy::Apy, fetcher::Fetcher }, types::asset::Asset };
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -25,18 +25,21 @@ impl SanctumHistoricalApyFetcher {
 
 #[async_trait::async_trait]
 impl Fetcher<Apy> for SanctumHistoricalApyFetcher {
-    async fn fetch(&self, symbol: &str) -> Result<Vec<Apy>> {
-        info!("fetching historical APY data for {}", symbol.to_uppercase());
+    async fn fetch(&self, asset: &Asset) -> Result<Vec<Apy>> {
+        info!("fetching historical APY data for {}", asset.symbol.to_uppercase());
 
         let client = reqwest::Client::new();
-        let url = format!("https://extra-api.sanctum.so/v1/apy/indiv-epochs?lst={}&n=300", symbol);
+        let url = format!(
+            "https://extra-api.sanctum.so/v1/apy/indiv-epochs?lst={}&n=300",
+            asset.symbol
+        );
         let response: SanctumHistoricalResponse = client.get(url).send().await?.json().await?;
 
         let mut datapoints: Vec<Apy> = vec![];
-        response.apys.iter().for_each(|(symbol, apys)| {
+        response.apys.iter().for_each(|(_, apys)| {
             apys.iter().for_each(|apy| {
                 datapoints.push(Apy {
-                    symbol: symbol.clone(),
+                    mint: asset.mint.clone(),
                     apy: apy.apy,
                 });
             });
@@ -45,7 +48,7 @@ impl Fetcher<Apy> for SanctumHistoricalApyFetcher {
         sleep(std::time::Duration::from_millis(200));
 
         if datapoints.is_empty() {
-            return Err(anyhow::anyhow!("No datapoints found for {}", symbol));
+            return Err(anyhow::anyhow!("No datapoints found for {}", asset.symbol));
         }
 
         Ok(datapoints)
@@ -54,12 +57,14 @@ impl Fetcher<Apy> for SanctumHistoricalApyFetcher {
 
 #[cfg(test)]
 mod tests {
+    use lst_optimizer_std::types::asset::Asset;
+
     use super::*;
 
     #[tokio::test]
     async fn test_fetch() {
         let fetcher = SanctumHistoricalApyFetcher::new();
-        let datapoints = fetcher.fetch("inf").await.unwrap();
+        let datapoints = fetcher.fetch(&Asset::new("", "inf", 1.0)).await.unwrap();
         assert_ne!(datapoints.len(), 0);
     }
 }

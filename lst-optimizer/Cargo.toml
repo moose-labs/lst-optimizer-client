@@ -1,11 +1,16 @@
 [workspace]
-members = ["packages/lst-optimizer-std", "packages/lst-optimizer-client"]
+members = [
+    "packages/lst-optimizer-std",
+    "packages/lst-optimizer-client",
+    "packages/controller-lib",
+]
 resolver = "2"
 
 [workspace.dependencies]
 anyhow = "1.0.96"
 thiserror = "2.0.12"
 rust_decimal = "1.36"
+serde = { version = "1.0.218", features = ["derive"] }
 tokio = { version = "1.43.0", features = ["rt-multi-thread", "macros"] }
 async-trait = "0.1.86"
 # loggings
