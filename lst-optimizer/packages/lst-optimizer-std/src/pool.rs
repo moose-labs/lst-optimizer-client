@@ -18,7 +18,7 @@ pub enum PoolError {
 
     #[error(
         "Failed to calculate lamports per symbol, the lamports are {0}, the symbol bps is {1}"
-    )] FailedToCalculateLamportsPerSymbol(i128, Decimal),
+    )] FailedToCalculateLamportsPerSymbol(u64, Decimal),
 
     #[error("Failed to calculate allocation changes")]
     FailedToCalculateAllocationChanges,

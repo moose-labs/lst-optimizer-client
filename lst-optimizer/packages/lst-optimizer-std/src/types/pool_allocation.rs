@@ -1,7 +1,7 @@
 use super::{ asset::Asset, pool_asset::PoolAsset };
 use anyhow::Result;
 
-pub const MAX_ALLOCATION_BPS: i128 = 10_000;
+pub const MAX_ALLOCATION_BPS: i16 = 10_000;
 
 #[derive(Debug, Clone)]
 pub struct PoolAllocations {
@@ -9,7 +9,7 @@ pub struct PoolAllocations {
 }
 
 impl PoolAllocations {
-    pub fn get_total_lamports(&self) -> i128 {
+    pub fn get_total_lamports(&self) -> u64 {
         let mut total = 0;
         for asset in self.assets.iter() {
             total += asset.lamports;

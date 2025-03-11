@@ -15,6 +15,7 @@ use lst_optimizer_std::{
     allocator::AllocationRatios,
     pool::{ Pool, PoolError },
     types::{
+        amount_change::AmountChange,
         asset::Asset,
         context::Context,
         pool_allocation::{ PoolAllocations, MAX_ALLOCATION_BPS },
@@ -68,9 +69,9 @@ impl MaxPool {
 
     fn calculate_lamports_per_symbol(
         &self,
-        total_lamports: i128,
+        total_lamports: u64,
         symbol_bps: Decimal
-    ) -> Result<i128> {
+    ) -> Result<u64> {
         let total_lamports_dec = Decimal::from(total_lamports);
         let max_bps = Decimal::from(MAX_ALLOCATION_BPS);
         let ratio = symbol_bps
@@ -84,7 +85,7 @@ impl MaxPool {
         Ok(
             target_lamports
                 .ceil()
-                .to_i128()
+                .to_u64()
                 .ok_or(PoolError::FailedToCalculateLamportsPerSymbol(total_lamports, symbol_bps))?
         )
     }
@@ -121,7 +122,7 @@ impl Pool for MaxPool {
         let mut assets: Vec<PoolAsset> = vec![];
         for lst_state in lst_state_list {
             let mint = lst_state.mint;
-            let lamports = lst_state.sol_value as i128;
+            let lamports = lst_state.sol_value;
             let known_asset = context.get_asset(&mint.to_string());
             // TODO: remove this assertion
             if known_asset.is_err() {
@@ -146,7 +147,7 @@ impl Pool for MaxPool {
         let total_lamports = pool_allocations.get_total_lamports();
 
         // Calculate target lamports per symbol
-        let mut target_lamports_per_symbol: HashMap<String, i128> = HashMap::new();
+        let mut target_lamports_per_symbol: HashMap<String, u64> = HashMap::new();
         for symbol_ratio in new_allocation_ratios.asset_alloc_ratios.iter() {
             let symbol_bps = symbol_ratio.bps;
             let target_lamports = self.calculate_lamports_per_symbol(total_lamports, symbol_bps)?;
@@ -154,15 +155,23 @@ impl Pool for MaxPool {
         }
 
         // Calculate allocation changes
-        let mut changes: HashMap<String, i128> = HashMap::new();
+        let mut changes: HashMap<String, AmountChange> = HashMap::new();
         for (mint, target_lamports) in target_lamports_per_symbol.iter() {
             let current_allocation = pool_allocations.get_pool_asset(mint);
+            let target_lamports = *target_lamports;
             let current_lamports = match current_allocation {
                 Some(allocation) => allocation.lamports,
                 None => 0,
             };
-            let lamports_change = (*target_lamports as i128) - (current_lamports as i128);
-            changes.insert(mint.clone(), lamports_change);
+
+            // target_lamports > current_lamports (increase)
+            if target_lamports > current_lamports {
+                let lamports_change = target_lamports - current_lamports;
+                changes.insert(mint.clone(), AmountChange::Increase(lamports_change));
+            } else if target_lamports < current_lamports {
+                let lamports_change = current_lamports - target_lamports;
+                changes.insert(mint.clone(), AmountChange::Decrease(lamports_change));
+            }
         }
 
         // Add current allocations that are not in the new allocation ratios
@@ -170,15 +179,16 @@ impl Pool for MaxPool {
         for asset in current_assets.iter() {
             let mint = &asset.mint;
             if !changes.contains_key(mint) {
-                let lamports_change = -(asset.lamports as i128);
-                changes.insert(mint.clone(), lamports_change);
+                changes.insert(mint.clone(), AmountChange::Decrease(asset.lamports));
             }
         }
 
         Ok(PoolAllocationLamportsChanges {
             assets: changes
                 .iter()
-                .map(|(mint, lamports_change)| PoolAssetLamportsChange::new(mint, *lamports_change))
+                .map(|(mint, lamports_change)|
+                    PoolAssetLamportsChange::new(mint, lamports_change.clone())
+                )
                 .collect(),
         })
     }
@@ -200,21 +210,28 @@ impl Pool for MaxPool {
         let mut asset_changes: Vec<PoolAssetChange> = vec![];
         for asset_lamports_change in changes.assets.iter() {
             let mint = &asset_lamports_change.mint;
-            let lamports_change = asset_lamports_change.lamports;
+            let lamports_change = match asset_lamports_change.lamports {
+                AmountChange::Increase(amount) => amount,
+                AmountChange::Decrease(amount) => amount,
+            };
 
             let known_asset = context.get_asset(mint)?;
-            let sign = if lamports_change > 0 { 1 } else { -1 };
             let calculator_type = pool_to_calculator_type(&known_asset)?;
             let reserves_change = convert_sol_to_lst(
                 &rpc,
                 &payer,
                 calculator_type,
-                lamports_change.abs() as u64
+                lamports_change
             )?;
-            let asset_change = PoolAssetChange::new(
-                mint,
-                (reserves_change.get_min() as i128) * sign
-            );
+
+            let reserves_change = reserves_change.get_min();
+            let asset_change = match asset_lamports_change.lamports {
+                AmountChange::Increase(_) =>
+                    PoolAssetChange::new(mint, AmountChange::Increase(reserves_change)),
+                AmountChange::Decrease(_) =>
+                    PoolAssetChange::new(mint, AmountChange::Decrease(reserves_change)),
+            };
+
             asset_changes.push(asset_change);
         }
 
@@ -284,9 +301,21 @@ mod tests {
             )
             .unwrap();
         assert_eq!(changes.assets.len(), 4);
-        assert_eq!(changes.get_asset_lamports_changes("hsol").unwrap().lamports, -400);
-        assert_eq!(changes.get_asset_lamports_changes("jitosol").unwrap().lamports, -100);
-        assert_eq!(changes.get_asset_lamports_changes("jupsol").unwrap().lamports, 250);
-        assert_eq!(changes.get_asset_lamports_changes("inf").unwrap().lamports, 250);
+        assert_eq!(
+            changes.get_asset_lamports_changes("hsol").unwrap().lamports,
+            AmountChange::Decrease(400)
+        );
+        assert_eq!(
+            changes.get_asset_lamports_changes("jitosol").unwrap().lamports,
+            AmountChange::Decrease(100)
+        );
+        assert_eq!(
+            changes.get_asset_lamports_changes("jupsol").unwrap().lamports,
+            AmountChange::Increase(250)
+        );
+        assert_eq!(
+            changes.get_asset_lamports_changes("inf").unwrap().lamports,
+            AmountChange::Increase(250)
+        );
     }
 }

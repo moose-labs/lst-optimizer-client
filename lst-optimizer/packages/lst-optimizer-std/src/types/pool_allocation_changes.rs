@@ -1,3 +1,5 @@
+use super::amount_change::AmountChange;
+
 // Change in lamports
 #[derive(Debug, Clone)]
 pub struct PoolAllocationLamportsChanges {
@@ -22,11 +24,11 @@ impl PoolAllocationLamportsChanges {
 #[derive(Debug, Clone)]
 pub struct PoolAssetLamportsChange {
     pub mint: String,
-    pub lamports: i128,
+    pub lamports: AmountChange,
 }
 
 impl PoolAssetLamportsChange {
-    pub fn new(mint: &str, lamports: i128) -> Self {
+    pub fn new(mint: &str, lamports: AmountChange) -> Self {
         Self { mint: mint.to_string(), lamports }
     }
 }
@@ -55,11 +57,11 @@ impl PoolAllocationChanges {
 #[derive(Debug, Clone)]
 pub struct PoolAssetChange {
     pub mint: String,
-    pub amount: i128,
+    pub amount: AmountChange,
 }
 
 impl PoolAssetChange {
-    pub fn new(mint: &str, amount: i128) -> Self {
+    pub fn new(mint: &str, amount: AmountChange) -> Self {
         Self { mint: mint.to_string(), amount }
     }
 }

@@ -14,7 +14,7 @@ pub struct AllocationRatio {
 }
 
 impl AllocationRatio {
-    pub fn new(mint: &str, bps: i128) -> Self {
+    pub fn new(mint: &str, bps: i16) -> Self {
         Self {
             mint: mint.to_string(),
             bps: Decimal::from(bps),
