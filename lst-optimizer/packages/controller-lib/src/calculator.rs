@@ -39,6 +39,12 @@ pub enum CalculatorType {
     SanctumSplMulti(String),
 }
 
+impl CalculatorType {
+    pub fn resolve_account_metas(&self, rpc: &RpcClient) -> Result<Vec<AccountMeta>> {
+        fetch_calculator_account_metas(rpc, self)
+    }
+}
+
 // Convert between LST and SOL using the calculator program
 
 pub fn convert_sol_to_lst(
@@ -167,7 +173,7 @@ pub fn calculator_program_id(calculator_type: &CalculatorType) -> Pubkey {
     }
 }
 
-fn fetch_calculator_account_metas(
+pub fn fetch_calculator_account_metas(
     rpc: &RpcClient,
     calculator_type: &CalculatorType
 ) -> Result<Vec<AccountMeta>> {

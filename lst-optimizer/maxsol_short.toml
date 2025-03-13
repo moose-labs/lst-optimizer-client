@@ -5,8 +5,12 @@ symbol = "dSOL"
 mint = "Dso1bDeDjCQxTrWHqUUi63oBvV7Mdm6WaobLbQ7gnPQ"
 decimals = 9
 token_program = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+logo_uri = "https://drift-public.s3.eu-central-1.amazonaws.com/dSOL.svg"
+[lst_list.pool]
 program = "SanctumSpl"
 pool = "9mhGNSPArRMHpLDMSmxAvuoizBqtBGqYdT8WGuqgxNdn"
+validator_list = "4dRHzwW2npecE4riAKibHccnMib5jBu9RdFf8bQ2o7Mo"
+vote_account = "DriFTm3wM9ugxhCA1K3wVQMSdC4Dv4LNmyZMmZiuHRpp"
 
 # Spl
 [[lst_list]]
@@ -16,24 +20,30 @@ symbol = "BNSOL"
 mint = "BNso1VUJnh4zcfpZa6986Ea66P6TCp59hvtNJ8b1X85"
 decimals = 9
 token_program = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+logo_uri = "https://arweave.net/LepI-hea-JrbLMb4L_HpMzaq9k0aHY2-lVSGiBtwvFM?ext=png"
+[lst_list.pool]
 program = "Spl"
 pool = "Hr9pzexrBge3vgmBNRR8u42CNQgBXdHm4UkUN2DH4a7r"
+validator_list = "FQxPPqmKKiRH3q2Sqb1xvdafqbbVyBPpMUnDug4AjtkX"
 
 # Legacy
-[[sanctum_lst_list]]
+[[lst_list]]
 weight = 1.0
 name = "Lido Staked SOL"
 symbol = "stSOL"
 mint = "7dHbWXmci3dT8UFYWYZweBLXgycu7Y3iL6trKn1Y7ARj"
 decimals = 9
 token_program = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+logo_uri = "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/7dHbWXmci3dT8UFYWYZweBLXgycu7Y3iL6trKn1Y7ARj/logo.png"
+[lst_list.pool]
 program = "Lido"
 
-[[sanctum_lst_list]]
-weight = 1.0
+[[lst_list]]
 name = "Marinade staked SOL"
 symbol = "mSOL"
 mint = "mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So"
 decimals = 9
 token_program = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+logo_uri = "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So/logo.png"
+[lst_list.pool]
 program = "Marinade"

@@ -18,8 +18,12 @@ spl-token-2022 = ">=0.1.0"
 # link to https://github.com/moose-labs/S
 s-controller-lib = { git = "https://github.com/moose-labs/S.git", branch = "custom_address" }
 s_controller_interface = { git = "https://github.com/moose-labs/S.git", branch = "custom_address" }
-sol_value_calculator_interface = { git = "https://github.com/moose-labs/S.git", branch = "custom_address" }
 generic_pool_calculator_interface = { git = "https://github.com/moose-labs/S.git", branch = "custom_address" }
+# staking
+stakedex_interface = { git = "https://github.com/igneous-labs/stakedex-sdk.git", branch = "master" }
+# sanctum swap
+flat_fee_interface = { git = "https://github.com/moose-labs/S.git", branch = "custom_address" }
+flat-fee-lib = { git = "https://github.com/moose-labs/S.git", branch = "custom_address" }
 # calculator
 lido-calculator-lib = { git = "https://github.com/moose-labs/S.git", branch = "custom_address" }
 marinade-calculator-lib = { git = "https://github.com/moose-labs/S.git", branch = "custom_address" }

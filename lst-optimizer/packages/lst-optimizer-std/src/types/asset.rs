@@ -11,6 +11,15 @@ pub struct Asset {
     pub pool: Option<String>,
 }
 
+#[derive(Debug, Clone, Deserialize)]
+pub struct PoolInfo {
+    pub program: String,
+    pub pool: Option<String>,
+    pub validator_list: Option<String>,
+    pub vote_account: Option<String>,
+    pub program_id: Option<String>,
+}
+
 impl Asset {
     pub fn new(mint: &str, symbol: &str, weight: f64) -> Self {
         Self {

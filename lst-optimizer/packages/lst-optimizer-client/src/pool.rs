@@ -33,7 +33,7 @@ use rust_decimal::prelude::ToPrimitive;
 use anyhow::{ Context as _AnyhowContext, Ok, Result };
 use solana_client::rpc_client::RpcClient;
 
-use crate::typesdef::pool_to_calculator_type;
+use crate::typedefs::pool_to_calculator_type;
 
 #[derive(Debug, Clone)]
 pub struct MaxPoolOptions {

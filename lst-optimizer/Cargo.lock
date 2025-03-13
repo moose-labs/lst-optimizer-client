@@ -814,13 +814,14 @@ dependencies = [
  "anyhow",
  "borsh 1.5.5",
  "data-encoding",
+ "flat-fee-lib",
+ "flat_fee_interface",
  "generic_pool_calculator_interface",
  "lido-calculator-lib",
  "marinade-calculator-lib",
  "s-controller-lib",
  "s_controller_interface",
  "sanctum-token-ratio",
- "sol_value_calculator_interface",
  "solana-client",
  "solana-program",
  "solana-readonly-account",
@@ -829,6 +830,7 @@ dependencies = [
  "spl-calculator-lib",
  "spl-token",
  "spl-token-2022 6.0.0",
+ "stakedex_interface",
  "wsol-calculator-lib",
 ]
 
@@ -3857,15 +3859,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "sol_value_calculator_interface"
-version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
-dependencies = [
- "borsh 1.5.5",
- "solana-program",
-]
-
-[[package]]
 name = "solana-account"
 version = "2.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6482,6 +6475,18 @@ name = "stable_deref_trait"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a8f112729512f8e442d81f95a8a7ddf2b7c6b8a1a6f509a95864142b30cab2d3"
+
+[[package]]
+name = "stakedex_interface"
+version = "0.1.0"
+source = "git+https://github.com/igneous-labs/stakedex-sdk.git?branch=master#b11b317dc9313cb14739e0bcf9d81186a8d40d0c"
+dependencies = [
+ "borsh 1.5.5",
+ "num-derive",
+ "num-traits",
+ "solana-program",
+ "thiserror 1.0.69",
+]
 
 [[package]]
 name = "static_assertions"
