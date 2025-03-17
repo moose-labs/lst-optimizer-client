@@ -1,14 +1,9 @@
 use std::collections::HashMap;
 
 use controller_lib::{
-    calculator::convert_sol_to_lst,
-    state::{
-        find_and_get_lst_state_list,
-        find_pool_reserves_address,
-        find_pool_state_address,
-        get_reserves_account,
-        LstState,
-    },
+    calculator::query::CalculatorQuery,
+    controller::ControllerClient,
+    state::PoolQuery,
     Pubkey,
 };
 use lst_optimizer_std::{
@@ -38,33 +33,37 @@ use crate::typedefs::pool_to_calculator_type;
 #[derive(Debug, Clone)]
 pub struct MaxPoolOptions {
     pub rpc_url: String,
+    pub minimum_rebalance_lamports: u64,
 }
 
 impl Default for MaxPoolOptions {
     fn default() -> Self {
         Self {
             rpc_url: "https://api.mainnet-beta.solana.com".to_string(),
+            minimum_rebalance_lamports: 1_000_000,
         }
     }
 }
 
-#[derive(Debug, Clone)]
 pub struct MaxPool {
     // A controller program id
     program_id: String,
     options: MaxPoolOptions,
+    controller_client: ControllerClient,
 }
 
 impl MaxPool {
-    pub fn new(program_id: &str, options: Option<MaxPoolOptions>) -> Self {
+    pub fn new(program_id: &str, options: MaxPoolOptions) -> Self {
+        let rpc_client = RpcClient::new(options.rpc_url.clone());
         Self {
             program_id: program_id.to_string(),
-            options: options.unwrap_or(MaxPoolOptions::default()),
+            options: options,
+            controller_client: ControllerClient::new(rpc_client),
         }
     }
 
-    fn get_rpc(&self) -> RpcClient {
-        RpcClient::new(self.options.rpc_url.clone())
+    pub fn options(&self) -> &MaxPoolOptions {
+        &self.options
     }
 
     fn calculate_lamports_per_symbol(
@@ -89,36 +88,15 @@ impl MaxPool {
                 .ok_or(PoolError::FailedToCalculateLamportsPerSymbol(total_lamports, symbol_bps))?
         )
     }
-
-    fn get_lst_state(&self) -> Result<Vec<LstState>> {
-        let rpc = self.get_rpc();
-        let program_id = self.program_id.parse()?;
-        let lst_state_list = find_and_get_lst_state_list(&rpc, &program_id)?;
-        Ok(lst_state_list)
-    }
-
-    fn get_lst_reserves_balance(
-        &self,
-        lst_state: &LstState,
-        controller: &Pubkey,
-        token_program: &Pubkey
-    ) -> Result<u64> {
-        let rpc = self.get_rpc();
-        let pool_state_address = find_pool_state_address(controller);
-        let reserves_addr = find_pool_reserves_address(
-            lst_state,
-            &pool_state_address,
-            token_program
-        )?;
-        let reserves_account = get_reserves_account(&rpc, &reserves_addr)?;
-        Ok(reserves_account.amount)
-    }
 }
 
 impl Pool for MaxPool {
     fn get_allocation(&self, context: &Context) -> Result<PoolAllocations> {
         let controller: Pubkey = self.program_id.parse()?;
-        let lst_state_list = self.get_lst_state()?;
+        let controller_client = &self.controller_client;
+        let pool_state_addr = controller_client.pool_state_address(&controller);
+        let lst_state_list = controller_client.lst_state_list_from_program_id(&controller)?;
+
         let mut assets: Vec<PoolAsset> = vec![];
         for lst_state in lst_state_list {
             let mint = lst_state.mint;
@@ -130,8 +108,15 @@ impl Pool for MaxPool {
             }
             let asset: Asset = known_asset.unwrap();
             let token_program: Pubkey = asset.token_program.parse()?;
-            let reserves = self.get_lst_reserves_balance(&lst_state, &controller, &token_program)?;
-            assets.push(PoolAsset::new(&mint.to_string(), lamports, reserves));
+
+            let pool_reserves_address = controller_client.pool_reserves_address(
+                &lst_state,
+                &pool_state_addr,
+                &token_program
+            )?;
+            let reserves = controller_client.pool_reserves_account(&pool_reserves_address)?;
+            let reserves_balance = reserves.amount;
+            assets.push(PoolAsset::new(&mint.to_string(), lamports, reserves_balance));
         }
         Ok(PoolAllocations {
             assets: assets,
@@ -206,7 +191,7 @@ impl Pool for MaxPool {
         )?;
 
         let payer: Pubkey = context.payer.parse()?;
-        let rpc = self.get_rpc();
+        let controller = &self.controller_client;
         let mut asset_changes: Vec<PoolAssetChange> = vec![];
         for asset_lamports_change in changes.assets.iter() {
             let mint = &asset_lamports_change.mint;
@@ -217,14 +202,15 @@ impl Pool for MaxPool {
 
             let known_asset = context.get_asset(mint)?;
             let calculator_type = pool_to_calculator_type(&known_asset)?;
-            let reserves_change = convert_sol_to_lst(
-                &rpc,
-                &payer,
-                calculator_type,
-                lamports_change
-            )?;
-
-            let reserves_change = reserves_change.get_min();
+            let mut reserves_change = 0 as u64;
+            if lamports_change > self.options.minimum_rebalance_lamports {
+                let reserves_change_range = controller.convert_sol_to_lst(
+                    &payer,
+                    calculator_type,
+                    lamports_change
+                )?;
+                reserves_change = reserves_change_range.get_min();
+            }
             let asset_change = match asset_lamports_change.lamports {
                 AmountChange::Increase(_) =>
                     PoolAssetChange::new(mint, AmountChange::Increase(reserves_change)),
@@ -249,7 +235,7 @@ mod tests {
 
     #[test]
     fn test_calculate_lamports_per_symbol_success() {
-        let pool = MaxPool::new("", None);
+        let pool = MaxPool::new("", MaxPoolOptions::default());
         let total_lamports = 1_000_000;
         let symbol_bps = Decimal::from(5000);
         let target_lamports = pool
@@ -260,7 +246,7 @@ mod tests {
 
     #[test]
     fn test_calculate_lamports_per_symbol_success_on_division_by_zeros() {
-        let pool = MaxPool::new("", None);
+        let pool = MaxPool::new("", MaxPoolOptions::default());
 
         // symbol_bps = 0
         let total_lamports = 1_000_000;
@@ -281,7 +267,7 @@ mod tests {
 
     #[test]
     fn test_get_allocation_changes() {
-        let pool = MaxPool::new("", None);
+        let pool = MaxPool::new("", MaxPoolOptions::default());
         let pool_allocations = PoolAllocations {
             assets: vec![
                 PoolAsset::new("hsol", 400, 0),

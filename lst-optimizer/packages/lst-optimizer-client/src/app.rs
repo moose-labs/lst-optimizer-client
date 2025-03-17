@@ -1,7 +1,7 @@
 use core::time;
 
 use anyhow::Result;
-use log::debug;
+use log::info;
 use lst_optimizer_std::{
     allocator::Allocator,
     fetcher::fetcher::Fetcher,
@@ -15,15 +15,14 @@ use crate::{
     pool::MaxPool,
 };
 
-#[derive(Debug, Clone)]
 pub struct OptimizerApp {
-    program_id: String,
+    pool: MaxPool,
 }
 
 impl OptimizerApp {
-    pub fn new(program_id: String) -> Self {
+    pub fn new(pool: MaxPool) -> Self {
         Self {
-            program_id,
+            pool,
         }
     }
 
@@ -59,12 +58,12 @@ impl OptimizerApp {
         allocations.validate()?;
 
         // Get the current pool allocations and calculate the changes
-        let pool = MaxPool::new(&self.program_id, None);
+        let pool = &self.pool;
         let current_pool_allocations = pool.get_allocation(context)?;
 
-        debug!("Pool allocation:");
+        info!("Pool allocation:");
         for pool_asset in current_pool_allocations.assets.iter() {
-            debug!(" - pool asset: {:?}", pool_asset);
+            info!(" - pool asset: {:?}", pool_asset);
         }
 
         // Ensure that all pool assets are defined in the asset list
@@ -78,9 +77,9 @@ impl OptimizerApp {
             &current_pool_allocations,
             &allocations
         )?;
-        debug!("Pool allocation changes:");
+        info!("Pool allocation changes:");
         for pool_asset_change in pool_allocation_lamports_changes.assets.iter() {
-            debug!(" - pool allocation changes (lamports): {:?}", pool_asset_change);
+            info!(" - pool allocation changes (lamports): {:?}", pool_asset_change);
         }
 
         // Get the pool allocation changes
@@ -89,9 +88,9 @@ impl OptimizerApp {
             &current_pool_allocations,
             &allocations
         )?;
-        debug!("Pool allocation changes:");
+        info!("Pool allocation changes:");
         for pool_asset_change in pool_allocation_changes.assets.iter() {
-            debug!(" - pool allocation changes (lst): {:?}", pool_asset_change);
+            info!(" - pool allocation changes (lst): {:?}", pool_asset_change);
         }
 
         Ok(())

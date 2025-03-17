@@ -7,8 +7,7 @@ pub struct Asset {
     pub symbol: String,
     pub weight: Decimal,
     pub token_program: String,
-    pub program: String,
-    pub pool: Option<String>,
+    pub pool: Option<PoolInfo>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -27,7 +26,6 @@ impl Asset {
             symbol: symbol.to_string(),
             weight: Decimal::from_f64(weight).unwrap(),
             token_program: "".to_string(),
-            program: "".to_string(),
             pool: None,
         }
     }

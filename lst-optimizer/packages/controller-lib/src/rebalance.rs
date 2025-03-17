@@ -10,9 +10,8 @@ use s_controller_lib::{
     SwapByMintsFreeArgs,
     SwapExactInAmounts,
 };
-use solana_client::rpc_client::RpcClient;
 use solana_readonly_account::keyed::Keyed;
-use solana_sdk::{ instruction::{ AccountMeta, Instruction }, pubkey::Pubkey };
+use solana_sdk::{ account::Account, instruction::{ AccountMeta, Instruction }, pubkey::Pubkey };
 use stakedex_interface::{
     StakeWrappedSolIxArgs,
     StakeWrappedSolIxData,
@@ -21,132 +20,176 @@ use stakedex_interface::{
 };
 
 use crate::{
-    calculator::CalculatorType,
-    mint::{ MintAccountResolver, MintWithTokenProgram },
-    state::{ find_lst_state_list_address, find_pool_state_address },
+    controller_instructions::ControllerInstructionBuilder,
+    mint::typedefs::MintWithTokenProgram,
 };
 
-pub fn create_start_rebalance_instruction(
-    rpc: &RpcClient,
-    program_id: &Pubkey,
-    withdraw_to: &Pubkey, // the account who will receive the withdrawn funds
-    src_mint: &Pubkey,
-    dst_mint: &Pubkey,
-    src_cal_type: &CalculatorType,
-    dst_cal_type: &CalculatorType,
-    lamports: u64
-) -> Result<Instruction> {
-    let pool_state_addr = find_pool_state_address(program_id);
-    let pool_state = rpc.get_account(&pool_state_addr)?;
-
-    let lst_state_list_addr = find_lst_state_list_address(program_id);
-    let lst_state_list_acc = rpc.get_account(&lst_state_list_addr)?;
-
-    let instruction = start_rebalance_ix_by_mints_full_for_prog(
-        program_id.clone(),
-        StartRebalanceByMintsFreeArgs {
-            withdraw_to: withdraw_to.clone(),
-            pool_state: Keyed {
-                pubkey: pool_state_addr,
-                account: &pool_state,
-            },
-            lst_state_list: Keyed {
-                pubkey: lst_state_list_addr,
-                account: &lst_state_list_acc,
-            },
-            src_lst_mint: MintWithTokenProgram {
-                pubkey: src_mint.clone(),
-                token_program: src_mint.resolve_owner(rpc)?,
-            },
-            dst_lst_mint: MintWithTokenProgram {
-                pubkey: dst_mint.clone(),
-                token_program: dst_mint.resolve_owner(rpc)?,
-            },
-        },
-        StartRebalanceIxLstAmts {
-            amount: lamports,
-            min_starting_src_lst: 0,
-            max_starting_dst_lst: u64::MAX,
-        },
-        SrcDstLstSolValueCalcAccountSuffixes {
-            src_lst_calculator_accounts: &src_cal_type.resolve_account_metas(rpc)?,
-            dst_lst_calculator_accounts: &dst_cal_type.resolve_account_metas(rpc)?,
-        }
-    )?;
-    Ok(instruction)
+pub trait RebalancingInstructions {
+    fn create_start_rebalance_instruction(
+        &self,
+        program_id: &Pubkey,
+        withdraw_to: &Pubkey, // the account who will receive the withdrawn funds
+        pool_state_addr: &Pubkey,
+        pool_state: &Account,
+        lst_state_addr: &Pubkey,
+        lst_state: &Account,
+        src_mint: &Pubkey,
+        dst_mint: &Pubkey,
+        src_mint_program: &Pubkey,
+        dst_mint_program: &Pubkey,
+        src_accounts: Vec<AccountMeta>,
+        dst_accounts: Vec<AccountMeta>,
+        lamports: u64
+    ) -> Result<Instruction>;
+    fn create_end_rebalance_instruction_from_start(
+        &self,
+        start_rebalance_ix: &Instruction
+    ) -> Result<Instruction>;
+    fn create_stake_wrapped_sol_instruction(
+        &self,
+        program_id: &Pubkey,
+        accounts: StakeWrappedSolKeys,
+        args: StakeWrappedSolIxArgs
+    ) -> Result<Instruction>;
+    fn create_sanctum_swap_exact_in_instruction(
+        &self,
+        swapper: &Pubkey,
+        swapper_src_acc: &Pubkey,
+        swapper_dst_acc: &Pubkey,
+        lst_state: &Account,
+        src_mint: &Pubkey,
+        dst_mint: &Pubkey,
+        src_mint_program: &Pubkey,
+        dst_mint_program: &Pubkey,
+        src_accounts: Vec<AccountMeta>,
+        dst_accounts: Vec<AccountMeta>,
+        amount: u64,
+        min_amount_out: u64
+    ) -> Result<Instruction>;
 }
 
-pub fn create_end_rebalance_instruction_from_start(
-    start_rebalance_ix: &Instruction
-) -> Result<Instruction> {
-    Ok(end_rebalance_ix_from_start_rebalance_ix(start_rebalance_ix)?)
-}
-
-// deposit, swap instructions
-
-pub fn create_stake_wrapped_sol_instruction(
-    program_id: &Pubkey,
-    accounts: StakeWrappedSolKeys,
-    args: StakeWrappedSolIxArgs
-) -> Result<Instruction> {
-    let metas: [AccountMeta; STAKE_WRAPPED_SOL_IX_ACCOUNTS_LEN] = accounts.into();
-    let data: StakeWrappedSolIxData = args.into();
-    Ok(Instruction {
-        program_id: program_id.clone(),
-        accounts: Vec::from(metas),
-        data: data.try_to_vec()?,
-    })
-}
-
-pub fn create_sanctum_swap_exact_in_instruction(
-    rpc: &RpcClient,
-    program_id: &Pubkey, // controller
-    // the swapper infos
-    swapper: &Pubkey,
-    swapper_src_acc: &Pubkey,
-    swapper_dst_acc: &Pubkey,
-    // mint infos
-    src_mint: &Pubkey,
-    dst_mint: &Pubkey,
-    // src & dst types
-    src_cal_type: &CalculatorType,
-    dst_cal_type: &CalculatorType,
-    // swap parameters
-    amount: u64,
-    min_amount_out: u64
-) -> Result<Instruction> {
-    let lst_state_list_addr = find_lst_state_list_address(program_id);
-    let lst_state_list_acc = rpc.get_account(&lst_state_list_addr)?;
-
-    let instruction = swap_exact_in_ix_by_mint_full(
-        SwapByMintsFreeArgs {
-            signer: swapper.clone(),
-            src_lst_acc: swapper_src_acc.clone(),
-            dst_lst_acc: swapper_dst_acc.clone(),
-            src_lst_mint: MintWithTokenProgram {
-                pubkey: src_mint.clone(),
-                token_program: src_mint.resolve_owner(rpc)?,
+impl RebalancingInstructions for ControllerInstructionBuilder {
+    fn create_start_rebalance_instruction(
+        &self,
+        program_id: &Pubkey,
+        withdraw_to: &Pubkey, // the account who will receive the withdrawn funds
+        pool_state_addr: &Pubkey,
+        pool_state: &Account,
+        lst_state_addr: &Pubkey,
+        lst_state: &Account,
+        src_mint: &Pubkey,
+        dst_mint: &Pubkey,
+        src_mint_program: &Pubkey,
+        dst_mint_program: &Pubkey,
+        src_accounts: Vec<AccountMeta>,
+        dst_accounts: Vec<AccountMeta>,
+        lamports: u64
+    ) -> Result<Instruction> {
+        let instruction = start_rebalance_ix_by_mints_full_for_prog(
+            program_id.clone(),
+            StartRebalanceByMintsFreeArgs {
+                withdraw_to: withdraw_to.clone(),
+                pool_state: Keyed {
+                    pubkey: pool_state_addr.clone(),
+                    account: pool_state,
+                },
+                lst_state_list: Keyed {
+                    pubkey: lst_state_addr.clone(),
+                    account: lst_state,
+                },
+                src_lst_mint: MintWithTokenProgram {
+                    pubkey: src_mint.clone(),
+                    token_program: src_mint_program.clone(),
+                },
+                dst_lst_mint: MintWithTokenProgram {
+                    pubkey: dst_mint.clone(),
+                    token_program: dst_mint_program.clone(),
+                },
             },
-            dst_lst_mint: MintWithTokenProgram {
-                pubkey: dst_mint.clone(),
-                token_program: dst_mint.resolve_owner(rpc)?,
+            StartRebalanceIxLstAmts {
+                amount: lamports,
+                min_starting_src_lst: 0,
+                max_starting_dst_lst: u64::MAX,
             },
-            lst_state_list: lst_state_list_acc,
-        },
-        SwapExactInAmounts {
-            amount,
-            min_amount_out,
-        },
-        SrcDstLstSolValueCalcAccountSuffixes {
-            src_lst_calculator_accounts: &src_cal_type.resolve_account_metas(rpc)?,
-            dst_lst_calculator_accounts: &dst_cal_type.resolve_account_metas(rpc)?,
-        },
-        &(PriceExactInFreeArgs {
-            input_lst_mint: src_mint.clone(),
-            output_lst_mint: dst_mint.clone(),
-        }).resolve_to_account_metas(),
-        flat_fee_lib::program::ID
-    )?;
+            SrcDstLstSolValueCalcAccountSuffixes {
+                src_lst_calculator_accounts: &src_accounts,
+                dst_lst_calculator_accounts: &dst_accounts,
+            }
+        )?;
+        Ok(instruction)
+    }
 
-    Ok(instruction)
+    fn create_end_rebalance_instruction_from_start(
+        &self,
+        start_rebalance_ix: &Instruction
+    ) -> Result<Instruction> {
+        Ok(end_rebalance_ix_from_start_rebalance_ix(start_rebalance_ix)?)
+    }
+
+    // This function is used to create a stake wrapped sol instruction for the sanctum program
+
+    fn create_stake_wrapped_sol_instruction(
+        &self,
+        program_id: &Pubkey,
+        accounts: StakeWrappedSolKeys,
+        args: StakeWrappedSolIxArgs
+    ) -> Result<Instruction> {
+        let metas: [AccountMeta; STAKE_WRAPPED_SOL_IX_ACCOUNTS_LEN] = accounts.into();
+        let data: StakeWrappedSolIxData = args.into();
+        Ok(Instruction {
+            program_id: program_id.clone(),
+            accounts: Vec::from(metas),
+            data: data.try_to_vec()?,
+        })
+    }
+
+    // This function is used to create a swap instruction for the sanctum program
+
+    fn create_sanctum_swap_exact_in_instruction(
+        &self,
+        swapper: &Pubkey,
+        swapper_src_acc: &Pubkey,
+        swapper_dst_acc: &Pubkey,
+        lst_state: &Account,
+        src_mint: &Pubkey,
+        dst_mint: &Pubkey,
+        src_mint_program: &Pubkey,
+        dst_mint_program: &Pubkey,
+        src_accounts: Vec<AccountMeta>,
+        dst_accounts: Vec<AccountMeta>,
+        amount: u64,
+        min_amount_out: u64
+    ) -> Result<Instruction> {
+        let instruction = swap_exact_in_ix_by_mint_full(
+            SwapByMintsFreeArgs {
+                signer: swapper.clone(),
+                src_lst_acc: swapper_src_acc.clone(),
+                dst_lst_acc: swapper_dst_acc.clone(),
+                src_lst_mint: MintWithTokenProgram {
+                    pubkey: src_mint.clone(),
+                    token_program: src_mint_program.clone(),
+                },
+                dst_lst_mint: MintWithTokenProgram {
+                    pubkey: dst_mint.clone(),
+                    token_program: dst_mint_program.clone(),
+                },
+                lst_state_list: lst_state,
+            },
+            SwapExactInAmounts {
+                amount,
+                min_amount_out,
+            },
+            SrcDstLstSolValueCalcAccountSuffixes {
+                src_lst_calculator_accounts: &src_accounts,
+                dst_lst_calculator_accounts: &dst_accounts,
+            },
+            &(PriceExactInFreeArgs {
+                input_lst_mint: src_mint.clone(),
+                output_lst_mint: dst_mint.clone(),
+            }).resolve_to_account_metas(),
+            flat_fee_lib::program::ID
+        )?;
+
+        Ok(instruction)
+    }
 }

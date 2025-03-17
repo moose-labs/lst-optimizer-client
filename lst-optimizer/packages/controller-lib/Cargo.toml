@@ -5,16 +5,16 @@ edition = "2021"
 
 [dependencies]
 anyhow = { workspace = true }
+borsh = { workspace = true }
+solana-client = { workspace = true }
+solana-sdk = { workspace = true }
+solana-program = { workspace = true }
+spl-token = { workspace = true }
+spl-token-2022 = { workspace = true }
 
-borsh = "1.5.5"
-solana-client = "2.2.1"
-solana-sdk = "2.2.1"
-solana-program = ">=1"
-solana-transaction-status = "2.2.1"
+solana-transaction-status = "^2.0.0"
 solana-readonly-account = { version = "^1.1", features = ["solana-sdk"] }
 data-encoding = "2.8.0"
-spl-token = ">=0.1.0"
-spl-token-2022 = ">=0.1.0"
 # link to https://github.com/moose-labs/S
 s-controller-lib = { git = "https://github.com/moose-labs/S.git", branch = "custom_address" }
 s_controller_interface = { git = "https://github.com/moose-labs/S.git", branch = "custom_address" }
