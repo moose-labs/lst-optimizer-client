@@ -1,8 +1,11 @@
-use std::{ collections::HashMap, thread::sleep };
+use std::{collections::HashMap, thread::sleep};
 
 use anyhow::Result;
 use log::info;
-use lst_optimizer_std::{ fetcher::{ apy::Apy, fetcher::Fetcher }, types::asset::Asset };
+use lst_optimizer_std::{
+    fetcher::{apy::Apy, fetcher::Fetcher},
+    types::asset::Asset,
+};
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -26,7 +29,10 @@ impl SanctumHistoricalApyFetcher {
 #[async_trait::async_trait]
 impl Fetcher<Apy> for SanctumHistoricalApyFetcher {
     async fn fetch(&self, asset: &Asset) -> Result<Vec<Apy>> {
-        info!("fetching historical APY data for {}", asset.symbol.to_uppercase());
+        info!(
+            "fetching historical APY data for {}",
+            asset.symbol.to_uppercase()
+        );
 
         let client = reqwest::Client::new();
         let url = format!(

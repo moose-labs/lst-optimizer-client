@@ -1,6 +1,6 @@
+use anyhow::Result;
 use controller_lib::calculator::typedefs::CalculatorType;
 use lst_optimizer_std::types::asset::Asset;
-use anyhow::Result;
 
 pub fn pool_to_calculator_type(asset: &Asset) -> Result<CalculatorType> {
     let pool_info = asset.pool.clone();
@@ -17,7 +17,10 @@ pub fn pool_to_calculator_type(asset: &Asset) -> Result<CalculatorType> {
         "spl" | "sanctumspl" | "sanctumsplmulti" => {
             let pool: Option<String> = pool_info.pool.clone();
             if pool.is_none() {
-                return Err(anyhow::anyhow!("expect pool address for asset {}", asset.symbol));
+                return Err(anyhow::anyhow!(
+                    "expect pool address for asset {}",
+                    asset.symbol
+                ));
             }
 
             let pool = pool.unwrap();
@@ -25,9 +28,15 @@ pub fn pool_to_calculator_type(asset: &Asset) -> Result<CalculatorType> {
                 "spl" => Ok(CalculatorType::Spl(pool)),
                 "sanctumspl" => Ok(CalculatorType::SanctumSpl(pool)),
                 "sanctumsplmulti" => Ok(CalculatorType::SanctumSplMulti(pool)),
-                _ => Err(anyhow::anyhow!("invalid calculator program type for {}", asset.symbol)),
+                _ => Err(anyhow::anyhow!(
+                    "invalid calculator program type for {}",
+                    asset.symbol
+                )),
             }
         }
-        _ => Err(anyhow::anyhow!("invalid calculator program type for {}", asset.symbol)),
+        _ => Err(anyhow::anyhow!(
+            "invalid calculator program type for {}",
+            asset.symbol
+        )),
     }
 }

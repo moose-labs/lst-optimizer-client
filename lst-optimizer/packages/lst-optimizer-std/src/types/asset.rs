@@ -1,4 +1,4 @@
-use rust_decimal::{ prelude::FromPrimitive, Decimal };
+use rust_decimal::{prelude::FromPrimitive, Decimal};
 use serde::Deserialize;
 
 #[derive(Debug, Clone, Deserialize)]

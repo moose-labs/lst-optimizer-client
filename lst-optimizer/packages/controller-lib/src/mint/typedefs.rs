@@ -1,4 +1,4 @@
-use solana_readonly_account::{ ReadonlyAccountOwner, ReadonlyAccountPubkey };
+use solana_readonly_account::{ReadonlyAccountOwner, ReadonlyAccountPubkey};
 use solana_sdk::pubkey::Pubkey;
 
 /// A mint and its owner token program

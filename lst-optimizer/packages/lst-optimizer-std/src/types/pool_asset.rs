@@ -7,6 +7,10 @@ pub struct PoolAsset {
 
 impl PoolAsset {
     pub fn new(mint: &str, lamports: u64, reserves: u64) -> Self {
-        Self { mint: mint.to_string(), lamports, reserves }
+        Self {
+            mint: mint.to_string(),
+            lamports,
+            reserves,
+        }
     }
 }

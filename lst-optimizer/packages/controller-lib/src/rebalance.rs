@@ -1,27 +1,24 @@
 use anyhow::Result;
 use flat_fee_lib::account_resolvers::PriceExactInFreeArgs;
 use s_controller_lib::{
-    end_rebalance_ix_from_start_rebalance_ix,
-    start_rebalance_ix_by_mints_full_for_prog,
-    swap_exact_in_ix_by_mint_full,
-    SrcDstLstSolValueCalcAccountSuffixes,
-    StartRebalanceByMintsFreeArgs,
-    StartRebalanceIxLstAmts,
-    SwapByMintsFreeArgs,
+    end_rebalance_ix_from_start_rebalance_ix, start_rebalance_ix_by_mints_full_for_prog,
+    swap_exact_in_ix_by_mint_full, SrcDstLstSolValueCalcAccountSuffixes,
+    StartRebalanceByMintsFreeArgs, StartRebalanceIxLstAmts, SwapByMintsFreeArgs,
     SwapExactInAmounts,
 };
 use solana_readonly_account::keyed::Keyed;
-use solana_sdk::{ account::Account, instruction::{ AccountMeta, Instruction }, pubkey::Pubkey };
+use solana_sdk::{
+    account::Account,
+    instruction::{AccountMeta, Instruction},
+    pubkey::Pubkey,
+};
 use stakedex_interface::{
-    StakeWrappedSolIxArgs,
-    StakeWrappedSolIxData,
-    StakeWrappedSolKeys,
+    StakeWrappedSolIxArgs, StakeWrappedSolIxData, StakeWrappedSolKeys,
     STAKE_WRAPPED_SOL_IX_ACCOUNTS_LEN,
 };
 
 use crate::{
-    controller_instructions::ControllerInstructionBuilder,
-    mint::typedefs::MintWithTokenProgram,
+    controller_instructions::ControllerInstructionBuilder, mint::typedefs::MintWithTokenProgram,
 };
 
 pub trait RebalancingInstructions {
@@ -39,17 +36,17 @@ pub trait RebalancingInstructions {
         dst_mint_program: &Pubkey,
         src_accounts: Vec<AccountMeta>,
         dst_accounts: Vec<AccountMeta>,
-        lamports: u64
+        lamports: u64,
     ) -> Result<Instruction>;
     fn create_end_rebalance_instruction_from_start(
         &self,
-        start_rebalance_ix: &Instruction
+        start_rebalance_ix: &Instruction,
     ) -> Result<Instruction>;
     fn create_stake_wrapped_sol_instruction(
         &self,
         program_id: &Pubkey,
         accounts: StakeWrappedSolKeys,
-        args: StakeWrappedSolIxArgs
+        args: StakeWrappedSolIxArgs,
     ) -> Result<Instruction>;
     fn create_sanctum_swap_exact_in_instruction(
         &self,
@@ -64,7 +61,7 @@ pub trait RebalancingInstructions {
         src_accounts: Vec<AccountMeta>,
         dst_accounts: Vec<AccountMeta>,
         amount: u64,
-        min_amount_out: u64
+        min_amount_out: u64,
     ) -> Result<Instruction>;
 }
 
@@ -83,7 +80,7 @@ impl RebalancingInstructions for ControllerInstructionBuilder {
         dst_mint_program: &Pubkey,
         src_accounts: Vec<AccountMeta>,
         dst_accounts: Vec<AccountMeta>,
-        lamports: u64
+        lamports: u64,
     ) -> Result<Instruction> {
         let instruction = start_rebalance_ix_by_mints_full_for_prog(
             program_id.clone(),
@@ -114,16 +111,18 @@ impl RebalancingInstructions for ControllerInstructionBuilder {
             SrcDstLstSolValueCalcAccountSuffixes {
                 src_lst_calculator_accounts: &src_accounts,
                 dst_lst_calculator_accounts: &dst_accounts,
-            }
+            },
         )?;
         Ok(instruction)
     }
 
     fn create_end_rebalance_instruction_from_start(
         &self,
-        start_rebalance_ix: &Instruction
+        start_rebalance_ix: &Instruction,
     ) -> Result<Instruction> {
-        Ok(end_rebalance_ix_from_start_rebalance_ix(start_rebalance_ix)?)
+        Ok(end_rebalance_ix_from_start_rebalance_ix(
+            start_rebalance_ix,
+        )?)
     }
 
     // This function is used to create a stake wrapped sol instruction for the sanctum program
@@ -132,7 +131,7 @@ impl RebalancingInstructions for ControllerInstructionBuilder {
         &self,
         program_id: &Pubkey,
         accounts: StakeWrappedSolKeys,
-        args: StakeWrappedSolIxArgs
+        args: StakeWrappedSolIxArgs,
     ) -> Result<Instruction> {
         let metas: [AccountMeta; STAKE_WRAPPED_SOL_IX_ACCOUNTS_LEN] = accounts.into();
         let data: StakeWrappedSolIxData = args.into();
@@ -158,7 +157,7 @@ impl RebalancingInstructions for ControllerInstructionBuilder {
         src_accounts: Vec<AccountMeta>,
         dst_accounts: Vec<AccountMeta>,
         amount: u64,
-        min_amount_out: u64
+        min_amount_out: u64,
     ) -> Result<Instruction> {
         let instruction = swap_exact_in_ix_by_mint_full(
             SwapByMintsFreeArgs {
@@ -186,8 +185,9 @@ impl RebalancingInstructions for ControllerInstructionBuilder {
             &(PriceExactInFreeArgs {
                 input_lst_mint: src_mint.clone(),
                 output_lst_mint: dst_mint.clone(),
-            }).resolve_to_account_metas(),
-            flat_fee_lib::program::ID
+            })
+            .resolve_to_account_metas(),
+            flat_fee_lib::program::ID,
         )?;
 
         Ok(instruction)

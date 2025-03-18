@@ -1,9 +1,9 @@
+use anyhow::Result;
 use borsh::BorshDeserialize;
 use data_encoding::BASE64;
 use sanctum_token_ratio::U64ValueRange;
 use solana_sdk::pubkey::Pubkey;
 use solana_transaction_status::UiTransactionReturnData;
-use anyhow::Result;
 
 #[derive(Clone, Debug)]
 pub enum CalculatorType {
@@ -18,9 +18,12 @@ pub enum CalculatorType {
 // Helper function to parse the return data
 
 pub fn parse_u64_value_range_return_data(
-    return_data: &UiTransactionReturnData
+    return_data: &UiTransactionReturnData,
 ) -> Result<U64ValueRange> {
-    let UiTransactionReturnData { data: (data_str, _), .. } = return_data;
+    let UiTransactionReturnData {
+        data: (data_str, _),
+        ..
+    } = return_data;
     let data = BASE64.decode(data_str.as_bytes())?;
     let range = U64ValueRange::deserialize(&mut data.as_ref())?;
     Ok(range)
@@ -51,7 +54,10 @@ mod tests {
     fn test_parse_u64_value_range_return_data() {
         let data = UiTransactionReturnData {
             program_id: String::new(),
-            data: ("hW/KLgAAAACJb8ouAAAAAA==".to_string(), UiReturnDataEncoding::Base64),
+            data: (
+                "hW/KLgAAAACJb8ouAAAAAA==".to_string(),
+                UiReturnDataEncoding::Base64,
+            ),
         };
         let val = parse_u64_value_range_return_data(&data).unwrap();
         assert_eq!(val.get_min(), 785018757);

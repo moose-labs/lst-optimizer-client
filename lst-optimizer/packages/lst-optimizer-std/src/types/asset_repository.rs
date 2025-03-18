@@ -9,9 +9,7 @@ pub struct AssetRepository {
 
 impl AssetRepository {
     pub fn new(assets: Vec<Asset>) -> Self {
-        Self {
-            assets,
-        }
+        Self { assets }
     }
 
     pub fn get_assets(&self) -> Vec<Asset> {
@@ -24,6 +22,9 @@ impl AssetRepository {
                 return Ok(asset.clone());
             }
         }
-        Err(anyhow::anyhow!("Asset {} not found in the repository", mint))
+        Err(anyhow::anyhow!(
+            "Asset {} not found in the repository",
+            mint
+        ))
     }
 }

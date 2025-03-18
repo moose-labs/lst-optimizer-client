@@ -1,32 +1,28 @@
 use std::collections::HashMap;
 
+use anyhow::{Context as _AnyhowContext, Ok, Result};
 use controller_lib::{
-    calculator::query::CalculatorQuery,
-    controller::ControllerClient,
-    state::PoolQuery,
-    Pubkey,
+    calculator::query::CalculatorQuery, controller::ControllerClient, state::PoolQuery, Pubkey,
 };
+use log::warn;
 use lst_optimizer_std::{
     allocator::AllocationRatios,
-    pool::{ Pool, PoolError },
+    pool::{Pool, PoolError},
     types::{
         amount_change::AmountChange,
         asset::Asset,
         context::Context,
-        pool_allocation::{ PoolAllocations, MAX_ALLOCATION_BPS },
+        pool_allocation::{PoolAllocations, MAX_ALLOCATION_BPS},
         pool_allocation_changes::{
-            PoolAllocationChanges,
-            PoolAllocationLamportsChanges,
-            PoolAssetChange,
+            PoolAllocationChanges, PoolAllocationLamportsChanges, PoolAssetChange,
             PoolAssetLamportsChange,
         },
         pool_asset::PoolAsset,
     },
 };
-use rust_decimal::Decimal;
 use rust_decimal::prelude::ToPrimitive;
-use anyhow::{ Context as _AnyhowContext, Ok, Result };
-use solana_client::rpc_client::RpcClient;
+use rust_decimal::Decimal;
+use solana_client::nonblocking::rpc_client::RpcClient;
 
 use crate::typedefs::pool_to_calculator_type;
 
@@ -69,65 +65,67 @@ impl MaxPool {
     fn calculate_lamports_per_symbol(
         &self,
         total_lamports: u64,
-        symbol_bps: Decimal
+        symbol_bps: Decimal,
     ) -> Result<u64> {
         let total_lamports_dec = Decimal::from(total_lamports);
         let max_bps = Decimal::from(MAX_ALLOCATION_BPS);
-        let ratio = symbol_bps
-            .checked_div(max_bps)
-            .context(PoolError::FailedToCalculateLamportsPerSymbol(total_lamports, symbol_bps))?;
+        let ratio = symbol_bps.checked_div(max_bps).context(
+            PoolError::FailedToCalculateLamportsPerSymbol(total_lamports, symbol_bps),
+        )?;
 
         let target_lamports = ratio
             .checked_mul(total_lamports_dec)
             .context(PoolError::FailedToCalculateAllocationChanges)?;
 
-        Ok(
-            target_lamports
-                .ceil()
-                .to_u64()
-                .ok_or(PoolError::FailedToCalculateLamportsPerSymbol(total_lamports, symbol_bps))?
-        )
+        Ok(target_lamports
+            .ceil()
+            .to_u64()
+            .ok_or(PoolError::FailedToCalculateLamportsPerSymbol(
+                total_lamports,
+                symbol_bps,
+            ))?)
     }
 }
 
+#[async_trait::async_trait]
 impl Pool for MaxPool {
-    fn get_allocation(&self, context: &Context) -> Result<PoolAllocations> {
+    async fn get_allocation(&self, context: &Context) -> Result<PoolAllocations> {
         let controller: Pubkey = self.program_id.parse()?;
         let controller_client = &self.controller_client;
-        let pool_state_addr = controller_client.pool_state_address(&controller);
-        let lst_state_list = controller_client.lst_state_list_from_program_id(&controller)?;
+        let pool_state_addr = controller_client.pool_state_address(&controller).await;
+        let lst_state_list = controller_client
+            .lst_state_list_from_program_id(&controller)
+            .await?;
 
         let mut assets: Vec<PoolAsset> = vec![];
         for lst_state in lst_state_list {
             let mint = lst_state.mint;
             let lamports = lst_state.sol_value;
             let known_asset = context.get_asset(&mint.to_string());
-            // TODO: remove this assertion
-            if known_asset.is_err() {
-                continue;
-            }
             let asset: Asset = known_asset.unwrap();
             let token_program: Pubkey = asset.token_program.parse()?;
 
-            let pool_reserves_address = controller_client.pool_reserves_address(
-                &lst_state,
-                &pool_state_addr,
-                &token_program
-            )?;
-            let reserves = controller_client.pool_reserves_account(&pool_reserves_address)?;
+            let pool_reserves_address = controller_client
+                .pool_reserves_address(&lst_state, &pool_state_addr, &token_program)
+                .await?;
+            let reserves = controller_client
+                .pool_reserves_account(&pool_reserves_address)
+                .await?;
             let reserves_balance = reserves.amount;
-            assets.push(PoolAsset::new(&mint.to_string(), lamports, reserves_balance));
+            assets.push(PoolAsset::new(
+                &mint.to_string(),
+                lamports,
+                reserves_balance,
+            ));
         }
-        Ok(PoolAllocations {
-            assets: assets,
-        })
+        Ok(PoolAllocations { assets: assets })
     }
 
-    fn get_allocation_lamports_changes(
+    async fn get_allocation_lamports_changes(
         &self,
         _context: &Context,
         pool_allocations: &PoolAllocations,
-        new_allocation_ratios: &AllocationRatios
+        new_allocation_ratios: &AllocationRatios,
     ) -> Result<PoolAllocationLamportsChanges> {
         let total_lamports = pool_allocations.get_total_lamports();
 
@@ -171,24 +169,22 @@ impl Pool for MaxPool {
         Ok(PoolAllocationLamportsChanges {
             assets: changes
                 .iter()
-                .map(|(mint, lamports_change)|
+                .map(|(mint, lamports_change)| {
                     PoolAssetLamportsChange::new(mint, lamports_change.clone())
-                )
+                })
                 .collect(),
         })
     }
 
-    fn get_allocation_changes(
+    async fn get_allocation_changes(
         &self,
         context: &Context,
         pool_allocations: &PoolAllocations,
-        new_allocation_ratios: &AllocationRatios
+        new_allocation_ratios: &AllocationRatios,
     ) -> Result<PoolAllocationChanges> {
-        let changes = self.get_allocation_lamports_changes(
-            context,
-            pool_allocations,
-            new_allocation_ratios
-        )?;
+        let changes = self
+            .get_allocation_lamports_changes(context, pool_allocations, new_allocation_ratios)
+            .await?;
 
         let payer: Pubkey = context.payer.parse()?;
         let controller = &self.controller_client;
@@ -204,18 +200,24 @@ impl Pool for MaxPool {
             let calculator_type = pool_to_calculator_type(&known_asset)?;
             let mut reserves_change = 0 as u64;
             if lamports_change > self.options.minimum_rebalance_lamports {
-                let reserves_change_range = controller.convert_sol_to_lst(
-                    &payer,
-                    calculator_type,
-                    lamports_change
-                )?;
+                let reserves_change_range = controller
+                    .convert_sol_to_lst(&payer, calculator_type, lamports_change)
+                    .await?;
                 reserves_change = reserves_change_range.get_min();
+            } else {
+                warn!(
+                    "The amount of lamports ({}) to rebalance is less than the minimum rebalance lamports ({})",
+                    lamports_change,
+                    self.options.minimum_rebalance_lamports
+                );
             }
             let asset_change = match asset_lamports_change.lamports {
-                AmountChange::Increase(_) =>
-                    PoolAssetChange::new(mint, AmountChange::Increase(reserves_change)),
-                AmountChange::Decrease(_) =>
-                    PoolAssetChange::new(mint, AmountChange::Decrease(reserves_change)),
+                AmountChange::Increase(_) => {
+                    PoolAssetChange::new(mint, AmountChange::Increase(reserves_change))
+                }
+                AmountChange::Decrease(_) => {
+                    PoolAssetChange::new(mint, AmountChange::Decrease(reserves_change))
+                }
             };
 
             asset_changes.push(asset_change);
@@ -233,8 +235,8 @@ mod tests {
 
     use super::*;
 
-    #[test]
-    fn test_calculate_lamports_per_symbol_success() {
+    #[tokio::test]
+    async fn test_calculate_lamports_per_symbol_success() {
         let pool = MaxPool::new("", MaxPoolOptions::default());
         let total_lamports = 1_000_000;
         let symbol_bps = Decimal::from(5000);
@@ -244,8 +246,8 @@ mod tests {
         assert_eq!(target_lamports, 500_000);
     }
 
-    #[test]
-    fn test_calculate_lamports_per_symbol_success_on_division_by_zeros() {
+    #[tokio::test]
+    async fn test_calculate_lamports_per_symbol_success_on_division_by_zeros() {
         let pool = MaxPool::new("", MaxPoolOptions::default());
 
         // symbol_bps = 0
@@ -265,26 +267,28 @@ mod tests {
         assert_eq!(target_lamports, 0);
     }
 
-    #[test]
-    fn test_get_allocation_changes() {
+    #[tokio::test]
+    async fn test_get_allocation_changes() {
         let pool = MaxPool::new("", MaxPoolOptions::default());
         let pool_allocations = PoolAllocations {
             assets: vec![
                 PoolAsset::new("hsol", 400, 0),
                 PoolAsset::new("jitosol", 100, 0),
                 PoolAsset::new("jupsol", 0, 0),
-                PoolAsset::new("inf", 0, 0)
+                PoolAsset::new("inf", 0, 0),
             ],
         };
-        let new_allocation_ratios = AllocationRatios::new(
-            vec![AllocationRatio::new("jupsol", 5000), AllocationRatio::new("inf", 5000)]
-        );
+        let new_allocation_ratios = AllocationRatios::new(vec![
+            AllocationRatio::new("jupsol", 5000),
+            AllocationRatio::new("inf", 5000),
+        ]);
         let changes = pool
             .get_allocation_lamports_changes(
                 &Context::default(),
                 &pool_allocations,
-                &new_allocation_ratios
+                &new_allocation_ratios,
             )
+            .await
             .unwrap();
         assert_eq!(changes.assets.len(), 4);
         assert_eq!(
@@ -292,11 +296,17 @@ mod tests {
             AmountChange::Decrease(400)
         );
         assert_eq!(
-            changes.get_asset_lamports_changes("jitosol").unwrap().lamports,
+            changes
+                .get_asset_lamports_changes("jitosol")
+                .unwrap()
+                .lamports,
             AmountChange::Decrease(100)
         );
         assert_eq!(
-            changes.get_asset_lamports_changes("jupsol").unwrap().lamports,
+            changes
+                .get_asset_lamports_changes("jupsol")
+                .unwrap()
+                .lamports,
             AmountChange::Increase(250)
         );
         assert_eq!(

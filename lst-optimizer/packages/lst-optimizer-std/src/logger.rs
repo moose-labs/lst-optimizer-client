@@ -1,5 +1,5 @@
 use anyhow::Result;
-use fern::colors::{ Color, ColoredLevelConfig };
+use fern::colors::{Color, ColoredLevelConfig};
 
 pub fn setup_global_logger() -> Result<()> {
     let colors_line = ColoredLevelConfig::new()
@@ -10,17 +10,14 @@ pub fn setup_global_logger() -> Result<()> {
         .trace(Color::BrightBlack);
     let colors_level = colors_line.info(Color::Green);
 
-    fern::Dispatch
-        ::new()
+    fern::Dispatch::new()
         .format(move |out, message, record| {
-            out.finish(
-                format_args!(
-                    "{} {} {}",
-                    humantime::format_rfc3339_seconds(std::time::SystemTime::now()),
-                    colors_level.color(record.level()),
-                    message
-                )
-            )
+            out.finish(format_args!(
+                "{} {} {}",
+                humantime::format_rfc3339_seconds(std::time::SystemTime::now()),
+                colors_level.color(record.level()),
+                message
+            ))
         })
         .level(log::LevelFilter::Debug)
         .chain(std::io::stdout())

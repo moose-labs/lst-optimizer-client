@@ -8,17 +8,25 @@ members = [
 resolver = "2"
 
 [workspace.dependencies]
+lst-optimizer-std = { path = "packages/lst-optimizer-std" }
+lst-optimizer-client = { path = "packages/lst-optimizer-client" }
+controller-lib = { path = "packages/controller-lib" }
+jupiter-lib = { path = "packages/jupiter-lib" }
+
+# dependencies
 anyhow = "1.0.96"
+async-trait = "0.1.88"
 thiserror = "2.0.12"
 rust_decimal = "1.36"
 serde = { version = "1.0.218", features = ["derive"] }
 tokio = { version = "1.43.0", features = ["rt-multi-thread", "macros"] }
-async-trait = "0.1.86"
+
 # loggings
 fern = { version = "0.7.1", features = ["colored"] }
 humantime = "2.1.0"
 colored = { version = "2.1.0" }
 log = { version = "0.4.26", features = ["std"] }
+
 # solana
 borsh = "1.5.5"
 solana-client = "^2.0.0"

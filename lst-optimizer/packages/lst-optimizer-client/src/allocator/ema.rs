@@ -1,12 +1,12 @@
-use anyhow::{ Context, Result };
+use anyhow::{Context, Result};
 use log::debug;
 use lst_optimizer_std::{
-    allocator::{ AllocationRatio, AllocationRatios, Allocator },
+    allocator::{AllocationRatio, AllocationRatios, Allocator},
     fetcher::apy::Apy,
-    types::{ pool_allocation::MAX_ALLOCATION_BPS, datapoint::SymbolData },
+    types::{datapoint::SymbolData, pool_allocation::MAX_ALLOCATION_BPS},
 };
 use rust_decimal::Decimal;
-use ta::{ indicators::ExponentialMovingAverage, Next };
+use ta::{indicators::ExponentialMovingAverage, Next};
 use thiserror::Error;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -32,13 +32,15 @@ pub struct EmaAllocator {
 
 impl EmaAllocator {
     pub fn new(allocation_limit: Option<usize>, period: Option<usize>) -> Self {
-        Self { allocation_limit, period }
+        Self {
+            allocation_limit,
+            period,
+        }
     }
 
     fn calculate_emas(&self, datapoints: &Vec<Apy>, period: usize) -> Result<Vec<f64>> {
-        let mut ema = ExponentialMovingAverage::new(period).context(
-            EmaError::FailedToCalculateEma
-        )?;
+        let mut ema =
+            ExponentialMovingAverage::new(period).context(EmaError::FailedToCalculateEma)?;
         let mut emas: Vec<f64> = Vec::new();
         for datapoint in datapoints {
             let value = ema.next(datapoint.apy);
@@ -122,7 +124,7 @@ mod tests {
             Apy {
                 mint: "".to_string(),
                 apy: 5.0,
-            }
+            },
         ]
     }
 
@@ -147,7 +149,7 @@ mod tests {
             Ema {
                 mint: "".to_string(),
                 ema: 5.0,
-            }
+            },
         ]
     }
 
@@ -159,7 +161,7 @@ mod tests {
             1.6666666666666665,
             2.5555555555555554,
             3.518518518518518,
-            4.506172839506172
+            4.506172839506172,
         ];
         let ema_values = EmaAllocator::new(None, None).calculate_emas(&datapoints, 2);
         assert_eq!(ema_values.unwrap(), expected_emas);

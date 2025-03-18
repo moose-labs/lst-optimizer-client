@@ -1,4 +1,4 @@
-use super::{ asset::Asset, pool_asset::PoolAsset };
+use super::{asset::Asset, pool_asset::PoolAsset};
 use anyhow::Result;
 
 pub const MAX_ALLOCATION_BPS: i16 = 10_000;
@@ -35,9 +35,10 @@ impl PoolAllocations {
                 }
             }
             if is_defined == false {
-                return Err(
-                    anyhow::anyhow!("Pool asset {} is not defined in the asset list", asset.mint)
-                );
+                return Err(anyhow::anyhow!(
+                    "Pool asset {} is not defined in the asset list",
+                    asset.mint
+                ));
             }
         }
         Ok(())
@@ -55,7 +56,7 @@ mod tests {
                 PoolAsset::new("jupsol", 100, 0),
                 PoolAsset::new("inf", 200, 0),
                 PoolAsset::new("jitosol", 300, 0),
-                PoolAsset::new("hsol", 400, 0)
+                PoolAsset::new("hsol", 400, 0),
             ],
         };
 
@@ -74,7 +75,7 @@ mod tests {
                 PoolAsset::new("jupsol", 100, 0),
                 PoolAsset::new("inf", 200, 0),
                 PoolAsset::new("jitosol", 300, 0),
-                PoolAsset::new("hsol", 400, 0)
+                PoolAsset::new("hsol", 400, 0),
             ],
         };
 
@@ -90,7 +91,7 @@ mod tests {
             Asset::new("jupsol", "", 0.5),
             Asset::new("inf", "", 0.5),
             Asset::new("jitosol", "", 0.5),
-            Asset::new("hsol", "", 0.5)
+            Asset::new("hsol", "", 0.5),
         ];
         let result = pool_allocations.assert_pool_allocations_are_defined(&defined_assets);
         assert_eq!(result.is_err(), false);

@@ -851,6 +851,7 @@ name = "controller_lib"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "async-trait",
  "borsh 1.5.5",
  "data-encoding",
  "flat-fee-lib",
@@ -870,6 +871,7 @@ dependencies = [
  "spl-token",
  "spl-token-2022 5.0.2",
  "stakedex_interface",
+ "tokio",
  "wsol-calculator-lib",
 ]
 

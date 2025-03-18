@@ -29,7 +29,10 @@ pub struct PoolAssetLamportsChange {
 
 impl PoolAssetLamportsChange {
     pub fn new(mint: &str, lamports: AmountChange) -> Self {
-        Self { mint: mint.to_string(), lamports }
+        Self {
+            mint: mint.to_string(),
+            lamports,
+        }
     }
 }
 
@@ -62,6 +65,9 @@ pub struct PoolAssetChange {
 
 impl PoolAssetChange {
     pub fn new(mint: &str, amount: AmountChange) -> Self {
-        Self { mint: mint.to_string(), amount }
+        Self {
+            mint: mint.to_string(),
+            amount,
+        }
     }
 }

@@ -7,7 +7,7 @@ use crate::{
     types::{
         context::Context,
         pool_allocation::PoolAllocations,
-        pool_allocation_changes::{ PoolAllocationChanges, PoolAllocationLamportsChanges },
+        pool_allocation_changes::{PoolAllocationChanges, PoolAllocationLamportsChanges},
     },
 };
 
@@ -18,24 +18,26 @@ pub enum PoolError {
 
     #[error(
         "Failed to calculate lamports per symbol, the lamports are {0}, the symbol bps is {1}"
-    )] FailedToCalculateLamportsPerSymbol(u64, Decimal),
+    )]
+    FailedToCalculateLamportsPerSymbol(u64, Decimal),
 
     #[error("Failed to calculate allocation changes")]
     FailedToCalculateAllocationChanges,
 }
 
+#[async_trait::async_trait]
 pub trait Pool {
-    fn get_allocation(&self, context: &Context) -> Result<PoolAllocations>;
-    fn get_allocation_lamports_changes(
+    async fn get_allocation(&self, context: &Context) -> Result<PoolAllocations>;
+    async fn get_allocation_lamports_changes(
         &self,
         context: &Context,
         pool_allocations: &PoolAllocations,
-        new_allocation_ratios: &AllocationRatios
+        new_allocation_ratios: &AllocationRatios,
     ) -> Result<PoolAllocationLamportsChanges>;
-    fn get_allocation_changes(
+    async fn get_allocation_changes(
         &self,
         context: &Context,
         pool_allocations: &PoolAllocations,
-        new_allocation_ratios: &AllocationRatios
+        new_allocation_ratios: &AllocationRatios,
     ) -> Result<PoolAllocationChanges>;
 }

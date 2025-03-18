@@ -1,7 +1,7 @@
 use anyhow::Result;
-use rust_decimal::{ prelude::Zero, Decimal };
+use rust_decimal::{prelude::Zero, Decimal};
 
-use crate::types::{ pool_allocation::MAX_ALLOCATION_BPS, datapoint::SymbolData, asset::Asset };
+use crate::types::{asset::Asset, datapoint::SymbolData, pool_allocation::MAX_ALLOCATION_BPS};
 
 pub trait Allocator<T> {
     fn allocate(&self, symbol_datas: Vec<SymbolData<T>>) -> Result<AllocationRatios>;
@@ -72,15 +72,10 @@ impl AllocationRatios {
 
         let max_allcation_bps = Decimal::from(MAX_ALLOCATION_BPS);
         if total_allocation != max_allcation_bps {
-            return Err(
-                anyhow::anyhow!(
-                    format!(
-                        "Total allocation ({}) bps is not equal to max allocation {}",
-                        total_allocation,
-                        max_allcation_bps
-                    )
-                )
-            );
+            return Err(anyhow::anyhow!(format!(
+                "Total allocation ({}) bps is not equal to max allocation {}",
+                total_allocation, max_allcation_bps
+            )));
         }
 
         Ok(())
@@ -95,20 +90,18 @@ mod tests {
     fn test_allocation_apply_weight_success() {
         let assets = vec![
             Asset::new_with_weight("jupsol", 0.8),
-            Asset::new_with_weight("inf", 0.2)
+            Asset::new_with_weight("inf", 0.2),
         ];
-        let mut allocation = AllocationRatios::new(
-            vec![
-                AllocationRatio {
-                    bps: (5000).into(),
-                    mint: "jupsol".to_string(),
-                },
-                AllocationRatio {
-                    bps: (5000).into(),
-                    mint: "inf".to_string(),
-                }
-            ]
-        );
+        let mut allocation = AllocationRatios::new(vec![
+            AllocationRatio {
+                bps: (5000).into(),
+                mint: "jupsol".to_string(),
+            },
+            AllocationRatio {
+                bps: (5000).into(),
+                mint: "inf".to_string(),
+            },
+        ]);
         allocation.apply_weights(&assets);
         assert_eq!(allocation.asset_alloc_ratios[0].bps, (8000).into());
         assert_eq!(allocation.asset_alloc_ratios[1].bps, (2000).into());
@@ -117,12 +110,10 @@ mod tests {
     #[test]
     fn test_allocation_apply_weight_success_edge() {
         let assets = vec![Asset::new_with_weight("jupsol", 0.1)];
-        let mut allocation = AllocationRatios::new(
-            vec![AllocationRatio {
-                bps: (10000).into(),
-                mint: "jupsol".to_string(),
-            }]
-        );
+        let mut allocation = AllocationRatios::new(vec![AllocationRatio {
+            bps: (10000).into(),
+            mint: "jupsol".to_string(),
+        }]);
         allocation.apply_weights(&assets);
         assert_eq!(allocation.asset_alloc_ratios[0].bps, (10000).into());
     }
@@ -132,49 +123,43 @@ mod tests {
         // Should apply only allocated asset's weight
         let assets = vec![
             Asset::new_with_weight("jupsol", 0.1),
-            Asset::new_with_weight("jitosol", 0.9) // This should be ignored
+            Asset::new_with_weight("jitosol", 0.9), // This should be ignored
         ];
-        let mut allocation = AllocationRatios::new(
-            vec![AllocationRatio {
-                bps: (10000).into(),
-                mint: "jupsol".to_string(),
-            }]
-        );
+        let mut allocation = AllocationRatios::new(vec![AllocationRatio {
+            bps: (10000).into(),
+            mint: "jupsol".to_string(),
+        }]);
         allocation.apply_weights(&assets);
         assert_eq!(allocation.asset_alloc_ratios[0].bps, (10000).into());
     }
 
     #[test]
     fn test_allocation_total_ratio_validation_succcess() {
-        let allocation = AllocationRatios::new(
-            vec![
-                AllocationRatio {
-                    bps: (5000).into(),
-                    mint: "jupsol".to_string(),
-                },
-                AllocationRatio {
-                    bps: (5000).into(),
-                    mint: "inf".to_string(),
-                }
-            ]
-        );
+        let allocation = AllocationRatios::new(vec![
+            AllocationRatio {
+                bps: (5000).into(),
+                mint: "jupsol".to_string(),
+            },
+            AllocationRatio {
+                bps: (5000).into(),
+                mint: "inf".to_string(),
+            },
+        ]);
         assert!(allocation.validate().is_ok());
     }
 
     #[test]
     fn test_allocation_total_ratio_validation_fail() {
-        let allocation = AllocationRatios::new(
-            vec![
-                AllocationRatio {
-                    bps: (1000).into(),
-                    mint: "jupsol".to_string(),
-                },
-                AllocationRatio {
-                    bps: (1000).into(),
-                    mint: "inf".to_string(),
-                }
-            ]
-        );
+        let allocation = AllocationRatios::new(vec![
+            AllocationRatio {
+                bps: (1000).into(),
+                mint: "jupsol".to_string(),
+            },
+            AllocationRatio {
+                bps: (1000).into(),
+                mint: "inf".to_string(),
+            },
+        ]);
         assert!(allocation.validate().is_err());
     }
 }

@@ -1,7 +1,7 @@
 use anyhow::Result;
 use serde::Deserialize;
 
-use crate::types::{ asset::Asset, asset_repository::AssetRepository };
+use crate::types::{asset::Asset, asset_repository::AssetRepository};
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Config {
