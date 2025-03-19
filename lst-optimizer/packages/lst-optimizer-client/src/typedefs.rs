@@ -13,7 +13,7 @@ pub fn pool_to_calculator_type(asset: &Asset) -> Result<CalculatorType> {
     match program.as_str() {
         "lido" => Ok(CalculatorType::Lido),
         "marinade" => Ok(CalculatorType::Marinade),
-        "wsol" => Ok(CalculatorType::Wsol),
+        "reservepool" => Ok(CalculatorType::Wsol),
         "spl" | "sanctumspl" | "sanctumsplmulti" => {
             let pool: Option<String> = pool_info.pool.clone();
             if pool.is_none() {

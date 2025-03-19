@@ -8,7 +8,7 @@ use solana_sdk::{
     pubkey::Pubkey,
 };
 
-use crate::controller_instructions::ControllerInstructionBuilder;
+use crate::controller::ControllerClient;
 
 use super::typedefs::{calculator_program_id, CalculatorType};
 
@@ -28,7 +28,7 @@ pub trait CalculatorInstructions {
     ) -> Result<Instruction>;
 }
 
-impl CalculatorInstructions for ControllerInstructionBuilder {
+impl CalculatorInstructions for ControllerClient {
     fn create_sol_to_lst_instruction(
         &self,
         calculator_type: CalculatorType,

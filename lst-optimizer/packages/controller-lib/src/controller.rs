@@ -1,9 +1,12 @@
 use anyhow::Result;
+use base64::{engine::general_purpose, Engine};
+use bincode::serialize;
 use solana_client::{
     nonblocking::rpc_client::RpcClient, rpc_config::RpcSimulateTransactionConfig,
     rpc_response::RpcSimulateTransactionResult,
 };
 use solana_sdk::{
+    address_lookup_table::AddressLookupTableAccount,
     instruction::Instruction,
     message::{v0::Message, VersionedMessage},
     pubkey::Pubkey,
@@ -33,27 +36,45 @@ impl ControllerClient {
         &self,
         payer: &Pubkey,
         instructions: &[Instruction],
-    ) -> Result<UiTransactionReturnData> {
+        address_lookup_table_accounts: &[AddressLookupTableAccount],
+    ) -> Result<RpcSimulateTransactionResult> {
         let rpc = self.rpc_client();
         let blockhash: solana_sdk::hash::Hash = rpc.get_latest_blockhash().await?;
-        let message =
-            VersionedMessage::V0(Message::try_compile(&payer, instructions, &[], blockhash)?);
+        let message = VersionedMessage::V0(Message::try_compile(
+            &payer,
+            instructions,
+            address_lookup_table_accounts,
+            blockhash,
+        )?);
         let tx: VersionedTransaction = VersionedTransaction {
             signatures: vec![Signature::default(); message.header().num_required_signatures.into()],
-            message,
+            message: message.clone(),
         };
+
+        let serialized_tx = bincode::serialize(&tx.message).unwrap();
+        let serialized_encoded = base64::encode(serialized_tx);
+        println!("Transaction: {:?}", serialized_encoded);
 
         let config = RpcSimulateTransactionConfig {
             sig_verify: false,
             ..Default::default()
         };
 
+        let ret = rpc.simulate_transaction_with_config(&tx, config).await?;
+        Ok(ret.value)
+    }
+
+    pub async fn simulate_returned_from_instructions(
+        &self,
+        payer: &Pubkey,
+        instructions: &[Instruction],
+        address_lookup_table_accounts: &[AddressLookupTableAccount],
+    ) -> Result<UiTransactionReturnData> {
         let RpcSimulateTransactionResult {
             return_data, err, ..
-        } = rpc
-            .simulate_transaction_with_config(&tx, config)
-            .await?
-            .value;
+        } = self
+            .simulate_instructions(payer, instructions, address_lookup_table_accounts)
+            .await?;
         if let Some(err) = err {
             return Err(anyhow::anyhow!("error in simulation: {:?}", err));
         }

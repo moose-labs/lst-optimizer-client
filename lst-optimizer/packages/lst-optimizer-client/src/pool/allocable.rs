@@ -1,18 +1,20 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, str::FromStr};
 
-use anyhow::{Context as _AnyhowContext, Ok, Result};
+use anyhow::Result;
 use controller_lib::{
-    calculator::query::CalculatorQuery, controller::ControllerClient, state::PoolQuery, Pubkey,
+    calculator::{query::CalculatorQuery, typedefs::CalculatorType},
+    rebalance::RebalancingInstructions,
+    state::PoolQuery,
+    Pubkey,
 };
-use log::warn;
+use log::{info, warn};
 use lst_optimizer_std::{
     allocator::AllocationRatios,
-    pool::{Pool, PoolError},
+    pool::Pool,
     types::{
         amount_change::AmountChange,
-        asset::Asset,
         context::Context,
-        pool_allocation::{PoolAllocations, MAX_ALLOCATION_BPS},
+        pool_allocation::PoolAllocations,
         pool_allocation_changes::{
             PoolAllocationChanges, PoolAllocationLamportsChanges, PoolAssetChange,
             PoolAssetLamportsChange,
@@ -20,102 +22,39 @@ use lst_optimizer_std::{
         pool_asset::PoolAsset,
     },
 };
-use rust_decimal::prelude::ToPrimitive;
-use rust_decimal::Decimal;
-use solana_client::nonblocking::rpc_client::RpcClient;
+use spl_helper::{mint::MintAccountQuery, token_account::TokenAccountQuery};
 
 use crate::typedefs::pool_to_calculator_type;
 
-#[derive(Debug, Clone)]
-pub struct MaxPoolOptions {
-    pub rpc_url: String,
-    pub minimum_rebalance_lamports: u64,
-}
-
-impl Default for MaxPoolOptions {
-    fn default() -> Self {
-        Self {
-            rpc_url: "https://api.mainnet-beta.solana.com".to_string(),
-            minimum_rebalance_lamports: 1_000_000,
-        }
-    }
-}
-
-pub struct MaxPool {
-    // A controller program id
-    program_id: String,
-    options: MaxPoolOptions,
-    controller_client: ControllerClient,
-}
-
-impl MaxPool {
-    pub fn new(program_id: &str, options: MaxPoolOptions) -> Self {
-        let rpc_client = RpcClient::new(options.rpc_url.clone());
-        Self {
-            program_id: program_id.to_string(),
-            options: options,
-            controller_client: ControllerClient::new(rpc_client),
-        }
-    }
-
-    pub fn options(&self) -> &MaxPoolOptions {
-        &self.options
-    }
-
-    fn calculate_lamports_per_symbol(
-        &self,
-        total_lamports: u64,
-        symbol_bps: Decimal,
-    ) -> Result<u64> {
-        let total_lamports_dec = Decimal::from(total_lamports);
-        let max_bps = Decimal::from(MAX_ALLOCATION_BPS);
-        let ratio = symbol_bps.checked_div(max_bps).context(
-            PoolError::FailedToCalculateLamportsPerSymbol(total_lamports, symbol_bps),
-        )?;
-
-        let target_lamports = ratio
-            .checked_mul(total_lamports_dec)
-            .context(PoolError::FailedToCalculateAllocationChanges)?;
-
-        Ok(target_lamports
-            .ceil()
-            .to_u64()
-            .ok_or(PoolError::FailedToCalculateLamportsPerSymbol(
-                total_lamports,
-                symbol_bps,
-            ))?)
-    }
-}
+use super::pool::MaxPool;
+use spl_token::native_mint;
 
 #[async_trait::async_trait]
 impl Pool for MaxPool {
     async fn get_allocation(&self, context: &Context) -> Result<PoolAllocations> {
-        let controller: Pubkey = self.program_id.parse()?;
-        let controller_client = &self.controller_client;
-        let pool_state_addr = controller_client.pool_state_address(&controller).await;
+        let controller: Pubkey = self.program_id();
+        let controller_client = self.controller_client();
+        let pool_state_addr = controller_client.get_pool_state_address(&controller).await;
         let lst_state_list = controller_client
-            .lst_state_list_from_program_id(&controller)
+            .get_lst_state_list_from_program_id(&controller)
             .await?;
 
         let mut assets: Vec<PoolAsset> = vec![];
         for lst_state in lst_state_list {
-            let mint = lst_state.mint;
-            let lamports = lst_state.sol_value;
-            let known_asset = context.get_asset(&mint.to_string());
-            let asset: Asset = known_asset.unwrap();
-            let token_program: Pubkey = asset.token_program.parse()?;
+            let known_asset = context.get_asset_from_mint(&lst_state.mint.to_string())?;
+            let token_program: Pubkey = known_asset.token_program.parse()?;
 
             let pool_reserves_address = controller_client
-                .pool_reserves_address(&lst_state, &pool_state_addr, &token_program)
+                .get_pool_reserves_address(&lst_state, &pool_state_addr, &token_program)
                 .await?;
             let reserves = controller_client
-                .pool_reserves_account(&pool_reserves_address)
+                .get_pool_reserves_account(&pool_reserves_address)
                 .await?;
-            let reserves_balance = reserves.amount;
+
             assets.push(PoolAsset::new(
-                &mint.to_string(),
-                lamports,
-                reserves_balance,
+                &lst_state.mint.to_string(),
+                lst_state.sol_value,
+                reserves.amount,
             ));
         }
         Ok(PoolAllocations { assets: assets })
@@ -123,18 +62,18 @@ impl Pool for MaxPool {
 
     async fn get_allocation_lamports_changes(
         &self,
-        _context: &Context,
+        _: &Context,
         pool_allocations: &PoolAllocations,
         new_allocation_ratios: &AllocationRatios,
     ) -> Result<PoolAllocationLamportsChanges> {
         let total_lamports = pool_allocations.get_total_lamports();
 
-        // Calculate target lamports per symbol
         let mut target_lamports_per_symbol: HashMap<String, u64> = HashMap::new();
         for symbol_ratio in new_allocation_ratios.asset_alloc_ratios.iter() {
-            let symbol_bps = symbol_ratio.bps;
-            let target_lamports = self.calculate_lamports_per_symbol(total_lamports, symbol_bps)?;
-            target_lamports_per_symbol.insert(symbol_ratio.mint.clone(), target_lamports);
+            target_lamports_per_symbol.insert(
+                symbol_ratio.mint.to_owned(),
+                self.calculate_lamports_from_bps(total_lamports, symbol_ratio.bps)?,
+            );
         }
 
         // Calculate allocation changes
@@ -182,12 +121,14 @@ impl Pool for MaxPool {
         pool_allocations: &PoolAllocations,
         new_allocation_ratios: &AllocationRatios,
     ) -> Result<PoolAllocationChanges> {
+        let payer: Pubkey = context.payer.parse()?;
+        let controller = self.controller_client();
+        let pool_options = self.pool_options();
+
         let changes = self
             .get_allocation_lamports_changes(context, pool_allocations, new_allocation_ratios)
             .await?;
 
-        let payer: Pubkey = context.payer.parse()?;
-        let controller = &self.controller_client;
         let mut asset_changes: Vec<PoolAssetChange> = vec![];
         for asset_lamports_change in changes.assets.iter() {
             let mint = &asset_lamports_change.mint;
@@ -196,10 +137,11 @@ impl Pool for MaxPool {
                 AmountChange::Decrease(amount) => amount,
             };
 
-            let known_asset = context.get_asset(mint)?;
+            let known_asset = context.get_asset_from_mint(mint)?;
             let calculator_type = pool_to_calculator_type(&known_asset)?;
+
             let mut reserves_change = 0 as u64;
-            if lamports_change > self.options.minimum_rebalance_lamports {
+            if lamports_change > pool_options.minimum_rebalance_lamports {
                 let reserves_change_range = controller
                     .convert_sol_to_lst(&payer, calculator_type, lamports_change)
                     .await?;
@@ -208,9 +150,10 @@ impl Pool for MaxPool {
                 warn!(
                     "The amount of lamports ({}) to rebalance is less than the minimum rebalance lamports ({})",
                     lamports_change,
-                    self.options.minimum_rebalance_lamports
+                    pool_options.minimum_rebalance_lamports
                 );
             }
+
             let asset_change = match asset_lamports_change.lamports {
                 AmountChange::Increase(_) => {
                     PoolAssetChange::new(mint, AmountChange::Increase(reserves_change))
@@ -227,45 +170,129 @@ impl Pool for MaxPool {
             assets: asset_changes,
         })
     }
+
+    async fn rebalance_asset(
+        &self,
+        context: &Context,
+        pool_asset_change: &PoolAssetChange,
+    ) -> Result<()> {
+        let asset = context.get_asset_from_mint(&pool_asset_change.mint)?;
+        let (src_mint, dst_mint, src_cal, dst_cal, amount) = match pool_asset_change.amount {
+            AmountChange::Increase(amt) => (
+                native_mint::ID,
+                Pubkey::from_str(pool_asset_change.mint.as_str())?,
+                CalculatorType::Wsol,
+                pool_to_calculator_type(&asset)?,
+                amt,
+            ),
+            AmountChange::Decrease(amt) => (
+                Pubkey::from_str(pool_asset_change.mint.as_str())?,
+                native_mint::ID,
+                pool_to_calculator_type(&asset)?,
+                CalculatorType::Wsol,
+                amt,
+            ),
+        };
+
+        if src_mint.eq(&dst_mint) {
+            warn!("The source and destination mints are the same, no rebalance needed");
+            return Ok(());
+        }
+
+        let payer: Pubkey = context.payer.parse()?;
+        let controller = self.controller_client();
+        let rpc = controller.rpc_client();
+
+        let src_ata = src_mint
+            .resolve_associated_token_account(&payer, rpc)
+            .await?;
+
+        let program_id = self.program_id();
+        let start_ix = controller
+            .create_start_rebalance_instruction(
+                &program_id,
+                &src_ata,
+                &src_mint,
+                &dst_mint,
+                src_cal.clone(),
+                dst_cal.clone(),
+                amount,
+            )
+            .await?;
+
+        let subsidized_ata = dst_mint
+            .resolve_associated_token_account(&payer, rpc)
+            .await?;
+
+        // get balance
+        let balance = subsidized_ata.get_token_account_balance(rpc).await?;
+        println!("token account: {}", subsidized_ata);
+        println!("balance: {}", balance);
+        println!("subsidized amount: {}", amount);
+
+        let pool_reserve_addr = controller
+            .find_pool_reserves_address(
+                &controller.get_pool_state_address(&program_id).await,
+                &dst_mint,
+                &dst_mint.get_mint_owner(rpc).await?,
+            )
+            .await?;
+        let transfer_ix = spl_token::instruction::transfer(
+            &spl_token::ID,
+            &subsidized_ata,
+            &pool_reserve_addr,
+            &payer,
+            &[&payer],
+            amount,
+        )?;
+
+        let end_ix = controller
+            .create_end_rebalance_instruction_from_start(&start_ix)
+            .await?;
+
+        // let swap_ix = controller
+        //     .create_sanctum_swap_exact_in_instruction(
+        //         &program_id,
+        //         &payer,
+        //         &src_mint
+        //             .resolve_associated_token_account(&payer, rpc)
+        //             .await?,
+        //         &dst_mint
+        //             .resolve_associated_token_account(&payer, rpc)
+        //             .await?,
+        //         &src_mint,
+        //         &dst_mint,
+        //         src_cal,
+        //         dst_cal,
+        //         amount,
+        //         0,
+        //     )
+        //     .await?;
+
+        let ret = controller
+            .simulate_instructions(&payer, &[start_ix, transfer_ix, end_ix], &[])
+            .await?;
+
+        match ret.err {
+            Some(err) => {
+                warn!("Error: {}", err);
+            }
+            None => {
+                info!("Rebalance successful");
+            }
+        };
+
+        Ok(())
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use lst_optimizer_std::allocator::AllocationRatio;
 
+    use crate::pool::{pool::MaxPool, typedefs::MaxPoolOptions};
+
     use super::*;
-
-    #[tokio::test]
-    async fn test_calculate_lamports_per_symbol_success() {
-        let pool = MaxPool::new("", MaxPoolOptions::default());
-        let total_lamports = 1_000_000;
-        let symbol_bps = Decimal::from(5000);
-        let target_lamports = pool
-            .calculate_lamports_per_symbol(total_lamports, symbol_bps)
-            .unwrap();
-        assert_eq!(target_lamports, 500_000);
-    }
-
-    #[tokio::test]
-    async fn test_calculate_lamports_per_symbol_success_on_division_by_zeros() {
-        let pool = MaxPool::new("", MaxPoolOptions::default());
-
-        // symbol_bps = 0
-        let total_lamports = 1_000_000;
-        let symbol_bps = Decimal::from(0);
-        let target_lamports = pool
-            .calculate_lamports_per_symbol(total_lamports, symbol_bps)
-            .unwrap();
-        assert_eq!(target_lamports, 0);
-
-        // total_lamports = 0
-        let total_lamports = 0;
-        let symbol_bps = Decimal::from(1000);
-        let target_lamports = pool
-            .calculate_lamports_per_symbol(total_lamports, symbol_bps)
-            .unwrap();
-        assert_eq!(target_lamports, 0);
-    }
 
     #[tokio::test]
     async fn test_get_allocation_changes() {

@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use super::amount_change::AmountChange;
 
 // Change in lamports
@@ -18,6 +20,16 @@ impl PoolAllocationLamportsChanges {
             }
         }
         None
+    }
+}
+
+impl Display for PoolAllocationLamportsChanges {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "PoolAllocationLamportsChanges:\n")?;
+        for asset in self.assets.iter() {
+            write!(f, " - {:?}\n", asset)?;
+        }
+        Ok(())
     }
 }
 
@@ -54,6 +66,16 @@ impl PoolAllocationChanges {
             }
         }
         None
+    }
+}
+
+impl Display for PoolAllocationChanges {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "PoolAllocationChanges:\n")?;
+        for asset in self.assets.iter() {
+            write!(f, " - {:?}\n", asset)?;
+        }
+        Ok(())
     }
 }
 

@@ -1,6 +1,7 @@
 use super::asset::Asset;
 use super::asset_repository::AssetRepository;
 use anyhow::Result;
+use log::info;
 
 #[derive(Debug, Clone)]
 pub struct Context {
@@ -17,11 +18,16 @@ impl Context {
     }
 
     pub fn with_payer(self, payer: String) -> Self {
+        info!("Setting payer to {}", payer);
         Self { payer, ..self }
     }
 
-    pub fn get_asset(&self, mint: &str) -> Result<Asset> {
-        self.asset_repository.get_asset(mint)
+    pub fn get_asset_from_mint(&self, mint: &str) -> Result<Asset> {
+        self.asset_repository.get_asset_from_mint(mint)
+    }
+
+    pub fn get_asset_from_symbol(&self, symbol: &str) -> Result<Asset> {
+        self.asset_repository.get_asset_from_symbol(symbol)
     }
 }
 

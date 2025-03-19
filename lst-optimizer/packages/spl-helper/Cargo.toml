@@ -1,0 +1,13 @@
+[package]
+name = "spl-helper"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+solana-sdk = { workspace = true }
+spl-token = { workspace = true }
+spl-token-2022 = { workspace = true }
+solana-client = { workspace = true }
+spl-associated-token-account = { workspace = true }

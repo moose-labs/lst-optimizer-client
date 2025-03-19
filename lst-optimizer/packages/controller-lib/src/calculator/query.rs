@@ -8,11 +8,11 @@ use solana_sdk::{instruction::AccountMeta, pubkey::Pubkey};
 use spl_calculator_lib::SplLstSolCommonFreeArgsConst;
 use wsol_calculator_lib::WSOL_LST_SOL_COMMON_METAS;
 
-use crate::{controller::ControllerClient, controller_instructions::ControllerInstructionBuilder};
+use crate::controller::ControllerClient;
 
 use super::{
-    instructions::CalculatorInstructions,
-    typedefs::{parse_u64_value_range_return_data, CalculatorType},
+    helper::parse_u64_value_range_return_data, instructions::CalculatorInstructions,
+    typedefs::CalculatorType,
 };
 
 // Convert between LST and SOL using the calculator program
@@ -47,13 +47,14 @@ impl CalculatorQuery for ControllerClient {
         calculator_type: CalculatorType,
         lamports: u64,
     ) -> Result<U64ValueRange> {
-        let builder = ControllerInstructionBuilder::new();
         let accounts = self
             .fetch_calculator_account_metas(&calculator_type)
             .await?;
         let instruction =
-            builder.create_sol_to_lst_instruction(calculator_type, lamports, accounts)?;
-        let return_data = self.simulate_instructions(payer, &[instruction]).await?;
+            self.create_sol_to_lst_instruction(calculator_type, lamports, accounts)?;
+        let return_data = self
+            .simulate_returned_from_instructions(payer, &[instruction], &[])
+            .await?;
         let val = parse_u64_value_range_return_data(&return_data)?;
         Ok(val)
     }
@@ -64,13 +65,13 @@ impl CalculatorQuery for ControllerClient {
         calculator_type: CalculatorType,
         amount: u64,
     ) -> Result<U64ValueRange> {
-        let builder = ControllerInstructionBuilder::new();
         let accounts = self
             .fetch_calculator_account_metas(&calculator_type)
             .await?;
-        let instruction =
-            builder.create_lst_to_sol_instruction(calculator_type, amount, accounts)?;
-        let return_data = self.simulate_instructions(payer, &[instruction]).await?;
+        let instruction = self.create_lst_to_sol_instruction(calculator_type, amount, accounts)?;
+        let return_data = self
+            .simulate_returned_from_instructions(payer, &[instruction], &[])
+            .await?;
         let val = parse_u64_value_range_return_data(&return_data)?;
         Ok(val)
     }

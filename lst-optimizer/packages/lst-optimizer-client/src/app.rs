@@ -6,11 +6,11 @@ use lst_optimizer_std::{
     allocator::Allocator,
     fetcher::fetcher::Fetcher,
     pool::Pool,
-    types::{context::Context, datapoint::SymbolData},
+    types::{amount_change::AmountChange, context::Context, datapoint::SymbolData},
 };
 
 use crate::{
-    allocator::ema::EmaAllocator, fetcher::apy::SanctumHistoricalApyFetcher, pool::MaxPool,
+    allocator::ema::EmaAllocator, fetcher::apy::SanctumHistoricalApyFetcher, pool::pool::MaxPool,
 };
 
 pub struct OptimizerApp {
@@ -44,47 +44,45 @@ impl OptimizerApp {
             });
         }
 
-        // Allocate assets and validate the allocations
         let allocator = EmaAllocator::new(Some(2), Some(5));
         let mut allocations = allocator.allocate(symbol_datas)?;
         allocations.validate()?;
-
-        // Apply weights to the allocations and validate the allocations
         allocations.apply_weights(&assets);
         allocations.validate()?;
 
-        // Get the current pool allocations and calculate the changes
         let pool = &self.pool;
         let current_pool_allocations = pool.get_allocation(context).await?;
-
-        info!("Pool allocation:");
-        for pool_asset in current_pool_allocations.assets.iter() {
-            info!(" - pool asset: {:?}", pool_asset);
-        }
-
-        // Ensure that all pool assets are defined in the asset list
-        // Otherwise, the optimizer should add the missing pool assets before rebalancing
         current_pool_allocations.assert_pool_allocations_are_defined(&assets)?;
+        info!("{}", current_pool_allocations);
 
-        // Get the allocation changes
         let pool_allocation_lamports_changes = pool
             .get_allocation_lamports_changes(context, &current_pool_allocations, &allocations)
             .await?;
-        info!("Pool allocation changes:");
-        for pool_asset_change in pool_allocation_lamports_changes.assets.iter() {
-            info!(
-                " - pool allocation changes (lamports): {:?}",
-                pool_asset_change
-            );
-        }
+        info!("{}", pool_allocation_lamports_changes);
 
-        // Get the pool allocation changes
         let pool_allocation_changes = pool
             .get_allocation_changes(context, &current_pool_allocations, &allocations)
             .await?;
-        info!("Pool allocation changes:");
-        for pool_asset_change in pool_allocation_changes.assets.iter() {
-            info!(" - pool allocation changes (lst): {:?}", pool_asset_change);
+        info!("{}", pool_allocation_changes);
+
+        // Reducing first
+        for pool_asset_change in &pool_allocation_changes.assets {
+            match pool_asset_change.amount {
+                AmountChange::Increase(_) => {}
+                AmountChange::Decrease(_) => {
+                    let _ = pool.rebalance_asset(context, pool_asset_change).await?;
+                }
+            }
+        }
+
+        // Increasing
+        for pool_asset_change in &pool_allocation_changes.assets {
+            match pool_asset_change.amount {
+                AmountChange::Increase(_) => {
+                    let _ = pool.rebalance_asset(context, pool_asset_change).await?;
+                }
+                AmountChange::Decrease(_) => {}
+            }
         }
 
         Ok(())

@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use super::{asset::Asset, pool_asset::PoolAsset};
 use anyhow::Result;
 
@@ -40,6 +42,16 @@ impl PoolAllocations {
                     asset.mint
                 ));
             }
+        }
+        Ok(())
+    }
+}
+
+impl Display for PoolAllocations {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "PoolAllocations:\n")?;
+        for asset in self.assets.iter() {
+            write!(f, " - {:?}\n", asset)?;
         }
         Ok(())
     }

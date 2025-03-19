@@ -4,6 +4,7 @@ members = [
     "packages/lst-optimizer-client",
     "packages/controller-lib",
     "packages/jupiter-lib",
+    "packages/spl-helper",
 ]
 resolver = "2"
 
@@ -12,6 +13,7 @@ lst-optimizer-std = { path = "packages/lst-optimizer-std" }
 lst-optimizer-client = { path = "packages/lst-optimizer-client" }
 controller-lib = { path = "packages/controller-lib" }
 jupiter-lib = { path = "packages/jupiter-lib" }
+spl-helper = { path = "packages/spl-helper" }
 
 # dependencies
 anyhow = "1.0.96"
@@ -34,3 +36,4 @@ solana-sdk = "^2.0.0"
 solana-program = ">=1"
 spl-token = ">=0.1.0"
 spl-token-2022 = ">=0.1.0"
+spl-associated-token-account = ">=0.1.0"

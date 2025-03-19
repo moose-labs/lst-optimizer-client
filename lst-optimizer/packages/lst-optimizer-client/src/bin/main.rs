@@ -1,12 +1,15 @@
 use controller_lib::controller;
 use lst_optimizer_client::{
     app::OptimizerApp,
-    pool::{MaxPool, MaxPoolOptions},
+    pool::{pool::MaxPool, typedefs::MaxPoolOptions},
+    utils::get_registry_file,
 };
 use lst_optimizer_std::{
     helper::config::asset_repository_from_toml, logger::setup_global_logger,
-    types::context::Context,
+    types::context::Context, utils::path::get_deps_accounts,
 };
+use solana_sdk::signature::Signer;
+use solana_sdk::signer::keypair::read_keypair_file;
 
 #[tokio::main]
 async fn main() {
@@ -14,12 +17,14 @@ async fn main() {
         eprintln!("{:?}", err);
     }
 
-    let rpc_url = "http://127.0.0.1:8899".to_string();
-    let asset_repository = asset_repository_from_toml("./registry.toml").unwrap();
+    let payer = read_keypair_file(get_deps_accounts("admin.json")).expect("Failed to read keypair");
+    let asset_repository = asset_repository_from_toml(get_registry_file()).unwrap();
     let interval = std::time::Duration::from_secs(60 * 60 * 24 * 2);
 
     let context = Context::default();
     let program_id = controller::ID.to_string();
+
+    let rpc_url = "http://127.0.0.1:8899".to_string();
     let pool = MaxPool::new(
         &program_id,
         MaxPoolOptions {
@@ -32,7 +37,7 @@ async fn main() {
         .keep_rebalance(
             context
                 .with_asset_repository(asset_repository)
-                .with_payer("86naSVEnAUH1C9b4WktPqohydNhW5c1Tnt2foQqnZKb1".to_string()),
+                .with_payer(payer.pubkey().to_string()),
             interval,
         )
         .await;

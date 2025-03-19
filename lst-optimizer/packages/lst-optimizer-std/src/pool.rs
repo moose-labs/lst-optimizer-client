@@ -7,7 +7,9 @@ use crate::{
     types::{
         context::Context,
         pool_allocation::PoolAllocations,
-        pool_allocation_changes::{PoolAllocationChanges, PoolAllocationLamportsChanges},
+        pool_allocation_changes::{
+            PoolAllocationChanges, PoolAllocationLamportsChanges, PoolAssetChange,
+        },
     },
 };
 
@@ -40,4 +42,9 @@ pub trait Pool {
         pool_allocations: &PoolAllocations,
         new_allocation_ratios: &AllocationRatios,
     ) -> Result<PoolAllocationChanges>;
+    async fn rebalance_asset(
+        &self,
+        context: &Context,
+        pool_asset_change: &PoolAssetChange,
+    ) -> Result<()>;
 }

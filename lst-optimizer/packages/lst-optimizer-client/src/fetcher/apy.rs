@@ -1,7 +1,6 @@
 use std::{collections::HashMap, thread::sleep};
 
 use anyhow::Result;
-use log::info;
 use lst_optimizer_std::{
     fetcher::{apy::Apy, fetcher::Fetcher},
     types::asset::Asset,
@@ -24,21 +23,31 @@ impl SanctumHistoricalApyFetcher {
     pub fn new() -> Self {
         Self {}
     }
+
+    fn get_symbol_endpoint(&self, symbol: &String) -> String {
+        format!(
+            "https://extra-api.sanctum.so/v1/apy/indiv-epochs?lst={}&n=300",
+            symbol
+        )
+    }
+
+    fn is_exceptable_symbol(&self, symbol: &String) -> bool {
+        symbol.to_lowercase().eq("sol")
+    }
 }
 
 #[async_trait::async_trait]
 impl Fetcher<Apy> for SanctumHistoricalApyFetcher {
     async fn fetch(&self, asset: &Asset) -> Result<Vec<Apy>> {
-        info!(
-            "fetching historical APY data for {}",
-            asset.symbol.to_uppercase()
-        );
+        if self.is_exceptable_symbol(&asset.symbol) {
+            return Ok(vec![Apy {
+                mint: asset.mint.clone(),
+                apy: 0.0,
+            }]);
+        }
 
         let client = reqwest::Client::new();
-        let url = format!(
-            "https://extra-api.sanctum.so/v1/apy/indiv-epochs?lst={}&n=300",
-            asset.symbol
-        );
+        let url = self.get_symbol_endpoint(&asset.symbol);
         let response: SanctumHistoricalResponse = client.get(url).send().await?.json().await?;
 
         let mut datapoints: Vec<Apy> = vec![];

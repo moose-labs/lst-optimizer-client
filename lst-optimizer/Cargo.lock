@@ -672,6 +672,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d71b6127be86fdcfddb610f7182ac57211d4b18a3e9c82eb2d17662f2227ad6a"
 
 [[package]]
+name = "camino"
+version = "1.1.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8b96ec4966b5813e2c0507c1f86115c8c5abaadc3980879c3424042a02fd1ad3"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "caps"
 version = "0.5.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -679,6 +688,29 @@ checksum = "190baaad529bcfbde9e1a19022c42781bdb6ff9de25721abdb8fd98c0807730b"
 dependencies = [
  "libc",
  "thiserror 1.0.69",
+]
+
+[[package]]
+name = "cargo-platform"
+version = "0.1.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e35af189006b9c0f00a064685c727031e3ed2d8020f7ba284d78cc2671bd36ea"
+dependencies = [
+ "serde",
+]
+
+[[package]]
+name = "cargo_metadata"
+version = "0.19.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dd5eb614ed4c27c5d706420e4320fbe3216ab31fa1c33cd8246ac36dae4479ba"
+dependencies = [
+ "camino",
+ "cargo-platform",
+ "semver",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.12",
 ]
 
 [[package]]
@@ -847,11 +879,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7c74b8349d32d297c9134b8c88677813a227df8f779daa29bfc29c183fe3dca6"
 
 [[package]]
-name = "controller_lib"
+name = "controller-lib"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
+ "base64 0.22.1",
+ "bincode",
  "borsh 1.5.5",
  "data-encoding",
  "flat-fee-lib",
@@ -868,7 +902,7 @@ dependencies = [
  "solana-sdk",
  "solana-transaction-status",
  "spl-calculator-lib",
- "spl-token",
+ "spl-helper",
  "spl-token-2022 5.0.2",
  "stakedex_interface",
  "tokio",
@@ -2306,29 +2340,33 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "30bde2b3dc3671ae49d8e2e9f044c7c005836e7a023ee57cffa25ab82764bb9e"
 
 [[package]]
-name = "lst_optimizer_client"
+name = "lst-optimizer-client"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
- "controller_lib",
+ "controller-lib",
  "log",
- "lst_optimizer_std",
+ "lst-optimizer-std",
  "reqwest 0.12.4",
  "rust_decimal",
  "serde",
  "solana-client",
+ "solana-sdk",
+ "spl-helper",
+ "spl-token",
  "ta",
  "thiserror 2.0.12",
  "tokio",
 ]
 
 [[package]]
-name = "lst_optimizer_std"
+name = "lst-optimizer-std"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
+ "cargo_metadata",
  "colored",
  "fern",
  "humantime",
@@ -3582,6 +3620,9 @@ name = "semver"
 version = "1.0.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56e6fa9c48d24d85fb3de5ad847117517440f6beceb7798af16b4a87d616b8d0"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "serde"
@@ -4704,6 +4745,19 @@ dependencies = [
  "sha2 0.10.8",
  "syn 2.0.100",
  "thiserror 1.0.69",
+]
+
+[[package]]
+name = "spl-helper"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "solana-client",
+ "solana-sdk",
+ "spl-associated-token-account 5.0.1",
+ "spl-token",
+ "spl-token-2022 5.0.2",
 ]
 
 [[package]]
