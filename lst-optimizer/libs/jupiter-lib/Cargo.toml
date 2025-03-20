@@ -8,4 +8,4 @@ anyhow = { workspace = true }
 thiserror = { workspace = true }
 solana-client = { workspace = true }
 solana-sdk = { workspace = true }
-jupiter-swap-api-client = { git = "https://github.com/jup-ag/jupiter-swap-api-client.git", package = "jupiter-swap-api-client" }
+jupiter-swap-api-client = { git = "https://github.com/moose-labs/jupiter-swap-api-client.git", package = "jupiter-swap-api-client", branch = "bump_sdk" }

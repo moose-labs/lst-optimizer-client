@@ -6,6 +6,8 @@ members = [
 
     "libs/controller-lib",
     "libs/jupiter-lib",
+
+    "integration-tests",
 ]
 resolver = "2"
 
