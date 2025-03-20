@@ -1,20 +1,15 @@
 use anyhow::Result;
-use controller_lib::{
-    calculator::typedefs::CalculatorType, rebalance::RebalancingInstructions, Pubkey,
-};
+use controller_lib::{rebalance::RebalancingInstructions, Pubkey};
 use jupiter_lib::quoter::JupiterInstructionBuilder;
 use log::{info, warn};
 use lst_optimizer_std::{
     pool::PoolRebalancable,
-    types::{
-        amount_change::AmountChange, context::Context, pool_allocation_changes::PoolAssetChange,
-    },
+    types::{context::Context, pool_allocation_changes::PoolAssetChange},
 };
 use solana_sdk::instruction::Instruction;
 use spl_helper::token_account::TokenAccountQuery;
-use spl_token::native_mint;
 
-use crate::typedefs::pool_to_calculator_type;
+use crate::pool::helper::pool_asset_change_route::{PoolAssetChangeRoute, PoolAssetChangeRouter};
 
 use super::pool::MaxPool;
 
@@ -25,23 +20,14 @@ impl PoolRebalancable for MaxPool {
         context: &Context,
         pool_asset_change: &PoolAssetChange,
     ) -> Result<()> {
-        let asset = context.get_asset_from_mint(&pool_asset_change.mint)?;
-        let (src_mint, dst_mint, src_cal, dst_cal, amount) = match pool_asset_change.amount {
-            AmountChange::Increase(amt) => (
-                native_mint::ID,
-                pool_asset_change.mint.parse()?,
-                CalculatorType::Wsol,
-                pool_to_calculator_type(&asset)?,
-                amt,
-            ),
-            AmountChange::Decrease(amt) => (
-                pool_asset_change.mint.parse()?,
-                native_mint::ID,
-                pool_to_calculator_type(&asset)?,
-                CalculatorType::Wsol,
-                amt,
-            ),
-        };
+        let asset = context.get_known_asset_from_mint(&pool_asset_change.mint)?;
+        let PoolAssetChangeRoute {
+            src_mint,
+            dst_mint,
+            src_cal,
+            dst_cal,
+            amount,
+        } = pool_asset_change.get_route(&asset)?;
 
         if src_mint.eq(&dst_mint) {
             warn!("The source and destination mints are the same, no rebalance needed");
@@ -52,13 +38,32 @@ impl PoolRebalancable for MaxPool {
         let controller = self.controller_client();
         let rpc = controller.rpc_client();
 
+        let jup_client = JupiterInstructionBuilder::new();
+        let swap_ixs = jup_client
+            .create_jupiter_swap_instruction(&payer, &src_mint, &dst_mint, amount, None)
+            .await?;
+        let address_lookup_table_accs = jup_client
+            .get_address_lookup_table_accounts(rpc, swap_ixs.address_lookup_table_addresses)
+            .await?;
+
+        // prepare the accounts if needed
+        if swap_ixs.setup_instructions.len() > 0 {
+            let ret = controller
+                .invoke_instructions(
+                    &payer,
+                    &swap_ixs.setup_instructions,
+                    &address_lookup_table_accs,
+                )
+                .await?;
+            info!("Setup instructions invoked with signature: {}", ret);
+        }
+
+        // rebalance instructions
+        let mut instructions: Vec<Instruction> = vec![];
+        let program_id = self.program_id();
         let src_ata = src_mint
             .resolve_associated_token_account(&payer, rpc)
             .await?;
-
-        let program_id = self.program_id();
-
-        let mut instructions: Vec<Instruction> = vec![];
         let start_ix = controller
             .create_start_rebalance_instruction(
                 &program_id,
@@ -70,38 +75,19 @@ impl PoolRebalancable for MaxPool {
                 amount,
             )
             .await?;
-
-        let jup_client = JupiterInstructionBuilder::new();
-        let swap_ixs = jup_client
-            .create_jupiter_swap_instruction(&payer, &src_mint, &dst_mint, amount, None)
-            .await?;
-
         let end_ix = controller
             .create_end_rebalance_instruction_from_start(&start_ix)
             .await?;
 
-        instructions.extend(swap_ixs.compute_budget_instructions);
+        // instructions.extend(swap_ixs.compute_budget_instructions);
         instructions.push(start_ix);
-        instructions.extend(swap_ixs.setup_instructions);
         instructions.push(swap_ixs.swap_instruction);
         instructions.push(end_ix);
 
-        let address_lookup_table_accs = jup_client
-            .get_address_lookup_table_accounts(rpc, swap_ixs.address_lookup_table_addresses)
-            .await?;
-
         let ret = controller
-            .simulate_instructions(&payer, &instructions, &address_lookup_table_accs)
+            .invoke_instructions(&payer, &instructions, &address_lookup_table_accs)
             .await?;
-
-        match ret.err {
-            Some(err) => {
-                warn!("Error: {}", err);
-            }
-            None => {
-                info!("Rebalance successful");
-            }
-        };
+        info!("Rebalance instructions invoked with signature: {}", ret);
 
         Ok(())
     }

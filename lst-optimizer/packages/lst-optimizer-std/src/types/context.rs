@@ -22,11 +22,11 @@ impl Context {
         Self { payer, ..self }
     }
 
-    pub fn get_asset_from_mint(&self, mint: &str) -> Result<Asset> {
+    pub fn get_known_asset_from_mint(&self, mint: &str) -> Result<Asset> {
         self.asset_repository.get_asset_from_mint(mint)
     }
 
-    pub fn get_asset_from_symbol(&self, symbol: &str) -> Result<Asset> {
+    pub fn get_known_asset_from_symbol(&self, symbol: &str) -> Result<Asset> {
         self.asset_repository.get_asset_from_symbol(symbol)
     }
 }

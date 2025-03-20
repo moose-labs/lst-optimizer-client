@@ -2,18 +2,20 @@
 members = [
     "packages/lst-optimizer-std",
     "packages/lst-optimizer-client",
-    "packages/controller-lib",
-    "packages/jupiter-lib",
     "packages/spl-helper",
+
+    "libs/controller-lib",
+    "libs/jupiter-lib",
 ]
 resolver = "2"
 
 [workspace.dependencies]
 lst-optimizer-std = { path = "packages/lst-optimizer-std" }
 lst-optimizer-client = { path = "packages/lst-optimizer-client" }
-controller-lib = { path = "packages/controller-lib" }
-jupiter-lib = { path = "packages/jupiter-lib" }
 spl-helper = { path = "packages/spl-helper" }
+
+controller-lib = { path = "libs/controller-lib" }
+jupiter-lib = { path = "libs/jupiter-lib" }
 
 # dependencies
 anyhow = "1.0.96"

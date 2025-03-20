@@ -1,10 +1,12 @@
 use anyhow::Result;
 use solana_client::{
-    nonblocking::rpc_client::RpcClient, rpc_config::RpcSimulateTransactionConfig,
+    nonblocking::rpc_client::RpcClient,
+    rpc_config::{RpcSendTransactionConfig, RpcSimulateTransactionConfig},
     rpc_response::RpcSimulateTransactionResult,
 };
 use solana_sdk::{
     address_lookup_table::AddressLookupTableAccount,
+    commitment_config::CommitmentLevel,
     instruction::Instruction,
     message::{v0::Message, VersionedMessage},
     pubkey::Pubkey,
@@ -30,6 +32,49 @@ impl ControllerClient {
 
     // Invoke the instructions simulation on the RPC client and return the return data
 
+    async fn build_transaction(
+        &self,
+        payer: &Pubkey,
+        instructions: &[Instruction],
+        address_lookup_table_accounts: &[AddressLookupTableAccount],
+    ) -> Result<VersionedTransaction> {
+        let recent_blockhash: solana_sdk::hash::Hash =
+            self.rpc_client.get_latest_blockhash().await?;
+        let message = VersionedMessage::V0(Message::try_compile(
+            &payer,
+            instructions,
+            address_lookup_table_accounts,
+            recent_blockhash,
+        )?);
+        let tx: VersionedTransaction = VersionedTransaction {
+            signatures: vec![Signature::default(); message.header().num_required_signatures.into()],
+            message: message.clone(),
+        };
+        Ok(tx)
+    }
+
+    pub async fn invoke_instructions(
+        &self,
+        payer: &Pubkey,
+        instructions: &[Instruction],
+        address_lookup_table_accounts: &[AddressLookupTableAccount],
+    ) -> Result<Signature> {
+        let rpc = self.rpc_client();
+        let tx = self
+            .build_transaction(payer, instructions, address_lookup_table_accounts)
+            .await?;
+        let ret = rpc
+            .send_transaction_with_config(
+                &tx,
+                RpcSendTransactionConfig {
+                    preflight_commitment: Some(CommitmentLevel::Finalized),
+                    ..Default::default()
+                },
+            )
+            .await?;
+        Ok(ret)
+    }
+
     pub async fn simulate_instructions(
         &self,
         payer: &Pubkey,
@@ -37,24 +82,18 @@ impl ControllerClient {
         address_lookup_table_accounts: &[AddressLookupTableAccount],
     ) -> Result<RpcSimulateTransactionResult> {
         let rpc = self.rpc_client();
-        let blockhash: solana_sdk::hash::Hash = rpc.get_latest_blockhash().await?;
-        let message = VersionedMessage::V0(Message::try_compile(
-            &payer,
-            instructions,
-            address_lookup_table_accounts,
-            blockhash,
-        )?);
-        let tx: VersionedTransaction = VersionedTransaction {
-            signatures: vec![Signature::default(); message.header().num_required_signatures.into()],
-            message: message.clone(),
-        };
-
-        let config = RpcSimulateTransactionConfig {
-            sig_verify: false,
-            ..Default::default()
-        };
-
-        let ret = rpc.simulate_transaction_with_config(&tx, config).await?;
+        let tx = self
+            .build_transaction(payer, instructions, address_lookup_table_accounts)
+            .await?;
+        let ret = rpc
+            .simulate_transaction_with_config(
+                &tx,
+                RpcSimulateTransactionConfig {
+                    sig_verify: false,
+                    ..Default::default()
+                },
+            )
+            .await?;
         Ok(ret.value)
     }
 

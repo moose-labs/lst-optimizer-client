@@ -34,7 +34,7 @@ impl PoolAllocable for MaxPool {
 
         let mut assets: Vec<PoolAsset> = vec![];
         for lst_state in lst_state_list {
-            let known_asset = context.get_asset_from_mint(&lst_state.mint.to_string())?;
+            let known_asset = context.get_known_asset_from_mint(&lst_state.mint.to_string())?;
             let token_program: Pubkey = known_asset.token_program.parse()?;
 
             let pool_reserves_address = controller_client
@@ -130,7 +130,7 @@ impl PoolAllocable for MaxPool {
                 AmountChange::Decrease(amount) => amount,
             };
 
-            let known_asset = context.get_asset_from_mint(mint)?;
+            let known_asset = context.get_known_asset_from_mint(mint)?;
             let calculator_type = pool_to_calculator_type(&known_asset)?;
 
             let mut reserves_change = 0 as u64;
