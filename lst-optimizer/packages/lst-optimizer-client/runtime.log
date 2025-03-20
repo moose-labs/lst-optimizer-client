@@ -1,0 +1,156 @@
+[2025-03-03T09:17:16.131289000Z INFO lst_optimizer_client::fetcher::apy] Fetching historical APY data for jupsol
+[2025-03-03T09:17:16.137052000Z DEBUG reqwest::connect] starting new connection: https://extra-api.sanctum.so/
+[2025-03-03T09:17:19.267262000Z INFO lst_optimizer_client::fetcher::apy] Fetching historical APY data for inf
+[2025-03-03T09:17:19.268487000Z DEBUG reqwest::connect] starting new connection: https://extra-api.sanctum.so/
+[2025-03-03T09:17:21.760114000Z INFO lst_optimizer_client::fetcher::apy] Fetching historical APY data for jitosol
+[2025-03-03T09:17:21.761476000Z DEBUG reqwest::connect] starting new connection: https://extra-api.sanctum.so/
+[2025-03-03T09:17:24.202489000Z INFO lst_optimizer_client::fetcher::apy] Fetching historical APY data for hsol
+[2025-03-03T09:17:24.204025000Z DEBUG reqwest::connect] starting new connection: https://extra-api.sanctum.so/
+2025-03-03T09:19:05Z INFO fetching historical APY data for jupsol
+2025-03-03T09:19:05Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T09:19:07Z INFO fetching historical APY data for inf
+2025-03-03T09:19:07Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T09:19:10Z INFO fetching historical APY data for jitosol
+2025-03-03T09:19:10Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T09:19:12Z INFO fetching historical APY data for hsol
+2025-03-03T09:19:12Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T09:23:47Z INFO fetching historical APY data for jupsol
+2025-03-03T09:23:47Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T09:23:49Z INFO fetching historical APY data for inf
+2025-03-03T09:23:49Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T09:23:52Z INFO fetching historical APY data for jitosol
+2025-03-03T09:23:52Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T09:23:54Z INFO fetching historical APY data for hsol
+2025-03-03T09:23:54Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T09:30:42Z INFO fetching historical APY data for jupsol
+2025-03-03T09:30:42Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T09:30:44Z INFO fetching historical APY data for inf
+2025-03-03T09:30:44Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T09:30:47Z INFO fetching historical APY data for jitosol
+2025-03-03T09:30:47Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T09:30:49Z INFO fetching historical APY data for hsol
+2025-03-03T09:30:49Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T09:30:52Z INFO allocation ratios: [WeightedSymbol { symbol: "jupsol", weight: 1 }, WeightedSymbol { symbol: "inf", weight: 1 }, WeightedSymbol { symbol: "jitosol", weight: 1 }, WeightedSymbol { symbol: "hsol", weight: 1 }]
+2025-03-03T09:30:52Z INFO allocation ratios after applying weights: AllocationRatios { ratios: [AllocationRatio { ratio: 2500.00, symbol: "jupsol" }, AllocationRatio { ratio: 2500.00, symbol: "inf" }, AllocationRatio { ratio: 2500.00, symbol: "hsol" }, AllocationRatio { ratio: 2500.00, symbol: "jitosol" }] }
+2025-03-03T09:31:08Z INFO fetching historical APY data for jupsol
+2025-03-03T09:31:08Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T09:31:11Z INFO fetching historical APY data for inf
+2025-03-03T09:31:11Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T09:31:13Z INFO fetching historical APY data for jitosol
+2025-03-03T09:31:13Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T09:31:15Z INFO fetching historical APY data for hsol
+2025-03-03T09:31:15Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T09:31:17Z INFO allocation ratios: AllocationRatios { ratios: [AllocationRatio { ratio: 2500, symbol: "jupsol" }, AllocationRatio { ratio: 2500, symbol: "inf" }, AllocationRatio { ratio: 2500, symbol: "hsol" }, AllocationRatio { ratio: 2500, symbol: "jitosol" }] }
+2025-03-03T09:31:17Z INFO allocation ratios after applying weights: AllocationRatios { ratios: [AllocationRatio { ratio: 2500.00, symbol: "jupsol" }, AllocationRatio { ratio: 2500.00, symbol: "inf" }, AllocationRatio { ratio: 2500.00, symbol: "hsol" }, AllocationRatio { ratio: 2500.00, symbol: "jitosol" }] }
+2025-03-03T09:32:17Z INFO fetching historical APY data for jupsol
+2025-03-03T09:32:17Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T09:32:19Z INFO fetching historical APY data for inf
+2025-03-03T09:32:19Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T09:32:21Z INFO fetching historical APY data for jitosol
+2025-03-03T09:32:21Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T09:32:24Z INFO fetching historical APY data for hsol
+2025-03-03T09:32:24Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T09:32:26Z INFO allocation ratios: AllocationRatios { ratios: [AllocationRatio { ratio: 2500, symbol: "jupsol" }, AllocationRatio { ratio: 2500, symbol: "inf" }, AllocationRatio { ratio: 2500, symbol: "hsol" }, AllocationRatio { ratio: 2500, symbol: "jitosol" }] }
+2025-03-03T09:32:26Z INFO allocation ratios after applying weights: AllocationRatios { ratios: [AllocationRatio { ratio: 3333.3333333333333333333333330, symbol: "jupsol" }, AllocationRatio { ratio: 3333.3333333333333333333333330, symbol: "inf" }, AllocationRatio { ratio: 1666.6666666666666666666666670, symbol: "hsol" }, AllocationRatio { ratio: 1666.6666666666666666666666670, symbol: "jitosol" }] }
+2025-03-03T10:37:34Z INFO fetching historical APY data for jupsol
+2025-03-03T10:37:34Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:37:37Z INFO fetching historical APY data for inf
+2025-03-03T10:37:37Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:37:39Z INFO fetching historical APY data for jitosol
+2025-03-03T10:37:39Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:37:41Z INFO fetching historical APY data for hsol
+2025-03-03T10:37:41Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:37:43Z INFO Current pool allocations: PoolAllocations { assets: [PoolAsset { symbol: "hsol", lamports: 1000000000000 }, PoolAsset { symbol: "jitosol", lamports: 1000000000000 }] }
+2025-03-03T10:37:43Z INFO New pool allocations: PoolAllocations { assets: [PoolAsset { symbol: "inf", lamports: 1 }, PoolAsset { symbol: "jitosol", lamports: 1 }, PoolAsset { symbol: "hsol", lamports: 1 }, PoolAsset { symbol: "jupsol", lamports: 1 }] }
+2025-03-03T10:39:32Z INFO fetching historical APY data for jupsol
+2025-03-03T10:39:32Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:39:34Z INFO fetching historical APY data for inf
+2025-03-03T10:39:34Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:39:36Z INFO fetching historical APY data for jitosol
+2025-03-03T10:39:36Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:39:39Z INFO fetching historical APY data for hsol
+2025-03-03T10:39:39Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:39:41Z INFO Target lamports per symbol: {"inf": 1, "jitosol": 1, "jupsol": 1, "hsol": 1}
+2025-03-03T10:39:41Z INFO Changes: {"jitosol": -999999999999, "inf": 1, "hsol": -999999999999, "jupsol": 1}
+2025-03-03T10:39:41Z INFO Current pool allocations: PoolAllocations { assets: [PoolAsset { symbol: "hsol", lamports: 1000000000000 }, PoolAsset { symbol: "jitosol", lamports: 1000000000000 }] }
+2025-03-03T10:39:41Z INFO New pool allocations: PoolAllocations { assets: [PoolAsset { symbol: "jitosol", lamports: 1 }, PoolAsset { symbol: "inf", lamports: 1 }, PoolAsset { symbol: "hsol", lamports: 1 }, PoolAsset { symbol: "jupsol", lamports: 1 }] }
+2025-03-03T10:40:49Z INFO fetching historical APY data for jupsol
+2025-03-03T10:40:49Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:40:50Z INFO fetching historical APY data for inf
+2025-03-03T10:40:50Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:40:52Z INFO fetching historical APY data for jitosol
+2025-03-03T10:40:52Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:40:53Z INFO fetching historical APY data for hsol
+2025-03-03T10:40:53Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:40:55Z INFO Symbol ratio: AllocationRatio { bps: 3333.3333333333333333333333330, symbol: "jupsol" }
+2025-03-03T10:40:55Z INFO Target lamports: 0.0000000000001666666666666667
+2025-03-03T10:40:55Z INFO Symbol ratio: AllocationRatio { bps: 3333.3333333333333333333333330, symbol: "inf" }
+2025-03-03T10:40:55Z INFO Target lamports: 0.0000000000001666666666666667
+2025-03-03T10:40:55Z INFO Symbol ratio: AllocationRatio { bps: 1666.6666666666666666666666670, symbol: "hsol" }
+2025-03-03T10:40:55Z INFO Target lamports: 0.0000000000000833333333333333
+2025-03-03T10:40:55Z INFO Symbol ratio: AllocationRatio { bps: 1666.6666666666666666666666670, symbol: "jitosol" }
+2025-03-03T10:40:55Z INFO Target lamports: 0.0000000000000833333333333333
+2025-03-03T10:40:55Z INFO Target lamports per symbol: {"inf": 1, "jitosol": 1, "jupsol": 1, "hsol": 1}
+2025-03-03T10:40:55Z INFO Changes: {"jupsol": 1, "jitosol": -999999999999, "hsol": -999999999999, "inf": 1}
+2025-03-03T10:40:55Z INFO Current pool allocations: PoolAllocations { assets: [PoolAsset { symbol: "hsol", lamports: 1000000000000 }, PoolAsset { symbol: "jitosol", lamports: 1000000000000 }] }
+2025-03-03T10:40:55Z INFO New pool allocations: PoolAllocations { assets: [PoolAsset { symbol: "jupsol", lamports: 1 }, PoolAsset { symbol: "jitosol", lamports: 1 }, PoolAsset { symbol: "hsol", lamports: 1 }, PoolAsset { symbol: "inf", lamports: 1 }] }
+2025-03-03T10:41:37Z INFO fetching historical APY data for jupsol
+2025-03-03T10:41:37Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:41:39Z INFO fetching historical APY data for inf
+2025-03-03T10:41:39Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:41:40Z INFO fetching historical APY data for jitosol
+2025-03-03T10:41:40Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:41:42Z INFO fetching historical APY data for hsol
+2025-03-03T10:41:42Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:41:43Z INFO Symbol ratio: AllocationRatio { bps: 3333.3333333333333333333333330, symbol: "jupsol" }
+2025-03-03T10:41:43Z INFO Target lamports: 666666666666.66666666666666660
+2025-03-03T10:41:43Z INFO Symbol ratio: AllocationRatio { bps: 3333.3333333333333333333333330, symbol: "inf" }
+2025-03-03T10:41:43Z INFO Target lamports: 666666666666.66666666666666660
+2025-03-03T10:41:43Z INFO Symbol ratio: AllocationRatio { bps: 1666.6666666666666666666666670, symbol: "hsol" }
+2025-03-03T10:41:43Z INFO Target lamports: 333333333333.33333333333333340
+2025-03-03T10:41:43Z INFO Symbol ratio: AllocationRatio { bps: 1666.6666666666666666666666670, symbol: "jitosol" }
+2025-03-03T10:41:43Z INFO Target lamports: 333333333333.33333333333333340
+2025-03-03T10:41:43Z INFO Target lamports per symbol: {"jupsol": 666666666667, "jitosol": 333333333334, "inf": 666666666667, "hsol": 333333333334}
+2025-03-03T10:41:43Z INFO Changes: {"inf": 666666666667, "hsol": -666666666666, "jupsol": 666666666667, "jitosol": -666666666666}
+2025-03-03T10:41:43Z INFO Current pool allocations: PoolAllocations { assets: [PoolAsset { symbol: "hsol", lamports: 1000000000000 }, PoolAsset { symbol: "jitosol", lamports: 1000000000000 }] }
+2025-03-03T10:41:43Z INFO New pool allocations: PoolAllocations { assets: [PoolAsset { symbol: "inf", lamports: 666666666667 }, PoolAsset { symbol: "hsol", lamports: 333333333334 }, PoolAsset { symbol: "jupsol", lamports: 666666666667 }, PoolAsset { symbol: "jitosol", lamports: 333333333334 }] }
+2025-03-03T10:42:42Z INFO fetching historical APY data for jupsol
+2025-03-03T10:42:42Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:42:43Z INFO fetching historical APY data for inf
+2025-03-03T10:42:43Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:42:46Z INFO fetching historical APY data for jitosol
+2025-03-03T10:42:46Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:42:48Z INFO fetching historical APY data for hsol
+2025-03-03T10:42:48Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:42:49Z DEBUG Sorted EMAs: [Ema { symbol: "jupsol", ema: 0.10026112273571049 }, Ema { symbol: "inf", ema: 0.08607135447067393 }, Ema { symbol: "hsol", ema: 0.08491458446639988 }, Ema { symbol: "jitosol", ema: 0.08122476051475346 }]
+2025-03-03T10:42:49Z INFO Symbol ratio: AllocationRatio { bps: 3333.3333333333333333333333330, symbol: "jupsol" }
+2025-03-03T10:42:49Z INFO Target lamports: 666666666666.66666666666666660
+2025-03-03T10:42:49Z INFO Symbol ratio: AllocationRatio { bps: 3333.3333333333333333333333330, symbol: "inf" }
+2025-03-03T10:42:49Z INFO Target lamports: 666666666666.66666666666666660
+2025-03-03T10:42:49Z INFO Symbol ratio: AllocationRatio { bps: 1666.6666666666666666666666670, symbol: "hsol" }
+2025-03-03T10:42:49Z INFO Target lamports: 333333333333.33333333333333340
+2025-03-03T10:42:49Z INFO Symbol ratio: AllocationRatio { bps: 1666.6666666666666666666666670, symbol: "jitosol" }
+2025-03-03T10:42:49Z INFO Target lamports: 333333333333.33333333333333340
+2025-03-03T10:42:49Z INFO Target lamports per symbol: {"jupsol": 666666666667, "hsol": 333333333334, "inf": 666666666667, "jitosol": 333333333334}
+2025-03-03T10:42:49Z INFO Changes: {"inf": 666666666667, "jitosol": -666666666666, "jupsol": 666666666667, "hsol": -666666666666}
+2025-03-03T10:42:49Z INFO Current pool allocations: PoolAllocations { assets: [PoolAsset { symbol: "hsol", lamports: 1000000000000 }, PoolAsset { symbol: "jitosol", lamports: 1000000000000 }] }
+2025-03-03T10:42:49Z INFO New pool allocations: PoolAllocations { assets: [PoolAsset { symbol: "inf", lamports: 666666666667 }, PoolAsset { symbol: "jitosol", lamports: 333333333334 }, PoolAsset { symbol: "jupsol", lamports: 666666666667 }, PoolAsset { symbol: "hsol", lamports: 333333333334 }] }
+2025-03-03T10:44:00Z INFO fetching historical APY data for jupsol
+2025-03-03T10:44:00Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:44:01Z INFO fetching historical APY data for inf
+2025-03-03T10:44:01Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:44:03Z INFO fetching historical APY data for jitosol
+2025-03-03T10:44:03Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:44:04Z INFO fetching historical APY data for hsol
+2025-03-03T10:44:04Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T10:44:06Z DEBUG Sorted EMAs: [Ema { symbol: "jupsol", ema: 0.10026112273571049 }, Ema { symbol: "inf", ema: 0.08607135447067393 }, Ema { symbol: "hsol", ema: 0.08491458446639988 }, Ema { symbol: "jitosol", ema: 0.08122476051475346 }]
+2025-03-03T13:02:13Z INFO fetching historical APY data for jupsol
+2025-03-03T13:02:13Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:02:15Z INFO fetching historical APY data for inf
+2025-03-03T13:02:15Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:02:17Z INFO fetching historical APY data for jitosol
+2025-03-03T13:02:17Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:02:19Z INFO fetching historical APY data for hsol
+2025-03-03T13:02:19Z DEBUG starting new connection: https://extra-api.sanctum.so/
+2025-03-03T13:02:20Z DEBUG Sorted EMAs: [Ema { symbol: "jupsol", ema: 0.10026116024313617 }, Ema { symbol: "inf", ema: 0.08607135447067393 }, Ema { symbol: "hsol", ema: 0.08491458446753172 }, Ema { symbol: "jitosol", ema: 0.08134586263502447 }]
+2025-03-03T13:02:20Z INFO allocated

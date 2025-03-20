@@ -1,0 +1,5 @@
+# ignore Rust related files
+target/
+
+# log
+*.log
