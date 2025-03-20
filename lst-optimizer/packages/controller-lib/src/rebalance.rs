@@ -198,7 +198,7 @@ impl RebalancingInstructions for ControllerClient {
                 output_lst_mint: dst_mint.clone(),
             })
             .resolve_to_account_metas(),
-            flat_fee_lib::program::ID, // TODO: use Moose's forked program ID
+            flat_fee_lib::program::ID, // Swap through Sanctum flat fee program
         )?;
 
         Ok(instruction)

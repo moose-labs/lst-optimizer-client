@@ -334,9 +334,9 @@ dependencies = [
 
 [[package]]
 name = "async-compression"
-version = "0.4.20"
+version = "0.4.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "310c9bcae737a48ef5cdee3174184e6d548b292739ede61a1f955ef76a738861"
+checksum = "c0cf008e5e1a9e9e22a7d3c9a4992e21a350290069e36d8fb72304ed17e8f2d2"
 dependencies = [
  "brotli",
  "flate2",
@@ -466,9 +466,9 @@ dependencies = [
 
 [[package]]
 name = "blake3"
-version = "1.6.1"
+version = "1.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "675f87afced0413c9bb02843499dbbd3882a237645883f71a2b59644a6d2f753"
+checksum = "b17679a8d69b6d7fd9cd9801a536cec9fa5e5970b69f9d4747f70b39b031f5e7"
 dependencies = [
  "arrayref",
  "arrayvec",
@@ -515,11 +515,11 @@ dependencies = [
 
 [[package]]
 name = "borsh"
-version = "1.5.5"
+version = "1.5.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5430e3be710b68d984d1391c854eb431a9d548640711faa54eecb1df93db91cc"
+checksum = "b2b74d67a0fc0af8e9823b79fd1c43a0900e5a8f0e0f4cc9210796bf3a820126"
 dependencies = [
- "borsh-derive 1.5.5",
+ "borsh-derive 1.5.6",
  "cfg_aliases 0.2.1",
 ]
 
@@ -538,9 +538,9 @@ dependencies = [
 
 [[package]]
 name = "borsh-derive"
-version = "1.5.5"
+version = "1.5.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f8b668d39970baad5356d7c83a86fee3a539e6f93bf6764c97368243e17a0487"
+checksum = "2d37ed1b2c9b78421218a0b4f6d8349132d6ec2cfeba1cfb0118b0a8e268df9e"
 dependencies = [
  "once_cell",
  "proc-macro-crate 3.3.0",
@@ -650,9 +650,9 @@ dependencies = [
 
 [[package]]
 name = "bytemuck_derive"
-version = "1.8.1"
+version = "1.9.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3fa76293b4f7bb636ab88fd78228235b5248b4d05cc589aed610f954af5d7c7a"
+checksum = "2ff22c2722516255d1823ce3cc4bc0b154dbc9364be5c905d6baa6eccbbc8774"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -886,7 +886,7 @@ dependencies = [
  "async-trait",
  "base64 0.22.1",
  "bincode",
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "data-encoding",
  "flat-fee-lib",
  "flat_fee_interface",
@@ -1097,9 +1097,9 @@ dependencies = [
 
 [[package]]
 name = "deranged"
-version = "0.3.11"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b42b6fa04a440b495c8b04d0e71b707c585f83cb9cb28cf8cd0d976c315e31b4"
+checksum = "9c9e6a11ca8224451684bc0d7d5a7adbf8f2fd6887261a1cfc3c0432f9d4068e"
 dependencies = [
  "powerfmt",
 ]
@@ -1340,9 +1340,9 @@ dependencies = [
 [[package]]
 name = "flat-fee-lib"
 version = "0.1.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
+source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "bytemuck",
  "flat_fee_interface",
  "sanctum-macros",
@@ -1355,9 +1355,9 @@ dependencies = [
 [[package]]
 name = "flat_fee_interface"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
+source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "bytemuck",
  "num-derive",
  "num-traits",
@@ -1514,7 +1514,7 @@ dependencies = [
 [[package]]
 name = "generic-pool-calculator-lib"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
+source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "bincode",
  "bytemuck",
@@ -1527,9 +1527,9 @@ dependencies = [
 [[package]]
 name = "generic_pool_calculator_interface"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
+source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "bytemuck",
  "num-derive",
  "num-traits",
@@ -1575,14 +1575,14 @@ dependencies = [
 
 [[package]]
 name = "getrandom"
-version = "0.3.1"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "43a49c392881ce6d5c3b8cb70f98717b7c07aabbdff06687b9030dbfbe2725f8"
+checksum = "73fea8450eea4bac3940448fb7ae50d91f034f941199fcd9d909a5a07aa455f0"
 dependencies = [
  "cfg-if",
  "libc",
- "wasi 0.13.3+wasi-0.2.2",
- "windows-targets 0.52.6",
+ "r-efi",
+ "wasi 0.14.2+wasi-0.2.4",
 ]
 
 [[package]]
@@ -2178,6 +2178,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "jupiter-lib"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "jupiter-swap-api-client",
+ "solana-client",
+ "solana-sdk",
+ "thiserror 2.0.12",
+]
+
+[[package]]
 name = "jupiter-swap-api-client"
 version = "0.1.0"
 source = "git+https://github.com/jup-ag/jupiter-swap-api-client.git#1554823f17b7a6f035f89847da6b44df1aaced59"
@@ -2190,16 +2201,6 @@ dependencies = [
  "serde_json",
  "serde_qs",
  "solana-account-decoder",
- "solana-sdk",
- "thiserror 2.0.12",
-]
-
-[[package]]
-name = "jupiter_lib"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "jupiter-swap-api-client",
  "solana-sdk",
  "thiserror 2.0.12",
 ]
@@ -2276,9 +2277,9 @@ dependencies = [
 [[package]]
 name = "lido-calculator-lib"
 version = "2.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
+source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "generic-pool-calculator-lib",
  "generic_pool_calculator_interface",
  "lido-keys",
@@ -2293,7 +2294,7 @@ dependencies = [
 [[package]]
 name = "lido-keys"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
+source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "sanctum-macros",
  "solana-program",
@@ -2302,9 +2303,9 @@ dependencies = [
 [[package]]
 name = "lido_calculator_interface"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
+source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "num-derive",
  "num-traits",
  "solana-program",
@@ -2346,6 +2347,7 @@ dependencies = [
  "anyhow",
  "async-trait",
  "controller-lib",
+ "jupiter-lib",
  "log",
  "lst-optimizer-std",
  "reqwest 0.12.4",
@@ -2380,7 +2382,7 @@ dependencies = [
 [[package]]
 name = "marinade-calculator-lib"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
+source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "generic-pool-calculator-lib",
  "generic_pool_calculator_interface",
@@ -2395,7 +2397,7 @@ dependencies = [
 [[package]]
 name = "marinade-keys"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
+source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "sanctum-macros",
  "solana-program",
@@ -2404,9 +2406,9 @@ dependencies = [
 [[package]]
 name = "marinade_calculator_interface"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
+source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "num-derive",
  "num-traits",
  "solana-program",
@@ -2993,6 +2995,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "r-efi"
+version = "5.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "74765f6d916ee2faa39bc8e68e4f3ed8949b48cccdac59983d287a7cb71ce9c5"
+
+[[package]]
 name = "radium"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3318,12 +3326,12 @@ dependencies = [
 
 [[package]]
 name = "rust_decimal"
-version = "1.36.0"
+version = "1.37.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b082d80e3e3cc52b2ed634388d436fe1f4de6af5786cc2de9ba9737527bdf555"
+checksum = "5c24af6e7ac43c88a8a458d1139d0246fdce2f6cd2f1ac6cb51eb88b29c978af"
 dependencies = [
  "arrayvec",
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "bytes",
  "num-traits",
  "rand 0.8.5",
@@ -3364,9 +3372,9 @@ dependencies = [
 
 [[package]]
 name = "rustix"
-version = "1.0.2"
+version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f7178faa4b75a30e269c71e61c353ce2748cf3d76f0c44c393f4e60abf49b825"
+checksum = "e56a18552996ac8d29ecc3b190b4fdbb2d91ca4ec396de7bbffaf43f3d637e96"
 dependencies = [
  "bitflags 2.9.0",
  "errno",
@@ -3448,9 +3456,9 @@ checksum = "28d3b2b1366ec20994f1fd18c3c594f05c5dd4bc44d8bb0c1c632c8d6829481f"
 [[package]]
 name = "s-controller-lib"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
+source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "bytemuck",
  "flat-fee-lib",
  "s_controller_interface",
@@ -3469,9 +3477,9 @@ dependencies = [
 [[package]]
 name = "s_controller_interface"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
+source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "bytemuck",
  "num-derive",
  "num-traits",
@@ -3505,7 +3513,7 @@ dependencies = [
 [[package]]
 name = "sanctum-spl-multi-stake-pool-keys"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
+source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "sanctum-macros",
  "solana-program",
@@ -3514,7 +3522,7 @@ dependencies = [
 [[package]]
 name = "sanctum-spl-stake-pool-keys"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
+source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "sanctum-macros",
  "solana-program",
@@ -3535,7 +3543,7 @@ name = "sanctum-token-ratio"
 version = "0.2.0"
 source = "git+https://github.com/igneous-labs/sanctum-solana-utils.git?branch=f6c40a0-loose-deps#5cf8b16d76530353fe5ede0f605ed3b36fde3c69"
 dependencies = [
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "num-traits",
  "serde",
  "solana-program",
@@ -3843,7 +3851,7 @@ dependencies = [
 [[package]]
 name = "sol-value-calculator-lib"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
+source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "sanctum-token-ratio",
  "solana-program",
@@ -4094,7 +4102,7 @@ dependencies = [
  "bitflags 2.9.0",
  "blake3",
  "borsh 0.10.4",
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "bs58",
  "bv",
  "bytemuck",
@@ -4317,7 +4325,7 @@ checksum = "0317d412207639326f2393c935769d2d7429d0882d509d0dca8dc0bb55aca6a1"
 dependencies = [
  "bincode",
  "bitflags 2.9.0",
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "bs58",
  "bytemuck",
  "bytemuck_derive",
@@ -4475,7 +4483,7 @@ dependencies = [
  "Inflector",
  "base64 0.22.1",
  "bincode",
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "bs58",
  "lazy_static",
  "log",
@@ -4659,7 +4667,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "68034596cf4804880d265f834af1ff2f821ad5293e41fa0f8f59086c181fc38e"
 dependencies = [
  "assert_matches",
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "num-derive",
  "num-traits",
  "solana-program",
@@ -4674,7 +4682,7 @@ version = "5.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "714b53f7312c2802c62f14bc8a07916c2c872761e3d6be97e99fd432be7799ca"
 dependencies = [
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "num-derive",
  "num-traits",
  "solana-program",
@@ -4696,9 +4704,9 @@ dependencies = [
 [[package]]
 name = "spl-calculator-lib"
 version = "2.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
+source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "generic-pool-calculator-lib",
  "generic_pool_calculator_interface",
  "sanctum-macros",
@@ -4775,7 +4783,7 @@ version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c704c88fc457fa649ba3aabe195c79d885c3f26709efaddc453c8de352c90b87"
 dependencies = [
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "bytemuck",
  "bytemuck_derive",
  "solana-program",
@@ -4789,7 +4797,7 @@ version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "00e38c99f09d58df06ca9a29fc0211786a4c34f4d099c1df27b1abaa206569a4"
 dependencies = [
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "bytemuck",
  "bytemuck_derive",
  "solana-program",
@@ -4825,7 +4833,7 @@ dependencies = [
 [[package]]
 name = "spl-stake-pool-keys"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
+source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "sanctum-macros",
  "solana-program",
@@ -4992,7 +5000,7 @@ version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c6c2318ddff97e006ed9b1291ebec0750a78547f870f62a69c56fe3b46a5d8fc"
 dependencies = [
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "solana-program",
  "spl-discriminator",
  "spl-pod 0.3.1",
@@ -5006,7 +5014,7 @@ version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "27c7a6d2a2a4f23c8f051ba2f7edb5689f1b534b4126bd9b4ae4177685e9a341"
 dependencies = [
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "solana-program",
  "spl-discriminator",
  "spl-pod 0.4.0",
@@ -5075,9 +5083,9 @@ dependencies = [
 [[package]]
 name = "spl_calculator_interface"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
+source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "num-derive",
  "num-traits",
  "solana-program",
@@ -5095,7 +5103,7 @@ name = "stakedex_interface"
 version = "0.1.0"
 source = "git+https://github.com/igneous-labs/stakedex-sdk.git?branch=master#b11b317dc9313cb14739e0bcf9d81186a8d40d0c"
 dependencies = [
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "num-derive",
  "num-traits",
  "solana-program",
@@ -5227,12 +5235,12 @@ dependencies = [
 
 [[package]]
 name = "tempfile"
-version = "3.19.0"
+version = "3.19.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "488960f40a3fd53d72c2a29a58722561dee8afdd175bd88e3db4677d7b2ba600"
+checksum = "7437ac7763b9b123ccf33c338a5cc1bac6f69b45a136c19bdd8a65e3916435bf"
 dependencies = [
  "fastrand",
- "getrandom 0.3.1",
+ "getrandom 0.3.2",
  "once_cell",
  "rustix",
  "windows-sys 0.59.0",
@@ -5304,9 +5312,9 @@ dependencies = [
 
 [[package]]
 name = "time"
-version = "0.3.39"
+version = "0.3.40"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dad298b01a40a23aac4580b67e3dbedb7cc8402f3592d7f49469de2ea4aecdd8"
+checksum = "9d9c75b47bdff86fa3334a3db91356b8d7d86a9b839dab7d0bdc5c3d3a077618"
 dependencies = [
  "deranged",
  "itoa",
@@ -5319,15 +5327,15 @@ dependencies = [
 
 [[package]]
 name = "time-core"
-version = "0.1.3"
+version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "765c97a5b985b7c11d7bc27fa927dc4fe6af3a6dfb021d28deb60d3bf51e76ef"
+checksum = "c9e9a38711f559d9e3ce1cdb06dd7c5b8ea546bc90052da6d06bb76da74bb07c"
 
 [[package]]
 name = "time-macros"
-version = "0.2.20"
+version = "0.2.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e8093bc3e81c3bc5f7879de09619d06c9a5a5e45ca44dfeeb7225bae38005c5c"
+checksum = "29aa485584182073ed57fd5004aa09c371f021325014694e432313345865fd04"
 dependencies = [
  "num-conv",
  "time-core",
@@ -5741,9 +5749,9 @@ checksum = "9c8d87e72b64a3b4db28d11ce29237c246188f4f51057d65a7eab63b7987e423"
 
 [[package]]
 name = "wasi"
-version = "0.13.3+wasi-0.2.2"
+version = "0.14.2+wasi-0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "26816d2e1a4a36a2940b96c5296ce403917633dff8f3440e9b236ed6f6bacad2"
+checksum = "9683f9a5a998d873c0d21fcbe3c083009670149a8fab228644b8bd36b2c48cb3"
 dependencies = [
  "wit-bindgen-rt",
 ]
@@ -5896,9 +5904,9 @@ dependencies = [
 
 [[package]]
 name = "windows-link"
-version = "0.1.0"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6dccfd733ce2b1753b03b6d3c65edf020262ea35e20ccdf3e288043e6dd620e3"
+checksum = "76840935b766e1b0a05c0066835fb9ec80071d4c09a16f6bd5f7e655e3c14c38"
 
 [[package]]
 name = "windows-sys"
@@ -6079,9 +6087,9 @@ dependencies = [
 
 [[package]]
 name = "wit-bindgen-rt"
-version = "0.33.0"
+version = "0.39.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3268f3d866458b787f390cf61f4bbb563b922d091359f9608842999eaee3943c"
+checksum = "6f42320e61fe2cfd34354ecb597f86f413484a798ba44a8ca1165c58d42da6c1"
 dependencies = [
  "bitflags 2.9.0",
 ]
@@ -6101,7 +6109,7 @@ checksum = "1e9df38ee2d2c3c5948ea468a8406ff0db0b29ae1ffde1bcf20ef305bcc95c51"
 [[package]]
 name = "wsol-calculator-lib"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
+source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "sanctum-token-ratio",
  "sol-value-calculator-lib",
@@ -6113,7 +6121,7 @@ dependencies = [
 [[package]]
 name = "wsol-keys"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
+source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "sanctum-macros",
  "solana-program",
@@ -6122,9 +6130,9 @@ dependencies = [
 [[package]]
 name = "wsol_calculator_interface"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#f3aa6574a83fff1e84fdeb4592cbc1840d7ce654"
+source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.5",
+ "borsh 1.5.6",
  "num-derive",
  "num-traits",
  "solana-program",

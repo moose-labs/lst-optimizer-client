@@ -1,6 +1,4 @@
 use anyhow::Result;
-use base64::{engine::general_purpose, Engine};
-use bincode::serialize;
 use solana_client::{
     nonblocking::rpc_client::RpcClient, rpc_config::RpcSimulateTransactionConfig,
     rpc_response::RpcSimulateTransactionResult,
@@ -50,10 +48,6 @@ impl ControllerClient {
             signatures: vec![Signature::default(); message.header().num_required_signatures.into()],
             message: message.clone(),
         };
-
-        let serialized_tx = bincode::serialize(&tx.message).unwrap();
-        let serialized_encoded = base64::encode(serialized_tx);
-        println!("Transaction: {:?}", serialized_encoded);
 
         let config = RpcSimulateTransactionConfig {
             sig_verify: false,

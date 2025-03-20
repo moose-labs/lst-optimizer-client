@@ -1,16 +1,11 @@
-use std::{collections::HashMap, str::FromStr};
+use std::collections::HashMap;
 
 use anyhow::Result;
-use controller_lib::{
-    calculator::{query::CalculatorQuery, typedefs::CalculatorType},
-    rebalance::RebalancingInstructions,
-    state::PoolQuery,
-    Pubkey,
-};
-use log::{info, warn};
+use controller_lib::{calculator::query::CalculatorQuery, state::PoolQuery, Pubkey};
+use log::warn;
 use lst_optimizer_std::{
     allocator::AllocationRatios,
-    pool::Pool,
+    pool::PoolAllocable,
     types::{
         amount_change::AmountChange,
         context::Context,
@@ -22,15 +17,13 @@ use lst_optimizer_std::{
         pool_asset::PoolAsset,
     },
 };
-use spl_helper::{mint::MintAccountQuery, token_account::TokenAccountQuery};
 
 use crate::typedefs::pool_to_calculator_type;
 
 use super::pool::MaxPool;
-use spl_token::native_mint;
 
 #[async_trait::async_trait]
-impl Pool for MaxPool {
+impl PoolAllocable for MaxPool {
     async fn get_allocation(&self, context: &Context) -> Result<PoolAllocations> {
         let controller: Pubkey = self.program_id();
         let controller_client = self.controller_client();
@@ -169,120 +162,6 @@ impl Pool for MaxPool {
         Ok(PoolAllocationChanges {
             assets: asset_changes,
         })
-    }
-
-    async fn rebalance_asset(
-        &self,
-        context: &Context,
-        pool_asset_change: &PoolAssetChange,
-    ) -> Result<()> {
-        let asset = context.get_asset_from_mint(&pool_asset_change.mint)?;
-        let (src_mint, dst_mint, src_cal, dst_cal, amount) = match pool_asset_change.amount {
-            AmountChange::Increase(amt) => (
-                native_mint::ID,
-                Pubkey::from_str(pool_asset_change.mint.as_str())?,
-                CalculatorType::Wsol,
-                pool_to_calculator_type(&asset)?,
-                amt,
-            ),
-            AmountChange::Decrease(amt) => (
-                Pubkey::from_str(pool_asset_change.mint.as_str())?,
-                native_mint::ID,
-                pool_to_calculator_type(&asset)?,
-                CalculatorType::Wsol,
-                amt,
-            ),
-        };
-
-        if src_mint.eq(&dst_mint) {
-            warn!("The source and destination mints are the same, no rebalance needed");
-            return Ok(());
-        }
-
-        let payer: Pubkey = context.payer.parse()?;
-        let controller = self.controller_client();
-        let rpc = controller.rpc_client();
-
-        let src_ata = src_mint
-            .resolve_associated_token_account(&payer, rpc)
-            .await?;
-
-        let program_id = self.program_id();
-        let start_ix = controller
-            .create_start_rebalance_instruction(
-                &program_id,
-                &src_ata,
-                &src_mint,
-                &dst_mint,
-                src_cal.clone(),
-                dst_cal.clone(),
-                amount,
-            )
-            .await?;
-
-        let subsidized_ata = dst_mint
-            .resolve_associated_token_account(&payer, rpc)
-            .await?;
-
-        // get balance
-        let balance = subsidized_ata.get_token_account_balance(rpc).await?;
-        println!("token account: {}", subsidized_ata);
-        println!("balance: {}", balance);
-        println!("subsidized amount: {}", amount);
-
-        let pool_reserve_addr = controller
-            .find_pool_reserves_address(
-                &controller.get_pool_state_address(&program_id).await,
-                &dst_mint,
-                &dst_mint.get_mint_owner(rpc).await?,
-            )
-            .await?;
-        let transfer_ix = spl_token::instruction::transfer(
-            &spl_token::ID,
-            &subsidized_ata,
-            &pool_reserve_addr,
-            &payer,
-            &[&payer],
-            amount,
-        )?;
-
-        let end_ix = controller
-            .create_end_rebalance_instruction_from_start(&start_ix)
-            .await?;
-
-        // let swap_ix = controller
-        //     .create_sanctum_swap_exact_in_instruction(
-        //         &program_id,
-        //         &payer,
-        //         &src_mint
-        //             .resolve_associated_token_account(&payer, rpc)
-        //             .await?,
-        //         &dst_mint
-        //             .resolve_associated_token_account(&payer, rpc)
-        //             .await?,
-        //         &src_mint,
-        //         &dst_mint,
-        //         src_cal,
-        //         dst_cal,
-        //         amount,
-        //         0,
-        //     )
-        //     .await?;
-
-        let ret = controller
-            .simulate_instructions(&payer, &[start_ix, transfer_ix, end_ix], &[])
-            .await?;
-
-        match ret.err {
-            Some(err) => {
-                warn!("Error: {}", err);
-            }
-            None => {
-                info!("Rebalance successful");
-            }
-        };
-
-        Ok(())
     }
 }
 

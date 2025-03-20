@@ -28,7 +28,7 @@ pub enum PoolError {
 }
 
 #[async_trait::async_trait]
-pub trait Pool {
+pub trait PoolAllocable {
     async fn get_allocation(&self, context: &Context) -> Result<PoolAllocations>;
     async fn get_allocation_lamports_changes(
         &self,
@@ -42,6 +42,10 @@ pub trait Pool {
         pool_allocations: &PoolAllocations,
         new_allocation_ratios: &AllocationRatios,
     ) -> Result<PoolAllocationChanges>;
+}
+
+#[async_trait::async_trait]
+pub trait PoolRebalancable {
     async fn rebalance_asset(
         &self,
         context: &Context,

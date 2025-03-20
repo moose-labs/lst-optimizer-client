@@ -4,7 +4,11 @@ use jupiter_swap_api_client::{
     quote::QuoteRequest, swap::SwapRequest, transaction_config::TransactionConfig,
     JupiterSwapApiClient,
 };
-use solana_sdk::pubkey::Pubkey;
+use solana_client::nonblocking::rpc_client::RpcClient;
+use solana_sdk::{
+    address_lookup_table::{state::AddressLookupTable, AddressLookupTableAccount},
+    pubkey::Pubkey,
+};
 
 const JUPITER_SWAP_API_URL: &str = "https://quote-api.jup.ag/v6";
 
@@ -57,5 +61,26 @@ impl JupiterInstructionBuilder {
         }
 
         Ok(swap_instructions)
+    }
+
+    pub async fn get_address_lookup_table_accounts(
+        &self,
+        rpc_client: &RpcClient,
+        addresses: Vec<Pubkey>,
+    ) -> Result<Vec<AddressLookupTableAccount>> {
+        let mut accounts = Vec::new();
+        for key in addresses {
+            if let Ok(account) = rpc_client.get_account(&key).await {
+                if let Ok(address_lookup_table_account) =
+                    AddressLookupTable::deserialize(&account.data)
+                {
+                    accounts.push(AddressLookupTableAccount {
+                        key,
+                        addresses: address_lookup_table_account.addresses.to_vec(),
+                    });
+                }
+            }
+        }
+        Ok(accounts)
     }
 }

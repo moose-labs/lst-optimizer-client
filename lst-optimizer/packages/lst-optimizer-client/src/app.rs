@@ -5,7 +5,7 @@ use log::info;
 use lst_optimizer_std::{
     allocator::Allocator,
     fetcher::fetcher::Fetcher,
-    pool::Pool,
+    pool::{PoolAllocable, PoolRebalancable},
     types::{amount_change::AmountChange, context::Context, datapoint::SymbolData},
 };
 

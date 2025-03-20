@@ -12,7 +12,6 @@ program = "Spl"
 pool = "Jito4APyf642JPZPx3hGc6WWJ8zPKtRbRs4P815Awbb"
 validator_list = "3R3nGZpQs2aZo5FDQvd2MUQ6R7KhAPainds6uT6uE2mn"
 
-
 [[lst_list]]
 weight = 1.0
 name = "Marinade staked SOL"
