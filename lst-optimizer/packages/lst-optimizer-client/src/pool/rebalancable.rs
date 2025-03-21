@@ -1,6 +1,5 @@
 use anyhow::Result;
 use controller_lib::{rebalance::RebalancingInstructions, Pubkey};
-use jupiter_lib::quoter::JupiterInstructionBuilder;
 use log::{info, warn};
 use lst_optimizer_std::{
     pool::PoolRebalancable,
@@ -38,12 +37,12 @@ impl PoolRebalancable for MaxPool {
         let controller = self.controller_client();
         let rpc = controller.rpc_client();
 
-        let jup_client = JupiterInstructionBuilder::new();
-        let swap_ixs = jup_client
-            .create_jupiter_swap_instruction(&payer, &src_mint, &dst_mint, amount, None)
+        let quoter_client = self.quoter_client();
+        let swap_ixs = quoter_client
+            .create_swap_instructions(&payer, &src_mint, &dst_mint, amount, 0, None)
             .await?;
-        let address_lookup_table_accs = jup_client
-            .get_address_lookup_table_accounts(rpc, swap_ixs.address_lookup_table_addresses)
+        let address_lookup_table_accs = quoter_client
+            .resolve_address_lookup_table_accounts(swap_ixs.address_lookup_tables)
             .await?;
 
         // prepare the accounts if needed
@@ -81,7 +80,7 @@ impl PoolRebalancable for MaxPool {
 
         // instructions.extend(swap_ixs.compute_budget_instructions);
         instructions.push(start_ix);
-        instructions.push(swap_ixs.swap_instruction);
+        instructions.extend(swap_ixs.swap_instructions);
         instructions.push(end_ix);
 
         let ret = controller

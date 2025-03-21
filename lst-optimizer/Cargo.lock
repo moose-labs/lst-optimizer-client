@@ -2182,7 +2182,9 @@ name = "jupiter-lib"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "async-trait",
  "jupiter-swap-api-client",
+ "quoter-lib",
  "solana-client",
  "solana-sdk",
  "thiserror 2.0.12",
@@ -2350,6 +2352,7 @@ dependencies = [
  "jupiter-lib",
  "log",
  "lst-optimizer-std",
+ "quoter-lib",
  "reqwest 0.12.4",
  "rust_decimal",
  "serde",
@@ -2992,6 +2995,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1885c039570dc00dcb4ff087a89e185fd56bae234ddc7f056a945bf36467248d"
 dependencies = [
  "proc-macro2",
+]
+
+[[package]]
+name = "quoter-lib"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "solana-client",
+ "solana-sdk",
 ]
 
 [[package]]

@@ -3,6 +3,7 @@ use anyhow::{Context as _AnyhowContext, Ok, Result};
 use controller_lib::controller::ControllerClient;
 use controller_lib::Pubkey;
 use lst_optimizer_std::{pool::PoolError, types::pool_allocation::MAX_ALLOCATION_BPS};
+use quoter_lib::typedefs::QuoterClient;
 use rust_decimal::prelude::ToPrimitive;
 use rust_decimal::Decimal;
 use solana_client::nonblocking::rpc_client::RpcClient;
@@ -12,15 +13,20 @@ pub struct MaxPool {
     program_id: Pubkey,
     options: MaxPoolOptions,
     controller_client: ControllerClient,
+    quoter_client: Box<dyn QuoterClient>,
 }
 
 impl MaxPool {
-    pub fn new(program_id: &str, options: MaxPoolOptions) -> Self {
-        let rpc_client = RpcClient::new(options.rpc_url.clone());
+    pub fn new(
+        program_id: &str,
+        quoter_client: Box<dyn QuoterClient>,
+        options: MaxPoolOptions,
+    ) -> Self {
         Self {
             program_id: program_id.parse().unwrap(),
-            options: options,
-            controller_client: ControllerClient::new(rpc_client),
+            options: options.clone(),
+            controller_client: ControllerClient::new(RpcClient::new(options.rpc_url.clone())),
+            quoter_client,
         }
     }
 
@@ -34,6 +40,10 @@ impl MaxPool {
 
     pub fn pool_options(&self) -> &MaxPoolOptions {
         &self.options
+    }
+
+    pub fn quoter_client(&self) -> &dyn QuoterClient {
+        &*self.quoter_client
     }
 
     pub fn calculate_lamports_from_bps(
@@ -64,11 +74,17 @@ impl MaxPool {
 #[cfg(test)]
 mod tests {
 
+    use quoter_lib::mock_quoter::MockQuoterClient;
+
     use super::*;
 
     #[tokio::test]
     async fn test_calculate_lamports_per_symbol_success() {
-        let pool = MaxPool::new("", MaxPoolOptions::default());
+        let pool = MaxPool::new(
+            "",
+            Box::new(MockQuoterClient::new()),
+            MaxPoolOptions::default(),
+        );
         let total_lamports = 1_000_000;
         let symbol_bps = Decimal::from(5000);
         let target_lamports = pool
@@ -79,7 +95,11 @@ mod tests {
 
     #[tokio::test]
     async fn test_calculate_lamports_per_symbol_success_on_division_by_zeros() {
-        let pool = MaxPool::new("", MaxPoolOptions::default());
+        let pool = MaxPool::new(
+            "",
+            Box::new(MockQuoterClient::new()),
+            MaxPoolOptions::default(),
+        );
 
         // symbol_bps = 0
         let total_lamports = 1_000_000;

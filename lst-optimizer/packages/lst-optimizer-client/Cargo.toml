@@ -6,7 +6,9 @@ edition = "2021"
 [dependencies]
 lst-optimizer-std = { workspace = true }
 controller-lib = { workspace = true }
+quoter-lib = { workspace = true }
 jupiter-lib = { workspace = true }
+
 spl-helper = { workspace = true }
 rust_decimal = { workspace = true }
 anyhow = { workspace = true }

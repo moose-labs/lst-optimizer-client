@@ -168,6 +168,7 @@ impl PoolAllocable for MaxPool {
 #[cfg(test)]
 mod tests {
     use lst_optimizer_std::allocator::AllocationRatio;
+    use quoter_lib::mock_quoter::MockQuoterClient;
 
     use crate::pool::{pool::MaxPool, typedefs::MaxPoolOptions};
 
@@ -175,7 +176,11 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_allocation_changes() {
-        let pool = MaxPool::new("", MaxPoolOptions::default());
+        let pool = MaxPool::new(
+            "",
+            Box::new(MockQuoterClient::new()),
+            MaxPoolOptions::default(),
+        );
         let pool_allocations = PoolAllocations {
             assets: vec![
                 PoolAsset::new("hsol", 400, 0),

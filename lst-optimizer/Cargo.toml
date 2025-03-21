@@ -5,6 +5,7 @@ members = [
     "packages/spl-helper",
 
     "libs/controller-lib",
+    "libs/quoter-lib",
     "libs/jupiter-lib",
 ]
 resolver = "2"
@@ -15,7 +16,9 @@ lst-optimizer-client = { path = "packages/lst-optimizer-client" }
 spl-helper = { path = "packages/spl-helper" }
 
 controller-lib = { path = "libs/controller-lib" }
+quoter-lib = { path = "libs/quoter-lib" }
 jupiter-lib = { path = "libs/jupiter-lib" }
+
 
 # dependencies
 anyhow = "1.0.96"
