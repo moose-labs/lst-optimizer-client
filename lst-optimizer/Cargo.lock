@@ -862,7 +862,7 @@ dependencies = [
  "async-trait",
  "base64 0.22.1",
  "bincode",
- "borsh 1.5.6",
+ "borsh 0.10.4",
  "data-encoding",
  "flat-fee-lib",
  "flat_fee_interface",
@@ -1405,7 +1405,7 @@ name = "flat-fee-lib"
 version = "0.1.0"
 source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.6",
+ "borsh 0.10.4",
  "bytemuck",
  "flat_fee_interface",
  "sanctum-macros",
@@ -1420,7 +1420,7 @@ name = "flat_fee_interface"
 version = "1.0.0"
 source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.6",
+ "borsh 0.10.4",
  "bytemuck",
  "num-derive",
  "num-traits",
@@ -1597,7 +1597,7 @@ name = "generic_pool_calculator_interface"
 version = "1.0.0"
 source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.6",
+ "borsh 0.10.4",
  "bytemuck",
  "num-derive",
  "num-traits",
@@ -2443,7 +2443,7 @@ name = "lido-calculator-lib"
 version = "2.0.0"
 source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.6",
+ "borsh 0.10.4",
  "generic-pool-calculator-lib",
  "generic_pool_calculator_interface",
  "lido-keys 1.0.0 (git+https://github.com/moose-labs/S.git?branch=custom_address)",
@@ -2478,7 +2478,7 @@ name = "lido_calculator_interface"
 version = "1.0.0"
 source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.6",
+ "borsh 0.10.4",
  "num-derive",
  "num-traits",
  "solana-program",
@@ -2610,7 +2610,7 @@ name = "marinade_calculator_interface"
 version = "1.0.0"
 source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.6",
+ "borsh 0.10.4",
  "num-derive",
  "num-traits",
  "solana-program",
@@ -3767,7 +3767,7 @@ name = "s-controller-lib"
 version = "1.0.0"
 source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.6",
+ "borsh 0.10.4",
  "bytemuck",
  "flat-fee-lib",
  "s_controller_interface",
@@ -3788,7 +3788,7 @@ name = "s_controller_interface"
 version = "1.0.0"
 source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.6",
+ "borsh 0.10.4",
  "bytemuck",
  "num-derive",
  "num-traits",
@@ -3879,7 +3879,7 @@ name = "sanctum-token-ratio"
 version = "0.2.0"
 source = "git+https://github.com/igneous-labs/sanctum-solana-utils.git?branch=f6c40a0-loose-deps#5cf8b16d76530353fe5ede0f605ed3b36fde3c69"
 dependencies = [
- "borsh 1.5.6",
+ "borsh 0.10.4",
  "num-traits",
  "serde",
  "solana-program",
@@ -6455,7 +6455,7 @@ name = "spl-calculator-lib"
 version = "2.0.0"
 source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.6",
+ "borsh 0.10.4",
  "generic-pool-calculator-lib",
  "generic_pool_calculator_interface",
  "sanctum-macros",
@@ -6837,7 +6837,7 @@ name = "spl_calculator_interface"
 version = "1.0.0"
 source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.6",
+ "borsh 0.10.4",
  "num-derive",
  "num-traits",
  "solana-program",
@@ -8076,7 +8076,7 @@ name = "wsol_calculator_interface"
 version = "1.0.0"
 source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
- "borsh 1.5.6",
+ "borsh 0.10.4",
  "num-derive",
  "num-traits",
  "solana-program",
