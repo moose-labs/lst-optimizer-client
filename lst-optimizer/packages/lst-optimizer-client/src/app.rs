@@ -3,10 +3,13 @@ use core::time;
 use anyhow::Result;
 use log::info;
 use lst_optimizer_std::{
-    allocator::Allocator,
+    allocator::{AllocationRatios, Allocator},
     fetcher::fetcher::Fetcher,
     pool::{PoolAllocable, PoolRebalancable},
-    types::{amount_change::AmountChange, context::Context, datapoint::SymbolData},
+    types::{
+        amount_change::AmountChange, context::Context, datapoint::SymbolData,
+        pool_allocation_changes::PoolAllocationChanges,
+    },
 };
 
 use crate::{
@@ -29,8 +32,37 @@ impl OptimizerApp {
         }
     }
 
+    pub fn get_pool(&self) -> &MaxPool {
+        &self.pool
+    }
+
+    pub async fn get_pool_allocation_changes(
+        &self,
+        context: &Context,
+        allocations: AllocationRatios,
+    ) -> Result<PoolAllocationChanges> {
+        let assets = context.get_kwown_assets();
+        let pool = &self.pool;
+
+        let current_pool_allocations = pool.get_allocation(context).await?;
+        current_pool_allocations.assert_pool_allocations_are_defined(&assets)?;
+        info!("{}", current_pool_allocations);
+
+        let pool_allocation_lamports_changes = pool
+            .get_allocation_lamports_changes(context, &current_pool_allocations, &allocations)
+            .await?;
+        info!("{}", pool_allocation_lamports_changes);
+
+        let pool_allocation_changes = pool
+            .get_allocation_changes(context, &current_pool_allocations, &allocations)
+            .await?;
+        info!("{}", pool_allocation_changes);
+
+        Ok(pool_allocation_changes)
+    }
+
     pub async fn rebalance(&self, context: &Context) -> Result<()> {
-        let assets = context.asset_repository.get_assets();
+        let assets = context.get_kwown_assets();
 
         // Fetch historical APY data from the Sanctum API
         let fetcher = SanctumHistoricalApyFetcher::new();
@@ -50,27 +82,19 @@ impl OptimizerApp {
         allocations.apply_weights(&assets);
         allocations.validate()?;
 
-        let pool = &self.pool;
-        let current_pool_allocations = pool.get_allocation(context).await?;
-        current_pool_allocations.assert_pool_allocations_are_defined(&assets)?;
-        info!("{}", current_pool_allocations);
-
-        let pool_allocation_lamports_changes = pool
-            .get_allocation_lamports_changes(context, &current_pool_allocations, &allocations)
+        let pool_allocation_changes = self
+            .get_pool_allocation_changes(context, allocations)
             .await?;
-        info!("{}", pool_allocation_lamports_changes);
-
-        let pool_allocation_changes = pool
-            .get_allocation_changes(context, &current_pool_allocations, &allocations)
-            .await?;
-        info!("{}", pool_allocation_changes);
 
         // Reducing first
         for pool_asset_change in &pool_allocation_changes.assets {
             match pool_asset_change.amount {
                 AmountChange::Increase(_) => {}
                 AmountChange::Decrease(_) => {
-                    let _ = pool.rebalance_asset(context, pool_asset_change).await?;
+                    let _ = self
+                        .pool
+                        .rebalance_asset(context, pool_asset_change)
+                        .await?;
                 }
             }
         }
@@ -79,7 +103,10 @@ impl OptimizerApp {
         for pool_asset_change in &pool_allocation_changes.assets {
             match pool_asset_change.amount {
                 AmountChange::Increase(_) => {
-                    let _ = pool.rebalance_asset(context, pool_asset_change).await?;
+                    let _ = self
+                        .pool
+                        .rebalance_asset(context, pool_asset_change)
+                        .await?;
                 }
                 AmountChange::Decrease(_) => {}
             }

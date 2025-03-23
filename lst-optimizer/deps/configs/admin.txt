@@ -1,0 +1,6 @@
+============================================================================
+pubkey: Ced3SU6nfyXyxB3pboxyGGvAhNSLFXy1iBsSwhbssBXY
+============================================================================
+Save this seed phrase and your BIP39 passphrase to recover your new keypair:
+address subway tattoo rug stool rotate luggage wool primary coast will truly
+============================================================================

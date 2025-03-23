@@ -1,18 +1,16 @@
 use anyhow::Result;
 use solana_client::{
-    nonblocking::rpc_client::RpcClient,
-    rpc_config::{RpcSendTransactionConfig, RpcSimulateTransactionConfig},
+    nonblocking::rpc_client::RpcClient, rpc_config::RpcSimulateTransactionConfig,
     rpc_response::RpcSimulateTransactionResult,
 };
 use solana_sdk::{
     address_lookup_table::AddressLookupTableAccount,
-    commitment_config::CommitmentLevel,
     instruction::Instruction,
     message::{v0::Message, VersionedMessage},
-    pubkey::Pubkey,
-    signature::Signature,
+    signature::{Keypair, Signature},
     transaction::VersionedTransaction,
 };
+use solana_sdk::{commitment_config::CommitmentConfig, signature::Signer};
 use solana_transaction_status::UiTransactionReturnData;
 
 solana_program::declare_id!("43vcPfe8ThRLwfJqhXoM2KwqmpqQK1wCrfvZsxrULsbQ");
@@ -34,28 +32,26 @@ impl ControllerClient {
 
     async fn build_transaction(
         &self,
-        payer: &Pubkey,
+        payer: &Keypair,
         instructions: &[Instruction],
         address_lookup_table_accounts: &[AddressLookupTableAccount],
     ) -> Result<VersionedTransaction> {
-        let recent_blockhash: solana_sdk::hash::Hash =
-            self.rpc_client.get_latest_blockhash().await?;
-        let message = VersionedMessage::V0(Message::try_compile(
-            &payer,
-            instructions,
+        let rpc = self.rpc_client();
+        let recent_blockhash = rpc.get_latest_blockhash().await?;
+        let compiled_message = Message::try_compile(
+            &payer.pubkey(),
+            &instructions,
             address_lookup_table_accounts,
             recent_blockhash,
-        )?);
-        let tx: VersionedTransaction = VersionedTransaction {
-            signatures: vec![Signature::default(); message.header().num_required_signatures.into()],
-            message: message.clone(),
-        };
+        )?;
+
+        let tx = VersionedTransaction::try_new(VersionedMessage::V0(compiled_message), &[payer])?;
         Ok(tx)
     }
 
     pub async fn invoke_instructions(
         &self,
-        payer: &Pubkey,
+        payer: &Keypair,
         instructions: &[Instruction],
         address_lookup_table_accounts: &[AddressLookupTableAccount],
     ) -> Result<Signature> {
@@ -63,21 +59,13 @@ impl ControllerClient {
         let tx = self
             .build_transaction(payer, instructions, address_lookup_table_accounts)
             .await?;
-        let ret = rpc
-            .send_transaction_with_config(
-                &tx,
-                RpcSendTransactionConfig {
-                    preflight_commitment: Some(CommitmentLevel::Finalized),
-                    ..Default::default()
-                },
-            )
-            .await?;
+        let ret = rpc.send_transaction(&tx).await?;
         Ok(ret)
     }
 
     pub async fn simulate_instructions(
         &self,
-        payer: &Pubkey,
+        payer: &Keypair,
         instructions: &[Instruction],
         address_lookup_table_accounts: &[AddressLookupTableAccount],
     ) -> Result<RpcSimulateTransactionResult> {
@@ -90,6 +78,7 @@ impl ControllerClient {
                 &tx,
                 RpcSimulateTransactionConfig {
                     sig_verify: false,
+                    commitment: Some(CommitmentConfig::processed()),
                     ..Default::default()
                 },
             )
@@ -99,7 +88,7 @@ impl ControllerClient {
 
     pub async fn simulate_returned_from_instructions(
         &self,
-        payer: &Pubkey,
+        payer: &Keypair,
         instructions: &[Instruction],
         address_lookup_table_accounts: &[AddressLookupTableAccount],
     ) -> Result<UiTransactionReturnData> {

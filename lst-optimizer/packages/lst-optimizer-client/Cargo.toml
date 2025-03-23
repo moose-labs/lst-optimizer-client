@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 lst-optimizer-std = { workspace = true }
+lst-optimizer-utils = { workspace = true }
 controller-lib = { workspace = true }
 quoter-lib = { workspace = true }
 jupiter-lib = { workspace = true }
@@ -20,6 +21,6 @@ serde = { workspace = true }
 solana-client = { workspace = true }
 solana-sdk = { workspace = true }
 spl-token = { workspace = true }
+reqwest = { workspace = true }
 
-reqwest = { version = "^0.12", features = ["json"] }
 ta = "0.5.0"

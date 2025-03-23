@@ -114,7 +114,6 @@ impl PoolAllocable for MaxPool {
         pool_allocations: &PoolAllocations,
         new_allocation_ratios: &AllocationRatios,
     ) -> Result<PoolAllocationChanges> {
-        let payer: Pubkey = context.payer.parse()?;
         let controller = self.controller_client();
         let pool_options = self.pool_options();
 
@@ -136,7 +135,7 @@ impl PoolAllocable for MaxPool {
             let mut reserves_change = 0 as u64;
             if lamports_change > pool_options.minimum_rebalance_lamports {
                 let reserves_change_range = controller
-                    .convert_sol_to_lst(&payer, calculator_type, lamports_change)
+                    .convert_sol_to_lst(context.get_payer(), calculator_type, lamports_change)
                     .await?;
                 reserves_change = reserves_change_range.get_min();
             } else {
@@ -175,9 +174,9 @@ mod tests {
     use super::*;
 
     #[tokio::test]
-    async fn test_get_allocation_changes() {
+    async fn test_get_allocation_lamports_changes() {
         let pool = MaxPool::new(
-            "",
+            Pubkey::new_unique(),
             Box::new(MockQuoterClient::new()),
             MaxPoolOptions::default(),
         );

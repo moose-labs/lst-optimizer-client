@@ -13,5 +13,6 @@ colored = { workspace = true }
 log = { workspace = true }
 humantime = { workspace = true }
 serde = { workspace = true }
+
+solana-sdk = { workspace = true }
 toml = "0.8.20"
-cargo_metadata = "0.19.1"

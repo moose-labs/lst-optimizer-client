@@ -1,0 +1,6 @@
+===================================================================
+pubkey: 54GvzEwe25N55wJ8zQZ4YTFjFAnDVP6fj4ZrvVhAyafq
+===================================================================
+Save this seed phrase and your BIP39 passphrase to recover your new keypair:
+joy mule recipe fluid fold visual toss diet lens limb pact tortoise
+===================================================================

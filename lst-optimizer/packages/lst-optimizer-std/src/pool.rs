@@ -13,7 +13,7 @@ use crate::{
     },
 };
 
-#[derive(Debug, Error)]
+#[derive(Debug, Error, PartialEq)]
 pub enum PoolError {
     #[error("Failed to fetch allocations")]
     FailedToFetchAllocations,

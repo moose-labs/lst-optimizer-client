@@ -1,6 +1,16 @@
 use anyhow::Result;
+use thiserror::Error;
 
 use super::asset::Asset;
+
+#[derive(Debug, Error, PartialEq)]
+pub enum AssetRepositoryError {
+    #[error("Asset mint {0} not found in the repository")]
+    AssetMintNotFound(String),
+
+    #[error("Asset symbol {0} not found in the repository")]
+    AssetSymbolNotFound(String),
+}
 
 #[derive(Debug, Clone)]
 pub struct AssetRepository {
@@ -22,10 +32,7 @@ impl AssetRepository {
                 return Ok(asset.clone());
             }
         }
-        Err(anyhow::anyhow!(
-            "Asset mint {} not found in the repository",
-            mint
-        ))
+        Err(AssetRepositoryError::AssetMintNotFound(mint.to_string()).into())
     }
 
     pub fn get_asset_from_symbol(&self, symbol: &str) -> Result<Asset> {
@@ -35,9 +42,6 @@ impl AssetRepository {
                 return Ok(asset.clone());
             }
         }
-        Err(anyhow::anyhow!(
-            "Asset symbol {} not found in the repository",
-            symbol
-        ))
+        Err(AssetRepositoryError::AssetSymbolNotFound(symbol).into())
     }
 }

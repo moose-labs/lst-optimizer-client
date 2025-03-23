@@ -7,9 +7,9 @@ use lst_optimizer_client::{
 };
 use lst_optimizer_std::{
     helper::config::asset_repository_from_toml, logger::setup_global_logger,
-    types::context::Context, utils::path::get_deps_accounts,
+    types::context::Context,
 };
-use solana_sdk::signature::Signer;
+use lst_optimizer_utils::path::get_deps_configs;
 use solana_sdk::signer::keypair::read_keypair_file;
 
 #[tokio::main]
@@ -18,18 +18,18 @@ async fn main() {
         eprintln!("{:?}", err);
     }
 
-    let payer = read_keypair_file(get_deps_accounts("admin.json")).expect("Failed to read keypair");
+    let payer = read_keypair_file(get_deps_configs("admin.json")).expect("Failed to read keypair");
     let asset_repository =
         asset_repository_from_toml(get_registry_file()).expect("Failed to read asset repository");
 
     let context = Context::default();
-    let program_id = controller::ID.to_string();
+    let program_id = controller::ID;
 
     let rpc_url = "http://127.0.0.1:8899".to_string();
 
     let jupiter_quoter_client = JupiterQuoterClient::new(&rpc_url);
     let pool = MaxPool::new(
-        &program_id,
+        program_id,
         Box::new(jupiter_quoter_client),
         MaxPoolOptions {
             rpc_url,
@@ -41,7 +41,7 @@ async fn main() {
         .keep_rebalance(
             context
                 .with_asset_repository(asset_repository)
-                .with_payer(payer.pubkey().to_string()),
+                .with_payer(payer),
             std::time::Duration::from_secs(60 * 60 * 24 * 2),
         )
         .await;

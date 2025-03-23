@@ -18,6 +18,6 @@ pub fn get_workspace_file(f: &str) -> PathBuf {
     resolve_path("./").join(f)
 }
 
-pub fn get_deps_accounts(f: &str) -> PathBuf {
-    resolve_path("deps/accounts").join(f)
+pub fn get_deps_configs(f: &str) -> PathBuf {
+    resolve_path("deps/configs").join(f)
 }

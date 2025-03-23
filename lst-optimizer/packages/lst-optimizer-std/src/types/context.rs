@@ -1,12 +1,14 @@
 use super::asset::Asset;
 use super::asset_repository::AssetRepository;
 use anyhow::Result;
-use log::info;
+use solana_sdk::pubkey::Pubkey;
+use solana_sdk::signature::Keypair;
+use solana_sdk::signer::Signer;
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Context {
-    pub payer: String,
-    pub asset_repository: AssetRepository,
+    payer: Keypair,
+    asset_repository: AssetRepository,
 }
 
 impl Context {
@@ -17,8 +19,7 @@ impl Context {
         }
     }
 
-    pub fn with_payer(self, payer: String) -> Self {
-        info!("Setting payer to {}", payer);
+    pub fn with_payer(self, payer: Keypair) -> Self {
         Self { payer, ..self }
     }
 
@@ -29,13 +30,25 @@ impl Context {
     pub fn get_known_asset_from_symbol(&self, symbol: &str) -> Result<Asset> {
         self.asset_repository.get_asset_from_symbol(symbol)
     }
+
+    pub fn get_kwown_assets(&self) -> Vec<Asset> {
+        self.asset_repository.get_assets()
+    }
+
+    pub fn get_payer_pubkey(&self) -> Pubkey {
+        self.payer.pubkey()
+    }
+
+    pub fn get_payer(&self) -> &Keypair {
+        &self.payer
+    }
 }
 
 impl Default for Context {
     fn default() -> Self {
         Self {
             asset_repository: AssetRepository::new(vec![]),
-            payer: "".to_string(),
+            payer: Keypair::new(),
         }
     }
 }

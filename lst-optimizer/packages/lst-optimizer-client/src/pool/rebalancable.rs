@@ -33,7 +33,7 @@ impl PoolRebalancable for MaxPool {
             return Ok(());
         }
 
-        let payer: Pubkey = context.payer.parse()?;
+        let payer: Pubkey = context.get_payer_pubkey();
         let controller = self.controller_client();
         let rpc = controller.rpc_client();
 
@@ -49,7 +49,7 @@ impl PoolRebalancable for MaxPool {
         if swap_ixs.setup_instructions.len() > 0 {
             let ret = controller
                 .invoke_instructions(
-                    &payer,
+                    context.get_payer(),
                     &swap_ixs.setup_instructions,
                     &address_lookup_table_accs,
                 )
@@ -84,7 +84,11 @@ impl PoolRebalancable for MaxPool {
         instructions.push(end_ix);
 
         let ret = controller
-            .invoke_instructions(&payer, &instructions, &address_lookup_table_accs)
+            .invoke_instructions(
+                context.get_payer(),
+                &instructions,
+                &address_lookup_table_accs,
+            )
             .await?;
         info!("Rebalance instructions invoked with signature: {}", ret);
 

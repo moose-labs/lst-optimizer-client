@@ -7,6 +7,7 @@ use quoter_lib::typedefs::QuoterClient;
 use rust_decimal::prelude::ToPrimitive;
 use rust_decimal::Decimal;
 use solana_client::nonblocking::rpc_client::RpcClient;
+use solana_sdk::commitment_config::CommitmentConfig;
 
 pub struct MaxPool {
     // A controller program id
@@ -18,14 +19,17 @@ pub struct MaxPool {
 
 impl MaxPool {
     pub fn new(
-        program_id: &str,
+        program_id: Pubkey,
         quoter_client: Box<dyn QuoterClient>,
         options: MaxPoolOptions,
     ) -> Self {
         Self {
-            program_id: program_id.parse().unwrap(),
+            program_id,
             options: options.clone(),
-            controller_client: ControllerClient::new(RpcClient::new(options.rpc_url.clone())),
+            controller_client: ControllerClient::new(RpcClient::new_with_commitment(
+                options.rpc_url.clone(),
+                CommitmentConfig::processed(),
+            )),
             quoter_client,
         }
     }
@@ -81,7 +85,7 @@ mod tests {
     #[tokio::test]
     async fn test_calculate_lamports_per_symbol_success() {
         let pool = MaxPool::new(
-            "",
+            Pubkey::new_unique(),
             Box::new(MockQuoterClient::new()),
             MaxPoolOptions::default(),
         );
@@ -96,7 +100,7 @@ mod tests {
     #[tokio::test]
     async fn test_calculate_lamports_per_symbol_success_on_division_by_zeros() {
         let pool = MaxPool::new(
-            "",
+            Pubkey::new_unique(),
             Box::new(MockQuoterClient::new()),
             MaxPoolOptions::default(),
         );

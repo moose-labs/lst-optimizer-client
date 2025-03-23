@@ -18,10 +18,8 @@ use stakedex_interface::{
 };
 
 use crate::{
-    calculator::{query::CalculatorQuery, typedefs::CalculatorType},
-    controller::ControllerClient,
-    mint::typedefs::MintWithTokenProgram,
-    state::PoolQuery,
+    calculator::typedefs::CalculatorType, controller::ControllerClient,
+    mint::typedefs::MintWithTokenProgram, state::PoolQuery,
 };
 
 #[async_trait::async_trait]
@@ -80,12 +78,8 @@ impl RebalancingInstructions for ControllerClient {
         let src_token_program = src_mint.get_mint_owner(rpc).await?;
         let dst_token_program = dst_mint.get_mint_owner(rpc).await?;
 
-        let src_accs = self
-            .fetch_calculator_account_metas(&src_calculator_type)
-            .await?;
-        let dst_accs = self
-            .fetch_calculator_account_metas(&dst_calculator_type)
-            .await?;
+        let src_accs = src_calculator_type.fetch_account_metas(rpc).await?;
+        let dst_accs = dst_calculator_type.fetch_account_metas(rpc).await?;
 
         let instruction = start_rebalance_ix_by_mints_full_for_prog(
             program_id.clone(),
@@ -186,12 +180,8 @@ impl RebalancingInstructions for ControllerClient {
                 min_amount_out,
             },
             SrcDstLstSolValueCalcAccountSuffixes {
-                src_lst_calculator_accounts: &self
-                    .fetch_calculator_account_metas(&src_calculator_type)
-                    .await?,
-                dst_lst_calculator_accounts: &self
-                    .fetch_calculator_account_metas(&dst_calculator_type)
-                    .await?,
+                src_lst_calculator_accounts: &src_calculator_type.fetch_account_metas(rpc).await?,
+                dst_lst_calculator_accounts: &dst_calculator_type.fetch_account_metas(rpc).await?,
             },
             &(PriceExactInFreeArgs {
                 input_lst_mint: src_mint.clone(),
