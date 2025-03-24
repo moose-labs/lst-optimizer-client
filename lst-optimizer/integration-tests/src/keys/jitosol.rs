@@ -10,11 +10,12 @@ pub struct JitoKeys {}
 
 #[async_trait::async_trait]
 impl LstKeys for JitoKeys {
-    fn get_cal_program_and_mint() -> (Pubkey, Pubkey) {
-        (
-            spl_calculator_lib::program::ID,
-            pubkey!("J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn"),
-        )
+    fn get_lsl_mint() -> Pubkey {
+        pubkey!("J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn")
+    }
+
+    fn get_calculator_program_id() -> Pubkey {
+        spl_calculator_lib::program::ID
     }
 
     fn get_token_program_id() -> Pubkey {

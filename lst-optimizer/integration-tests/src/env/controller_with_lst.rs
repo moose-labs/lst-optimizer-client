@@ -21,17 +21,20 @@ pub async fn new_controller_with_lst_list() -> Result<(
 
     let admin = read_keypair_file(get_deps_configs("admin.json")).unwrap();
 
-    let (msol_cal_program_id, msol_mint) = MarinadeKeys::get_cal_program_and_mint();
+    let msol_mint = MarinadeKeys::get_lsl_mint();
+    let msol_cal_program_id = MarinadeKeys::get_calculator_program_id();
     s_controller_client
         .add_lst(&msol_mint, &msol_cal_program_id, &admin)
         .await?;
 
-    let (jito_cal_program_id, jito_mint) = JitoKeys::get_cal_program_and_mint();
+    let jitosol_mint = JitoKeys::get_lsl_mint();
+    let jitosol_cal_program_id = JitoKeys::get_calculator_program_id();
     s_controller_client
-        .add_lst(&jito_mint, &jito_cal_program_id, &admin)
+        .add_lst(&jitosol_mint, &jitosol_cal_program_id, &admin)
         .await?;
 
-    let (wsol_cal_program_id, wsol_mint) = WsolKeys::get_cal_program_and_mint();
+    let wsol_mint = WsolKeys::get_lsl_mint();
+    let wsol_cal_program_id = WsolKeys::get_calculator_program_id();
     s_controller_client
         .add_lst(&wsol_mint, &wsol_cal_program_id, &admin)
         .await?;

@@ -26,6 +26,7 @@ impl PoolRebalancable for MaxPool {
             src_cal,
             dst_cal,
             amount,
+            swap_mode,
         } = pool_asset_change.get_route(&asset)?;
 
         if src_mint.eq(&dst_mint) {
@@ -39,7 +40,7 @@ impl PoolRebalancable for MaxPool {
 
         let quoter_client = self.quoter_client();
         let swap_ixs = quoter_client
-            .create_swap_instructions(&payer, &src_mint, &dst_mint, amount, 0, None)
+            .create_swap_instructions(&payer, &src_mint, &dst_mint, amount, 0, swap_mode, None)
             .await?;
         let address_lookup_table_accs = quoter_client
             .resolve_address_lookup_table_accounts(swap_ixs.address_lookup_tables)

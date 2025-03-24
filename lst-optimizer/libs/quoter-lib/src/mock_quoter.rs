@@ -1,4 +1,4 @@
-use crate::typedefs::QuoterClient;
+use crate::typedefs::{QuoterClient, SwapMode};
 
 pub struct MockQuoterClient {}
 
@@ -25,6 +25,7 @@ impl QuoterClient for MockQuoterClient {
         _dst_mint: &solana_sdk::pubkey::Pubkey,
         _amount: u64,
         _min_amount_out: u64,
+        _swap_mode: SwapMode,
         _slippage_bps: Option<u16>,
     ) -> anyhow::Result<crate::typedefs::SwapInstructions> {
         unimplemented!()

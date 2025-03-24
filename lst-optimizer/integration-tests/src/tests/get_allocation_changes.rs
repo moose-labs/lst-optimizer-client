@@ -22,9 +22,9 @@ async fn test_get_allocation_changes() -> Result<()> {
 
     let (optimizer, context, _) = new_lst_optimizer_app();
 
-    let (_, msol_mint) = MarinadeKeys::get_cal_program_and_mint();
-    let (_, jitosol_mint) = JitoKeys::get_cal_program_and_mint();
-    let (_, wsol_mint) = WsolKeys::get_cal_program_and_mint();
+    let msol_mint = MarinadeKeys::get_lsl_mint();
+    let jitosol_mint = JitoKeys::get_lsl_mint();
+    let wsol_mint = WsolKeys::get_lsl_mint();
 
     let deallocation_ratios = AllocationRatios::new(vec![
         AllocationRatio::new(&msol_mint.to_string(), 0),

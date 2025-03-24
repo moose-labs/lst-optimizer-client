@@ -9,8 +9,12 @@ pub struct WsolKeys {}
 
 #[async_trait::async_trait]
 impl LstKeys for WsolKeys {
-    fn get_cal_program_and_mint() -> (Pubkey, Pubkey) {
-        (wsol_calculator_lib::program::ID, wsol_keys::wsol::ID)
+    fn get_lsl_mint() -> Pubkey {
+        wsol_keys::wsol::ID
+    }
+
+    fn get_calculator_program_id() -> Pubkey {
+        wsol_calculator_lib::program::ID
     }
 
     fn get_token_program_id() -> Pubkey {

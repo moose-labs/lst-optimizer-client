@@ -1,4 +1,5 @@
 use anyhow::Result;
+use base64::Engine;
 use solana_client::{
     nonblocking::rpc_client::RpcClient, rpc_config::RpcSimulateTransactionConfig,
     rpc_response::RpcSimulateTransactionResult,
@@ -44,6 +45,11 @@ impl ControllerClient {
             address_lookup_table_accounts,
             recent_blockhash,
         )?;
+
+        // Create base64 encoded transaction for debugging
+        let tx_base64 =
+            base64::prelude::BASE64_STANDARD.encode(bincode::serialize(&compiled_message)?);
+        println!("base64_transaction: {}", tx_base64);
 
         let tx = VersionedTransaction::try_new(VersionedMessage::V0(compiled_message), &[payer])?;
         Ok(tx)

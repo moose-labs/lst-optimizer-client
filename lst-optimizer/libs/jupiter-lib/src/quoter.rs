@@ -1,10 +1,12 @@
 use anyhow::Result;
 pub use jupiter_swap_api_client::swap::SwapInstructionsResponse;
 use jupiter_swap_api_client::{
-    quote::QuoteRequest, swap::SwapRequest, transaction_config::TransactionConfig,
+    quote::{QuoteRequest, SwapMode as JupSwapMode},
+    swap::SwapRequest,
+    transaction_config::TransactionConfig,
     JupiterSwapApiClient,
 };
-use quoter_lib::typedefs::{QuoterClient, SwapInstructions};
+use quoter_lib::typedefs::{QuoterClient, SwapInstructions, SwapMode};
 use solana_client::nonblocking::rpc_client::RpcClient;
 use solana_sdk::pubkey::Pubkey;
 
@@ -41,6 +43,7 @@ impl QuoterClient for JupiterQuoterClient {
         dst_mint: &Pubkey,
         amount: u64,
         _min_amount_out: u64,
+        swap_mode: SwapMode,
         slippage_bps: Option<u16>,
     ) -> Result<SwapInstructions> {
         let jup_client = &self.client;
@@ -51,6 +54,10 @@ impl QuoterClient for JupiterQuoterClient {
             slippage_bps: slippage_bps.unwrap_or(100),
             max_accounts: Some(16),
             only_direct_routes: Some(true),
+            swap_mode: Some(match swap_mode {
+                SwapMode::ExactIn => JupSwapMode::ExactIn,
+                SwapMode::ExactOut => JupSwapMode::ExactOut,
+            }),
             ..QuoteRequest::default()
         };
 

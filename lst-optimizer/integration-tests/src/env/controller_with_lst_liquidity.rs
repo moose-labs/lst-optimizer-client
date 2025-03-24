@@ -41,7 +41,7 @@ pub async fn new_controller_with_lst_liquidity() -> Result<(
     let rpc = s_controller_client.rpc_client();
 
     // mSOL
-    let (_, msol_mint) = MarinadeKeys::get_cal_program_and_mint();
+    let msol_mint = MarinadeKeys::get_lsl_mint();
     let funder_lst_token_account = s_controller_client
         .get_ata(&msol_mint, &funder_pubkey)
         .await?;
@@ -61,7 +61,7 @@ pub async fn new_controller_with_lst_liquidity() -> Result<(
         )
         .await?;
 
-    let (_, jitosol_mint) = JitoKeys::get_cal_program_and_mint();
+    let jitosol_mint = JitoKeys::get_lsl_mint();
     let funder_lst_token_account = s_controller_client
         .get_ata(&jitosol_mint, &funder_pubkey)
         .await?;
@@ -82,7 +82,7 @@ pub async fn new_controller_with_lst_liquidity() -> Result<(
         .await?;
 
     // Create wSOL account for funder first
-    let (_, wsol_mint) = WsolKeys::get_cal_program_and_mint();
+    let wsol_mint = WsolKeys::get_lsl_mint();
     let wsol_ata = s_controller_client
         .create_ata(&wsol_mint, &funder_pubkey)
         .await?;

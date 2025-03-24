@@ -9,11 +9,12 @@ pub struct MarinadeKeys {}
 
 #[async_trait::async_trait]
 impl LstKeys for MarinadeKeys {
-    fn get_cal_program_and_mint() -> (Pubkey, Pubkey) {
-        (
-            marinade_calculator_lib::program::ID,
-            marinade_keys::msol::ID,
-        )
+    fn get_lsl_mint() -> Pubkey {
+        marinade_keys::msol::ID
+    }
+
+    fn get_calculator_program_id() -> Pubkey {
+        marinade_calculator_lib::program::ID
     }
 
     fn get_token_program_id() -> Pubkey {
