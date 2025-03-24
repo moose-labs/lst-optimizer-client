@@ -32,10 +32,10 @@ async fn rebalance_asset_with_return(
 
     let user1 = read_keypair_file(get_deps_configs("user1.json")).unwrap();
 
-    // Setup prepare the associated token accounts for wSOL and mSOL
+    // Setup prepare the associated token accounts for "pool_asset_change.mint" and "return_mint"
     let setup_instructions: Vec<Instruction> = vec![];
 
-    // Swap receives wSOL from the pool and sends mSOL to the pool
+    // Swap receives "pool_asset_change.mint" from the pool and sends "return_mint" to the pool
     let (pool_reserves, _) = find_pool_reserves_address(FindLstPdaAtaKeys {
         lst_mint: return_mint,
         token_program: return_mint_token_program_id,
