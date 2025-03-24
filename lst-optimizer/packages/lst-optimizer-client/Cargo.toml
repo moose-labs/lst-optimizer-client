@@ -18,6 +18,7 @@ tokio = { workspace = true }
 async-trait = { workspace = true }
 log = { workspace = true }
 serde = { workspace = true }
+backoff = { workspace = true }
 solana-client = { workspace = true }
 solana-sdk = { workspace = true }
 spl-token = { workspace = true }

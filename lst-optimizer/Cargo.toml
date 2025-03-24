@@ -27,6 +27,7 @@ jupiter-lib = { path = "libs/jupiter-lib" }
 # dependencies
 anyhow = "1.0.96"
 async-trait = "0.1.88"
+backoff = { version = "0.4.0", features = ["async-std"] }
 thiserror = "2.0.12"
 rust_decimal = "1.36"
 serde = { version = "1.0.218", features = ["derive"] }

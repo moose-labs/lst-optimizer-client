@@ -318,6 +318,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "async-channel"
+version = "2.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "89b47800b0be77592da0afd425cc03468052844aff33b84e33cc696f64e77b6a"
+dependencies = [
+ "concurrent-queue",
+ "event-listener-strategy",
+ "futures-core",
+ "pin-project-lite",
+]
+
+[[package]]
 name = "async-compression"
 version = "0.4.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -332,6 +344,53 @@ dependencies = [
 ]
 
 [[package]]
+name = "async-executor"
+version = "1.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "30ca9a001c1e8ba5149f91a74362376cc6bc5b919d92d988668657bd570bdcec"
+dependencies = [
+ "async-task",
+ "concurrent-queue",
+ "fastrand",
+ "futures-lite",
+ "slab",
+]
+
+[[package]]
+name = "async-global-executor"
+version = "2.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "05b1b633a2115cd122d73b955eadd9916c18c8f510ec9cd1686404c60ad1c29c"
+dependencies = [
+ "async-channel 2.3.1",
+ "async-executor",
+ "async-io",
+ "async-lock",
+ "blocking",
+ "futures-lite",
+ "once_cell",
+]
+
+[[package]]
+name = "async-io"
+version = "2.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "43a2b323ccce0a1d90b449fd71f2a06ca7faa7c54c2751f06c9bd851fc061059"
+dependencies = [
+ "async-lock",
+ "cfg-if",
+ "concurrent-queue",
+ "futures-io",
+ "futures-lite",
+ "parking",
+ "polling",
+ "rustix 0.38.44",
+ "slab",
+ "tracing",
+ "windows-sys 0.59.0",
+]
+
+[[package]]
 name = "async-lock"
 version = "3.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -341,6 +400,38 @@ dependencies = [
  "event-listener-strategy",
  "pin-project-lite",
 ]
+
+[[package]]
+name = "async-std"
+version = "1.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "730294c1c08c2e0f85759590518f6333f0d5a0a766a27d519c1b244c3dfd8a24"
+dependencies = [
+ "async-channel 1.9.0",
+ "async-global-executor",
+ "async-io",
+ "async-lock",
+ "crossbeam-utils",
+ "futures-channel",
+ "futures-core",
+ "futures-io",
+ "futures-lite",
+ "gloo-timers",
+ "kv-log-macro",
+ "log",
+ "memchr",
+ "once_cell",
+ "pin-project-lite",
+ "pin-utils",
+ "slab",
+ "wasm-bindgen-futures",
+]
+
+[[package]]
+name = "async-task"
+version = "4.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8b75356056920673b02621b35afd0f7dda9306d03c79a30f5c56c44cf256e3de"
 
 [[package]]
 name = "async-trait"
@@ -375,6 +466,20 @@ name = "autocfg"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ace50bade8e6234aa140d9a2f552bbee1db4d353f69b8217bc503490fc1a9f26"
+
+[[package]]
+name = "backoff"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b62ddb9cb1ec0a098ad4bbf9344d0713fa193ae1a80af55febcff2627b6a00c1"
+dependencies = [
+ "async-std",
+ "futures-core",
+ "getrandom 0.2.15",
+ "instant",
+ "pin-project-lite",
+ "rand 0.8.5",
+]
 
 [[package]]
 name = "backtrace"
@@ -496,6 +601,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71"
 dependencies = [
  "generic-array",
+]
+
+[[package]]
+name = "blocking"
+version = "1.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "703f41c54fc768e63e091340b424302bb1c29ef4aa0c7f10fe849dfb114d29ea"
+dependencies = [
+ "async-channel 2.3.1",
+ "async-task",
+ "futures-io",
+ "futures-lite",
+ "piper",
 ]
 
 [[package]]
@@ -1403,7 +1521,7 @@ dependencies = [
 [[package]]
 name = "flat-fee-lib"
 version = "0.1.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
+source = "git+https://github.com/moose-labs/S?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "borsh 0.10.4",
  "bytemuck",
@@ -1418,7 +1536,7 @@ dependencies = [
 [[package]]
 name = "flat_fee_interface"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
+source = "git+https://github.com/moose-labs/S?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "borsh 0.10.4",
  "bytemuck",
@@ -1523,6 +1641,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9e5c1b78ca4aae1ac06c48a526a655760685149f0d465d21f37abfe57ce075c6"
 
 [[package]]
+name = "futures-lite"
+version = "2.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f5edaec856126859abb19ed65f39e90fea3a9574b9707f13539acf4abf7eb532"
+dependencies = [
+ "fastrand",
+ "futures-core",
+ "futures-io",
+ "parking",
+ "pin-project-lite",
+]
+
+[[package]]
 name = "futures-macro"
 version = "0.3.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1582,7 +1713,7 @@ dependencies = [
 [[package]]
 name = "generic-pool-calculator-lib"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
+source = "git+https://github.com/moose-labs/S?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "bincode",
  "bytemuck",
@@ -1595,7 +1726,7 @@ dependencies = [
 [[package]]
 name = "generic_pool_calculator_interface"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
+source = "git+https://github.com/moose-labs/S?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "borsh 0.10.4",
  "bytemuck",
@@ -1660,6 +1791,18 @@ name = "gimli"
 version = "0.31.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "07e28edb80900c19c28f1072f2e8aeca7fa06b23cd4169cefe1af5aa3260783f"
+
+[[package]]
+name = "gloo-timers"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bbb143cf96099802033e0d4f4963b19fd2e0b728bcf076cd9cf7f6634f092994"
+dependencies = [
+ "futures-channel",
+ "futures-core",
+ "js-sys",
+ "wasm-bindgen",
+]
 
 [[package]]
 name = "governor"
@@ -1778,6 +1921,12 @@ name = "hermit-abi"
 version = "0.3.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d231dfb89cfffdbc30e7fc41579ed6066ad03abda9e567ccafae602b97ec5024"
+
+[[package]]
+name = "hermit-abi"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fbf6a919d6cf397374f7dfeeea91d974c7c0a7221d0d0f4f20d859d329e53fcc"
 
 [[package]]
 name = "histogram"
@@ -2200,6 +2349,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "instant"
+version = "0.1.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e0242819d153cba4b4b05a5a8f2a7e9bbf97b6055b2a002b395c96b5ff3c0222"
+dependencies = [
+ "cfg-if",
+]
+
+[[package]]
 name = "integration-tests"
 version = "0.1.0"
 dependencies = [
@@ -2366,6 +2524,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "kv-log-macro"
+version = "1.0.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0de8b303297635ad57c9f5059fd9cee7a47f8e8daa09df0fcd07dd39fb22977f"
+dependencies = [
+ "log",
+]
+
+[[package]]
 name = "lazy_static"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2434,7 +2601,7 @@ dependencies = [
  "borsh 0.10.4",
  "generic_pool_calculator_interface",
  "lido-calculator-lib",
- "lido-keys 1.0.0 (git+https://github.com/moose-labs/S.git?branch=custom_address)",
+ "lido-keys 1.0.0 (git+https://github.com/moose-labs/S?branch=custom_address)",
  "moose-utils",
  "solana-client",
  "solana-program",
@@ -2448,12 +2615,12 @@ dependencies = [
 [[package]]
 name = "lido-calculator-lib"
 version = "2.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
+source = "git+https://github.com/moose-labs/S?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "borsh 0.10.4",
  "generic-pool-calculator-lib",
  "generic_pool_calculator_interface",
- "lido-keys 1.0.0 (git+https://github.com/moose-labs/S.git?branch=custom_address)",
+ "lido-keys 1.0.0 (git+https://github.com/moose-labs/S?branch=custom_address)",
  "lido_calculator_interface",
  "sanctum-macros",
  "sanctum-token-ratio",
@@ -2465,7 +2632,7 @@ dependencies = [
 [[package]]
 name = "lido-keys"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
+source = "git+https://github.com/moose-labs/S?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "sanctum-macros",
  "solana-program",
@@ -2483,7 +2650,7 @@ dependencies = [
 [[package]]
 name = "lido_calculator_interface"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
+source = "git+https://github.com/moose-labs/S?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "borsh 0.10.4",
  "num-derive",
@@ -2491,6 +2658,12 @@ dependencies = [
  "solana-program",
  "thiserror 1.0.69",
 ]
+
+[[package]]
+name = "linux-raw-sys"
+version = "0.4.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d26c52dbd32dccf2d10cac7725f8eae5296885fb5703b261f7d0a0739ec807ab"
 
 [[package]]
 name = "linux-raw-sys"
@@ -2519,6 +2692,9 @@ name = "log"
 version = "0.4.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "30bde2b3dc3671ae49d8e2e9f044c7c005836e7a023ee57cffa25ab82764bb9e"
+dependencies = [
+ "value-bag",
+]
 
 [[package]]
 name = "lst-optimizer-client"
@@ -2526,6 +2702,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
+ "backoff",
  "controller-lib",
  "jupiter-lib",
  "log",
@@ -2591,11 +2768,11 @@ dependencies = [
 [[package]]
 name = "marinade-calculator-lib"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
+source = "git+https://github.com/moose-labs/S?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "generic-pool-calculator-lib",
  "generic_pool_calculator_interface",
- "marinade-keys 1.0.0 (git+https://github.com/moose-labs/S.git?branch=custom_address)",
+ "marinade-keys 1.0.0 (git+https://github.com/moose-labs/S?branch=custom_address)",
  "marinade_calculator_interface",
  "sanctum-macros",
  "sanctum-token-ratio",
@@ -2606,7 +2783,7 @@ dependencies = [
 [[package]]
 name = "marinade-keys"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
+source = "git+https://github.com/moose-labs/S?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "sanctum-macros",
  "solana-program",
@@ -2624,7 +2801,7 @@ dependencies = [
 [[package]]
 name = "marinade_calculator_interface"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
+source = "git+https://github.com/moose-labs/S?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "borsh 0.10.4",
  "num-derive",
@@ -3067,10 +3244,36 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 
 [[package]]
+name = "piper"
+version = "0.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "96c8c490f422ef9a4efd2cb5b42b76c8613d7e7dfc1caf667b8a3350a5acc066"
+dependencies = [
+ "atomic-waker",
+ "fastrand",
+ "futures-io",
+]
+
+[[package]]
 name = "pkg-config"
 version = "0.3.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7edddbd0b52d732b21ad9a5fab5c704c14cd949e5e9a1ec5929a24fded1b904c"
+
+[[package]]
+name = "polling"
+version = "3.7.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a604568c3202727d1507653cb121dbd627a58684eb09a820fd746bee38b4442f"
+dependencies = [
+ "cfg-if",
+ "concurrent-queue",
+ "hermit-abi 0.4.0",
+ "pin-project-lite",
+ "rustix 0.38.44",
+ "tracing",
+ "windows-sys 0.59.0",
+]
 
 [[package]]
 name = "polyval"
@@ -3633,6 +3836,19 @@ dependencies = [
 
 [[package]]
 name = "rustix"
+version = "0.38.44"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fdb5bc1ae2baa591800df16c9ca78619bf65c0488b41b96ccec5d11220d8c154"
+dependencies = [
+ "bitflags 2.9.0",
+ "errno",
+ "libc",
+ "linux-raw-sys 0.4.15",
+ "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "rustix"
 version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e56a18552996ac8d29ecc3b190b4fdbb2d91ca4ec396de7bbffaf43f3d637e96"
@@ -3640,7 +3856,7 @@ dependencies = [
  "bitflags 2.9.0",
  "errno",
  "libc",
- "linux-raw-sys",
+ "linux-raw-sys 0.9.3",
  "windows-sys 0.59.0",
 ]
 
@@ -3791,7 +4007,7 @@ dependencies = [
 [[package]]
 name = "s-controller-lib"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
+source = "git+https://github.com/moose-labs/S?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "borsh 0.10.4",
  "bytemuck",
@@ -3812,7 +4028,7 @@ dependencies = [
 [[package]]
 name = "s_controller_interface"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
+source = "git+https://github.com/moose-labs/S?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "borsh 0.10.4",
  "bytemuck",
@@ -3857,7 +4073,7 @@ dependencies = [
 [[package]]
 name = "sanctum-spl-multi-stake-pool-keys"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
+source = "git+https://github.com/moose-labs/S?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "sanctum-macros",
  "solana-program",
@@ -3875,7 +4091,7 @@ dependencies = [
 [[package]]
 name = "sanctum-spl-stake-pool-keys"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
+source = "git+https://github.com/moose-labs/S?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "sanctum-macros",
  "solana-program",
@@ -4248,7 +4464,7 @@ dependencies = [
 [[package]]
 name = "sol-value-calculator-lib"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
+source = "git+https://github.com/moose-labs/S?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "sanctum-token-ratio",
  "solana-program",
@@ -6005,7 +6221,7 @@ version = "2.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a881ecc123d91fb4bdf537a37b1d85b9cb43a649e5cc4c74e0409b3f3e3f9f80"
 dependencies = [
- "async-channel",
+ "async-channel 1.9.0",
  "bytes",
  "crossbeam-channel",
  "dashmap",
@@ -6519,19 +6735,19 @@ dependencies = [
 [[package]]
 name = "spl-calculator-lib"
 version = "2.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
+source = "git+https://github.com/moose-labs/S?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "borsh 0.10.4",
  "generic-pool-calculator-lib",
  "generic_pool_calculator_interface",
  "sanctum-macros",
- "sanctum-spl-multi-stake-pool-keys 1.0.0 (git+https://github.com/moose-labs/S.git?branch=custom_address)",
- "sanctum-spl-stake-pool-keys 1.0.0 (git+https://github.com/moose-labs/S.git?branch=custom_address)",
+ "sanctum-spl-multi-stake-pool-keys 1.0.0 (git+https://github.com/moose-labs/S?branch=custom_address)",
+ "sanctum-spl-stake-pool-keys 1.0.0 (git+https://github.com/moose-labs/S?branch=custom_address)",
  "sanctum-token-ratio",
  "sol-value-calculator-lib",
  "solana-program",
  "solana-readonly-account",
- "spl-stake-pool-keys 1.0.0 (git+https://github.com/moose-labs/S.git?branch=custom_address)",
+ "spl-stake-pool-keys 1.0.0 (git+https://github.com/moose-labs/S?branch=custom_address)",
  "spl_calculator_interface",
 ]
 
@@ -6659,7 +6875,7 @@ dependencies = [
 [[package]]
 name = "spl-stake-pool-keys"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
+source = "git+https://github.com/moose-labs/S?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "sanctum-macros",
  "solana-program",
@@ -6901,7 +7117,7 @@ dependencies = [
 [[package]]
 name = "spl_calculator_interface"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
+source = "git+https://github.com/moose-labs/S?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "borsh 0.10.4",
  "num-derive",
@@ -7078,7 +7294,7 @@ dependencies = [
  "fastrand",
  "getrandom 0.3.2",
  "once_cell",
- "rustix",
+ "rustix 1.0.3",
  "windows-sys 0.59.0",
 ]
 
@@ -7105,7 +7321,7 @@ dependencies = [
  "generic-pool-calculator-lib",
  "lido-calculator-client",
  "lido-calculator-lib",
- "lido-keys 1.0.0 (git+https://github.com/moose-labs/S.git?branch=custom_address)",
+ "lido-keys 1.0.0 (git+https://github.com/moose-labs/S?branch=custom_address)",
  "lido_calculator_interface",
  "marinade-calculator-client",
  "marinade-calculator-lib",
@@ -7540,6 +7756,12 @@ name = "uuid"
 version = "1.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "458f7a779bf54acc9f347480ac654f68407d3aab21269a6e3c9f922acd9e2da9"
+
+[[package]]
+name = "value-bag"
+version = "1.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3ef4c4aa54d5d05a279399bfa921ec387b7aba77caf7a682ae8d86785b8fdad2"
 
 [[package]]
 name = "vcpkg"
@@ -8110,19 +8332,19 @@ checksum = "1e9df38ee2d2c3c5948ea468a8406ff0db0b29ae1ffde1bcf20ef305bcc95c51"
 [[package]]
 name = "wsol-calculator-lib"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
+source = "git+https://github.com/moose-labs/S?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "sanctum-token-ratio",
  "sol-value-calculator-lib",
  "solana-program",
- "wsol-keys 1.0.0 (git+https://github.com/moose-labs/S.git?branch=custom_address)",
+ "wsol-keys 1.0.0 (git+https://github.com/moose-labs/S?branch=custom_address)",
  "wsol_calculator_interface",
 ]
 
 [[package]]
 name = "wsol-keys"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
+source = "git+https://github.com/moose-labs/S?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "sanctum-macros",
  "solana-program",
@@ -8140,7 +8362,7 @@ dependencies = [
 [[package]]
 name = "wsol_calculator_interface"
 version = "1.0.0"
-source = "git+https://github.com/moose-labs/S.git?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
+source = "git+https://github.com/moose-labs/S?branch=custom_address#605a4ac37689328005f4c87afec6271347771407"
 dependencies = [
  "borsh 0.10.4",
  "num-derive",

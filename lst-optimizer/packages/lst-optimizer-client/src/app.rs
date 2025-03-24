@@ -1,19 +1,23 @@
 use core::time;
 
-use anyhow::Result;
+use anyhow::{Context as _AnyhowContext, Result};
+use backoff::future::retry;
 use log::info;
 use lst_optimizer_std::{
     allocator::{AllocationRatios, Allocator},
     fetcher::fetcher::Fetcher,
     pool::{PoolAllocable, PoolRebalancable},
     types::{
-        amount_change::AmountChange, context::Context, datapoint::SymbolData,
-        pool_allocation_changes::PoolAllocationChanges,
+        amount_change::AmountChange,
+        context::Context,
+        datapoint::SymbolData,
+        pool_allocation_changes::{PoolAllocationChanges, PoolAssetChange},
     },
 };
 
 use crate::{
-    allocator::ema::EmaAllocator, fetcher::apy::SanctumHistoricalApyFetcher, pool::pool::MaxPool,
+    allocator::ema::EmaAllocator, error::AppError, fetcher::apy::SanctumHistoricalApyFetcher,
+    pool::pool::MaxPool, typedefs::default_backoff,
 };
 
 pub struct OptimizerApp {
@@ -36,6 +40,8 @@ impl OptimizerApp {
         &self.pool
     }
 
+    /// Get the pool allocation changes based on the current pool allocations and the new allocation ratios
+    ///
     pub async fn get_pool_allocation_changes(
         &self,
         context: &Context,
@@ -61,6 +67,24 @@ impl OptimizerApp {
         Ok(pool_allocation_changes)
     }
 
+    /// Retry rebalance pool asset change
+    ///
+    pub async fn retry_rebalance_pool_asset_change(
+        &self,
+        context: &Context,
+        pool_asset_change: &PoolAssetChange,
+    ) -> Result<()> {
+        retry(default_backoff(), async || {
+            let ret = self.pool.rebalance_asset(context, pool_asset_change).await;
+            match ret {
+                Ok(_) => Ok(()),
+                Err(e) => Err(backoff::Error::transient(e)),
+            }
+        })
+        .await
+        .context(AppError::FailedToRetryRebalancePoolAssetChange)
+    }
+
     pub async fn rebalance(&self, context: &Context) -> Result<()> {
         let assets = context.get_kwown_assets();
 
@@ -76,7 +100,7 @@ impl OptimizerApp {
             });
         }
 
-        let allocator = EmaAllocator::new(Some(2), Some(5));
+        let allocator = EmaAllocator::new(Some(10), Some(5));
         let mut allocations = allocator.allocate(symbol_datas)?;
         allocations.validate()?;
         allocations.apply_weights(&assets);
@@ -92,8 +116,7 @@ impl OptimizerApp {
                 AmountChange::Increase(_) => {}
                 AmountChange::Decrease(_) => {
                     let _ = self
-                        .pool
-                        .rebalance_asset(context, pool_asset_change)
+                        .retry_rebalance_pool_asset_change(context, pool_asset_change)
                         .await?;
                 }
             }
@@ -104,8 +127,7 @@ impl OptimizerApp {
             match pool_asset_change.amount {
                 AmountChange::Increase(_) => {
                     let _ = self
-                        .pool
-                        .rebalance_asset(context, pool_asset_change)
+                        .retry_rebalance_pool_asset_change(context, pool_asset_change)
                         .await?;
                 }
                 AmountChange::Decrease(_) => {}

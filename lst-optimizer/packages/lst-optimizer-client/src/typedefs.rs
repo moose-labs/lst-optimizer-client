@@ -1,6 +1,17 @@
+use std::time::Duration;
+
 use anyhow::Result;
+use backoff::ExponentialBackoff;
 use controller_lib::calculator::typedefs::CalculatorType;
 use lst_optimizer_std::types::asset::Asset;
+
+pub fn default_backoff() -> ExponentialBackoff {
+    ExponentialBackoff {
+        initial_interval: Duration::from_secs(1),
+        max_elapsed_time: Some(Duration::from_secs(20)),
+        ..Default::default()
+    }
+}
 
 pub fn pool_to_calculator_type(asset: &Asset) -> Result<CalculatorType> {
     let pool_info = asset.pool.clone();
