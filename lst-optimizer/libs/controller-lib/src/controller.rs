@@ -14,7 +14,7 @@ use solana_sdk::{
 use solana_sdk::{commitment_config::CommitmentConfig, signature::Signer};
 use solana_transaction_status::UiTransactionReturnData;
 
-solana_program::declare_id!("43vcPfe8ThRLwfJqhXoM2KwqmpqQK1wCrfvZsxrULsbQ");
+solana_program::declare_id!("maXsoLmywA737Cr4onbYcCmLg32hXtGK3VLjEgg48Rv");
 
 pub struct ControllerClient {
     rpc_client: RpcClient,
