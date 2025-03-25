@@ -132,12 +132,20 @@ impl PoolAllocable for MaxPool {
             let known_asset = context.get_known_asset_from_mint(mint)?;
             let calculator_type = pool_to_calculator_type(&known_asset)?;
 
-            let mut reserves_change = 0 as u64;
             if lamports_change > pool_options.minimum_rebalance_lamports {
                 let reserves_change_range = controller
                     .convert_sol_to_lst(context.get_payer(), calculator_type, lamports_change)
                     .await?;
-                reserves_change = reserves_change_range.get_min();
+                let reserves_change = reserves_change_range.get_min();
+                let asset_change = match asset_lamports_change.lamports {
+                    AmountChange::Increase(_) => {
+                        PoolAssetChange::new(mint, AmountChange::Increase(reserves_change))
+                    }
+                    AmountChange::Decrease(_) => {
+                        PoolAssetChange::new(mint, AmountChange::Decrease(reserves_change))
+                    }
+                };
+                asset_changes.push(asset_change);
             } else {
                 warn!(
                     "The amount of lamports ({}) to rebalance is less than the minimum rebalance lamports ({})",
@@ -145,17 +153,6 @@ impl PoolAllocable for MaxPool {
                     pool_options.minimum_rebalance_lamports
                 );
             }
-
-            let asset_change = match asset_lamports_change.lamports {
-                AmountChange::Increase(_) => {
-                    PoolAssetChange::new(mint, AmountChange::Increase(reserves_change))
-                }
-                AmountChange::Decrease(_) => {
-                    PoolAssetChange::new(mint, AmountChange::Decrease(reserves_change))
-                }
-            };
-
-            asset_changes.push(asset_change);
         }
 
         Ok(PoolAllocationChanges {
