@@ -33,6 +33,7 @@ rust_decimal = "1.36"
 serde = { version = "1.0.218", features = ["derive"] }
 tokio = { version = "1.43.0", features = ["rt-multi-thread", "macros"] }
 reqwest = { version = "^0.12", features = ["json"] }
+clap = { version = "4.5.32", features = ["derive"] }
 
 # loggings
 fern = { version = "0.7.1", features = ["colored"] }

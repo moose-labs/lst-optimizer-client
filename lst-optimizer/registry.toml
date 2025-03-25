@@ -1,16 +1,45 @@
 # Spl
 [[lst_list]]
 weight = 1.0
-name = "Jito Staked SOL"
-symbol = "JitoSOL"
-mint = "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn"
+name = "Drift Staked SOL"
+symbol = "dSOL"
+mint = "Dso1bDeDjCQxTrWHqUUi63oBvV7Mdm6WaobLbQ7gnPQ"
 decimals = 9
 token_program = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
-logo_uri = "https://storage.googleapis.com/token-metadata/JitoSOL-256.png"
+logo_uri = "https://drift-public.s3.eu-central-1.amazonaws.com/dSOL.svg"
 [lst_list.pool]
-program = "Spl"
-pool = "Jito4APyf642JPZPx3hGc6WWJ8zPKtRbRs4P815Awbb"
-validator_list = "3R3nGZpQs2aZo5FDQvd2MUQ6R7KhAPainds6uT6uE2mn"
+program = "SanctumSpl"
+pool = "9mhGNSPArRMHpLDMSmxAvuoizBqtBGqYdT8WGuqgxNdn"
+validator_list = "4dRHzwW2npecE4riAKibHccnMib5jBu9RdFf8bQ2o7Mo"
+vote_account = "DriFTm3wM9ugxhCA1K3wVQMSdC4Dv4LNmyZMmZiuHRpp"
+
+[[lst_list]]
+weight = 1.0
+name = "Helius Staked SOL"
+symbol = "hSOL"
+mint = "he1iusmfkpAdwvxLNGV8Y1iSbj4rUy6yMhEA3fotn9A"
+decimals = 9
+token_program = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+logo_uri = "https://raw.githubusercontent.com/igneous-labs/lst-offchain-metadata/master/hSOL/hSOL.png"
+[lst_list.pool]
+program = "SanctumSpl"
+pool = "3wK2g8ZdzAH8FJ7PKr2RcvGh7V9VYson5hrVsJM5Lmws"
+validator_list = "TCxWHorDSe3vWydw6MGwyexcqm3ZU9RT7VTqiCcN6y9"
+vote_account = "he1iusunGwqrNtafDtLdhsUQDFvo13z9sUa36PauBtk"
+
+# Spl multi
+[[lst_list]]
+weight = 1.0
+name = "Jupiter Staked SOL"
+symbol = "JupSOL"
+mint = "jupSoLaHXQiZZTSfEWMTRRgpnyFm8f6sZdosWBjx93v"
+decimals = 9
+token_program = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+logo_uri = "https://static.jup.ag/jupSOL/icon.png"
+[lst_list.pool]
+program = "SanctumSplMulti"
+pool = "8VpRhuxa7sUUepdY3kQiTmX9rS5vx4WgaXiAnXq4KCtr"
+validator_list = "AXL4v4bbzRkqwHmLc9A1YzHQmRhmG9Q93i1e6CPG2bEK"
 
 [[lst_list]]
 weight = 1.0

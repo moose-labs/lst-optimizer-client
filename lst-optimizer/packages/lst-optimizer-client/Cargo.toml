@@ -23,5 +23,6 @@ solana-client = { workspace = true }
 solana-sdk = { workspace = true }
 spl-token = { workspace = true }
 reqwest = { workspace = true }
+clap = { workspace = true }
 
 ta = "0.5.0"
