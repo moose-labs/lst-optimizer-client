@@ -115,9 +115,12 @@ impl OptimizerApp {
             match pool_asset_change.amount {
                 AmountChange::Increase(_) => {}
                 AmountChange::Decrease(_) => {
-                    let _ = self
+                    let ret = self
                         .retry_rebalance_pool_asset_change(context, pool_asset_change)
-                        .await?;
+                        .await;
+                    if let Err(e) = ret {
+                        info!("Failed to rebalance pool asset change: {:?}", e);
+                    }
                 }
             }
         }
@@ -126,9 +129,12 @@ impl OptimizerApp {
         for pool_asset_change in &pool_allocation_changes.assets {
             match pool_asset_change.amount {
                 AmountChange::Increase(_) => {
-                    let _ = self
+                    let ret = self
                         .retry_rebalance_pool_asset_change(context, pool_asset_change)
-                        .await?;
+                        .await;
+                    if let Err(e) = ret {
+                        info!("Failed to rebalance pool asset change: {:?}", e);
+                    }
                 }
                 AmountChange::Decrease(_) => {}
             }
