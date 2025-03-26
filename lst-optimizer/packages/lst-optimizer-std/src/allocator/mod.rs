@@ -1,4 +1,5 @@
 use anyhow::Result;
+use log::info;
 use rust_decimal::{prelude::Zero, Decimal};
 
 use crate::types::{asset::Asset, datapoint::SymbolData, pool_allocation::MAX_ALLOCATION_BPS};
@@ -39,7 +40,7 @@ impl AllocationRatios {
         let assets: &Vec<Asset> = &assets
             .iter()
             .filter(|asset| {
-                let s = &asset.symbol.to_lowercase();
+                let s = &asset.mint.to_lowercase();
                 self.asset_alloc_ratios.iter().any(|symbol_ratio| {
                     let sr = &symbol_ratio.mint.to_lowercase();
                     sr.eq(s)
@@ -59,6 +60,10 @@ impl AllocationRatios {
             for asset in assets.iter() {
                 if symbol_ratio.mint == asset.mint {
                     symbol_ratio.bps = (asset.weight / total_weight) * max_allocation_bps;
+                    info!(
+                        "Adjusted weight for {} to {} = {}",
+                        symbol_ratio.mint, asset.weight, symbol_ratio.bps
+                    );
                 }
             }
         }
