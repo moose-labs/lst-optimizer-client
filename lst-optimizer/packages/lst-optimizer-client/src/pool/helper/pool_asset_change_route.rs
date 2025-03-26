@@ -3,7 +3,6 @@ use controller_lib::{calculator::typedefs::CalculatorType, Pubkey};
 use lst_optimizer_std::types::{
     amount_change::AmountChange, asset::Asset, pool_allocation_changes::PoolAssetChange,
 };
-use quoter_lib::typedefs::SwapMode;
 use spl_token::native_mint;
 
 use crate::typedefs::pool_to_calculator_type;
@@ -15,7 +14,6 @@ pub struct PoolAssetChangeRoute {
     pub src_cal: CalculatorType,
     pub dst_cal: CalculatorType,
     pub amount: u64,
-    pub swap_mode: SwapMode,
 }
 
 pub trait PoolAssetChangeRouter {
@@ -25,21 +23,25 @@ pub trait PoolAssetChangeRouter {
 impl PoolAssetChangeRouter for PoolAssetChange {
     fn get_route(&self, asset: &Asset) -> Result<PoolAssetChangeRoute> {
         let ret = match self.amount {
-            AmountChange::Increase(amt) => (
+            AmountChange::Increase {
+                lamports,
+                lst_amount: _,
+            } => (
                 native_mint::ID,
                 self.mint.parse()?,
                 CalculatorType::Wsol,
                 pool_to_calculator_type(asset)?,
-                amt,
-                SwapMode::ExactOut,
+                lamports, // use lamports for amount
             ),
-            AmountChange::Decrease(amt) => (
+            AmountChange::Decrease {
+                lamports: _,
+                lst_amount,
+            } => (
                 self.mint.parse()?,
                 native_mint::ID,
                 pool_to_calculator_type(asset)?,
                 CalculatorType::Wsol,
-                amt,
-                SwapMode::ExactIn,
+                lst_amount,
             ),
         };
         Ok(PoolAssetChangeRoute {
@@ -48,7 +50,6 @@ impl PoolAssetChangeRouter for PoolAssetChange {
             src_cal: ret.2,
             dst_cal: ret.3,
             amount: ret.4,
-            swap_mode: ret.5,
         })
     }
 }

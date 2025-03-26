@@ -1,6 +1,7 @@
 pub mod calculator;
 pub mod controller;
 pub mod mint;
+pub mod program;
 pub mod rebalance;
 pub mod state;
 

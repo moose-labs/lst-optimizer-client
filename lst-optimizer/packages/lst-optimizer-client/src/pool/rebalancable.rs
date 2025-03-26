@@ -1,6 +1,6 @@
 use anyhow::Result;
-use controller_lib::{rebalance::RebalancingInstructions, Pubkey};
-use log::{info, warn};
+use controller_lib::{rebalance::RebalancingInstructions, state::PoolQuery, Pubkey};
+use log::{error, info, warn};
 use lst_optimizer_std::{
     pool::PoolRebalancable,
     types::{context::Context, pool_allocation_changes::PoolAssetChange},
@@ -26,7 +26,6 @@ impl PoolRebalancable for MaxPool {
             src_cal,
             dst_cal,
             amount,
-            swap_mode,
         } = pool_asset_change.get_route(&asset)?;
 
         if src_mint.eq(&dst_mint) {
@@ -37,33 +36,39 @@ impl PoolRebalancable for MaxPool {
         let payer: Pubkey = context.get_payer_pubkey();
         let controller = self.controller_client();
         let rpc = controller.rpc_client();
-
         let quoter_client = self.quoter_client();
+        let program_id = self.program_id();
+
+        let reserves_ata = controller
+            .get_pool_reserves_address_by_mint(&program_id, &dst_mint)
+            .await?;
         let swap_ixs = quoter_client
-            .create_swap_instructions(&payer, &src_mint, &dst_mint, amount, 0, swap_mode, None)
+            .create_swap_instructions(&payer, &reserves_ata, &src_mint, &dst_mint, amount, 0, None)
             .await?;
         let address_lookup_table_accs = quoter_client
             .resolve_address_lookup_table_accounts(swap_ixs.address_lookup_tables)
             .await?;
 
         // prepare the accounts if needed
-        if swap_ixs.setup_instructions.len() > 0 {
-            let ret = controller
-                .invoke_instructions(
-                    context.get_payer(),
-                    &swap_ixs.setup_instructions,
-                    &address_lookup_table_accs,
-                )
-                .await?;
-            info!("Setup instructions invoked with signature: {}", ret);
-        }
+        // returned if setup instructions failed
+        // if swap_ixs.setup_instructions.len() > 0 {
+        //     info!("Invoking setup instructions");
+        //     let signature = controller
+        //         .invoke_instructions(
+        //             context.get_payer(),
+        //             &swap_ixs.setup_instructions,
+        //             &address_lookup_table_accs,
+        //         )
+        //         .await?;
+        //     info!("Setup invoked with signature: {}", signature)
+        // }
 
         // rebalance instructions
         let mut instructions: Vec<Instruction> = vec![];
-        let program_id = self.program_id();
         let src_ata = src_mint
             .resolve_associated_token_account(&payer, rpc)
             .await?;
+
         let start_ix = controller
             .create_start_rebalance_instruction(
                 &program_id,
@@ -81,17 +86,39 @@ impl PoolRebalancable for MaxPool {
 
         // instructions.extend(swap_ixs.compute_budget_instructions);
         instructions.push(start_ix);
+        instructions.extend(swap_ixs.setup_instructions);
         instructions.extend(swap_ixs.swap_instructions);
         instructions.push(end_ix);
 
+        info!("Invoking rebalance instructions");
         let ret = controller
             .invoke_instructions(
                 context.get_payer(),
                 &instructions,
                 &address_lookup_table_accs,
             )
-            .await?;
-        info!("Rebalance instructions invoked with signature: {}", ret);
+            .await;
+        match ret {
+            Ok(signature) => {
+                info!("Rebalance invoked with signature: {}", signature);
+
+                if swap_ixs.cleanup_instructions.len() > 0 {
+                    info!("Invoking cleanup instructions");
+                    let ret = controller
+                        .invoke_instructions(
+                            context.get_payer(),
+                            &swap_ixs.cleanup_instructions,
+                            &address_lookup_table_accs,
+                        )
+                        .await;
+                    match ret {
+                        Ok(signature) => info!("Cleanup invoked with signature: {}", signature),
+                        Err(e) => error!("Cleanup failed with error: {}", e),
+                    }
+                }
+            }
+            Err(e) => error!("Rebalance failed with error: {}", e),
+        }
 
         Ok(())
     }

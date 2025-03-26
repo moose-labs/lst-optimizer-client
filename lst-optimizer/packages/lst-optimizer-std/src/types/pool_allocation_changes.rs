@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use super::amount_change::AmountChange;
+use super::{amount_change::AmountChange, lamports_change::LamportsChange};
 
 // Change in lamports
 #[derive(Debug, Clone)]
@@ -36,11 +36,11 @@ impl Display for PoolAllocationLamportsChanges {
 #[derive(Debug, Clone)]
 pub struct PoolAssetLamportsChange {
     pub mint: String,
-    pub lamports: AmountChange,
+    pub lamports: LamportsChange,
 }
 
 impl PoolAssetLamportsChange {
-    pub fn new(mint: &str, lamports: AmountChange) -> Self {
+    pub fn new(mint: &str, lamports: LamportsChange) -> Self {
         Self {
             mint: mint.to_string(),
             lamports,

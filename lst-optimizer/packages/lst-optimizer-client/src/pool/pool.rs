@@ -28,7 +28,7 @@ impl MaxPool {
             options: options.clone(),
             controller_client: ControllerClient::new(RpcClient::new_with_commitment(
                 options.rpc_url.clone(),
-                CommitmentConfig::processed(),
+                CommitmentConfig::confirmed(),
             )),
             quoter_client,
         }

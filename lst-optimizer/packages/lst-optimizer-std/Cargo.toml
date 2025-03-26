@@ -8,11 +8,9 @@ anyhow = { workspace = true }
 async-trait = { workspace = true }
 rust_decimal = { workspace = true }
 thiserror = { workspace = true }
-fern = { workspace = true }
-colored = { workspace = true }
-log = { workspace = true }
-humantime = { workspace = true }
 serde = { workspace = true }
+
+lst-optimizer-utils = { workspace = true }
 
 solana-sdk = { workspace = true }
 toml = "0.8.20"

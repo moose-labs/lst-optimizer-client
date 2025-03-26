@@ -1,5 +1,5 @@
 use anyhow::Result;
-use log::info;
+use lst_optimizer_utils::logger::info;
 use rust_decimal::{prelude::Zero, Decimal};
 
 use crate::types::{asset::Asset, datapoint::SymbolData, pool_allocation::MAX_ALLOCATION_BPS};

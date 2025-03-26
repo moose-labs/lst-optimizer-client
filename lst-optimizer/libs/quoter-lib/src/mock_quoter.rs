@@ -1,4 +1,6 @@
-use crate::typedefs::{QuoterClient, SwapMode};
+use solana_sdk::pubkey::Pubkey;
+
+use crate::typedefs::{QuoterClient, SwapInstructions};
 
 pub struct MockQuoterClient {}
 
@@ -20,14 +22,14 @@ impl QuoterClient for MockQuoterClient {
 
     async fn create_swap_instructions(
         &self,
-        _swapper: &solana_sdk::pubkey::Pubkey,
-        _src_mint: &solana_sdk::pubkey::Pubkey,
-        _dst_mint: &solana_sdk::pubkey::Pubkey,
+        _swapper: &Pubkey,
+        _receiver_token_account: &Pubkey,
+        _src_mint: &Pubkey,
+        _dst_mint: &Pubkey,
         _amount: u64,
         _min_amount_out: u64,
-        _swap_mode: SwapMode,
         _slippage_bps: Option<u16>,
-    ) -> anyhow::Result<crate::typedefs::SwapInstructions> {
+    ) -> anyhow::Result<SwapInstructions> {
         unimplemented!()
     }
 }

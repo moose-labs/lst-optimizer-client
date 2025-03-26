@@ -1,16 +1,12 @@
 use clap::Parser;
-use controller_lib::controller;
 use jupiter_lib::quoter::JupiterQuoterClient;
 use lst_optimizer_client::{
     app::OptimizerApp,
     pool::{pool::MaxPool, typedefs::MaxPoolOptions},
     utils::{args::AppArgs, path::get_registry_file},
 };
-use lst_optimizer_std::{
-    helper::config::asset_repository_from_toml, logger::setup_global_logger,
-    types::context::Context,
-};
-use lst_optimizer_utils::path::get_deps_configs;
+use lst_optimizer_std::{helper::config::asset_repository_from_toml, types::context::Context};
+use lst_optimizer_utils::{logger::setup_global_logger, path::get_deps_configs};
 use solana_sdk::signer::keypair::read_keypair_file;
 
 #[tokio::main]
@@ -27,7 +23,7 @@ async fn main() {
         asset_repository_from_toml(get_registry_file()).expect("Failed to read asset repository");
 
     let context = Context::default();
-    let program_id = controller::ID;
+    let program_id = controller_lib::program::mainnet::ID;
 
     let rpc_url = args.url;
     let jupiter_quoter_client = JupiterQuoterClient::new(&rpc_url);
@@ -36,6 +32,7 @@ async fn main() {
         Box::new(jupiter_quoter_client),
         MaxPoolOptions {
             rpc_url,
+            minimum_rebalance_lamports: args.minimum_rebalance_lamports,
             ..Default::default()
         },
     );

@@ -83,7 +83,10 @@ async fn test_rebalance_asset_decreased_with_no_loss() -> Result<()> {
     let msol_mint = MarinadeKeys::get_lsl_mint();
     let pool_asset_change = PoolAssetChange::new(
         &msol_mint.to_string(),
-        AmountChange::Decrease(10_000_000_000),
+        AmountChange::Decrease {
+            lamports: 0,
+            lst_amount: 10_000_000_000,
+        },
     );
 
     let return_mint = WsolKeys::get_lsl_mint();
@@ -103,7 +106,10 @@ async fn test_rebalance_asset_decreased_with_loss() -> Result<()> {
     let msol_mint = MarinadeKeys::get_lsl_mint();
     let pool_asset_change = PoolAssetChange::new(
         &msol_mint.to_string(),
-        AmountChange::Decrease(10_000_000_000),
+        AmountChange::Decrease {
+            lamports: 0,
+            lst_amount: 10_000_000_000,
+        },
     );
 
     let return_mint = WsolKeys::get_lsl_mint();
@@ -127,7 +133,10 @@ async fn test_rebalance_asset_increased_with_no_loss() -> Result<()> {
     let msol_mint = MarinadeKeys::get_lsl_mint();
     let pool_asset_change = PoolAssetChange::new(
         &msol_mint.to_string(),
-        AmountChange::Increase(10_000_000_000),
+        AmountChange::Increase {
+            lamports: 10_000_000_000,
+            lst_amount: 0,
+        },
     );
 
     let return_mint = MarinadeKeys::get_lsl_mint();
@@ -147,7 +156,10 @@ async fn test_rebalance_asset_increased_with_loss() -> Result<()> {
     let msol_mint = MarinadeKeys::get_lsl_mint();
     let pool_asset_change = PoolAssetChange::new(
         &msol_mint.to_string(),
-        AmountChange::Increase(10_000_000_000),
+        AmountChange::Increase {
+            lamports: 10_000_000_000,
+            lst_amount: 0,
+        },
     );
 
     let return_mint = MarinadeKeys::get_lsl_mint();

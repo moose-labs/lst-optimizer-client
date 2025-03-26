@@ -5,10 +5,11 @@ use s_controller_lib::{
     create_protocol_fee_accumulator_address_with_protocol_fee_id,
     find_lst_state_list_address as _find_lst_state_list_address,
     find_pool_reserves_address_with_pool_state_id,
-    find_pool_state_address as _find_pool_state_address, try_lst_state_list, try_pool_state,
-    FindLstPdaAtaKeys,
+    find_pool_state_address as _find_pool_state_address, try_find_lst_mint_on_list,
+    try_lst_state_list, try_pool_state, FindLstPdaAtaKeys,
 };
 use solana_sdk::{account::Account, pubkey::Pubkey};
+use spl_helper::mint::MintAccountQuery;
 
 use crate::controller::ControllerClient;
 
@@ -26,6 +27,11 @@ pub trait PoolQuery {
         program_id: &Pubkey,
     ) -> Result<Vec<LstState>>;
 
+    async fn get_pool_reserves_address_by_mint(
+        &self,
+        program_id: &Pubkey,
+        mint: &Pubkey,
+    ) -> Result<Pubkey>;
     async fn get_pool_reserves_address(
         &self,
         lst_state: &LstState,
@@ -102,6 +108,23 @@ impl PoolQuery for ControllerClient {
     }
 
     // Mint state helper
+
+    async fn get_pool_reserves_address_by_mint(
+        &self,
+        program_id: &Pubkey,
+        mint: &Pubkey,
+    ) -> Result<Pubkey> {
+        let rpc = self.rpc_client();
+        let pool_state_addr = self.get_pool_state_address(program_id).await;
+        let lst_state_list_addr = self.get_lst_state_list_address(program_id).await;
+        let lst_state_list = self.get_lst_state_list(&lst_state_list_addr).await?;
+        let mint_token_program = mint.get_mint_owner(rpc).await?;
+        let (_, lst_state) = try_find_lst_mint_on_list(mint.clone(), &lst_state_list)?;
+        let reserves_addr = self
+            .get_pool_reserves_address(&lst_state, &pool_state_addr, &mint_token_program)
+            .await?;
+        Ok(reserves_addr)
+    }
 
     async fn get_pool_reserves_address(
         &self,

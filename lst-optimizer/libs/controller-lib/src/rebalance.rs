@@ -1,10 +1,7 @@
 use anyhow::Result;
-use flat_fee_lib::account_resolvers::PriceExactInFreeArgs;
 use s_controller_lib::{
     end_rebalance_ix_from_start_rebalance_ix, start_rebalance_ix_by_mints_full_for_prog,
-    swap_exact_in_ix_by_mint_full, SrcDstLstSolValueCalcAccountSuffixes,
-    StartRebalanceByMintsFreeArgs, StartRebalanceIxLstAmts, SwapByMintsFreeArgs,
-    SwapExactInAmounts,
+    SrcDstLstSolValueCalcAccountSuffixes, StartRebalanceByMintsFreeArgs, StartRebalanceIxLstAmts,
 };
 use solana_readonly_account::keyed::Keyed;
 use solana_sdk::{
@@ -43,19 +40,6 @@ pub trait RebalancingInstructions {
         program_id: &Pubkey,
         accounts: StakeWrappedSolKeys,
         args: StakeWrappedSolIxArgs,
-    ) -> Result<Instruction>;
-    async fn create_sanctum_swap_exact_in_instruction(
-        &self,
-        program_id: &Pubkey,
-        swapper: &Pubkey,
-        swapper_src_acc: &Pubkey,
-        swapper_dst_acc: &Pubkey,
-        src_mint: &Pubkey,
-        dst_mint: &Pubkey,
-        src_calculator_type: CalculatorType,
-        dst_calculator_type: CalculatorType,
-        amount: u64,
-        min_amount_out: u64,
     ) -> Result<Instruction>;
 }
 
@@ -140,57 +124,5 @@ impl RebalancingInstructions for ControllerClient {
             accounts: Vec::from(metas),
             data: data.try_to_vec()?,
         })
-    }
-
-    // This function is used to create a swap instruction for the sanctum program
-
-    async fn create_sanctum_swap_exact_in_instruction(
-        &self,
-        program_id: &Pubkey,
-        swapper: &Pubkey,
-        swapper_src_acc: &Pubkey,
-        swapper_dst_acc: &Pubkey,
-        src_mint: &Pubkey,
-        dst_mint: &Pubkey,
-        src_calculator_type: CalculatorType,
-        dst_calculator_type: CalculatorType,
-        amount: u64,
-        min_amount_out: u64,
-    ) -> Result<Instruction> {
-        let rpc = self.rpc_client();
-        let lst_state_addr = self.get_lst_state_list_address(program_id).await;
-        let lst_state = self.get_lst_state_list_account(&lst_state_addr).await?;
-        let instruction = swap_exact_in_ix_by_mint_full(
-            SwapByMintsFreeArgs {
-                signer: swapper.clone(),
-                src_lst_acc: swapper_src_acc.clone(),
-                dst_lst_acc: swapper_dst_acc.clone(),
-                src_lst_mint: MintWithTokenProgram {
-                    pubkey: src_mint.clone(),
-                    token_program: src_mint.get_mint_owner(rpc).await?,
-                },
-                dst_lst_mint: MintWithTokenProgram {
-                    pubkey: dst_mint.clone(),
-                    token_program: dst_mint.get_mint_owner(rpc).await?,
-                },
-                lst_state_list: lst_state,
-            },
-            SwapExactInAmounts {
-                amount,
-                min_amount_out,
-            },
-            SrcDstLstSolValueCalcAccountSuffixes {
-                src_lst_calculator_accounts: &src_calculator_type.fetch_account_metas(rpc).await?,
-                dst_lst_calculator_accounts: &dst_calculator_type.fetch_account_metas(rpc).await?,
-            },
-            &(PriceExactInFreeArgs {
-                input_lst_mint: src_mint.clone(),
-                output_lst_mint: dst_mint.clone(),
-            })
-            .resolve_to_account_metas(),
-            flat_fee_lib::program::ID, // Swap through Sanctum flat fee program
-        )?;
-
-        Ok(instruction)
     }
 }

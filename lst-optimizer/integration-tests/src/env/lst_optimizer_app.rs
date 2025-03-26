@@ -1,4 +1,3 @@
-use controller_lib::controller;
 use lst_optimizer_client::{
     app::OptimizerApp,
     pool::{pool::MaxPool, typedefs::MaxPoolOptions},
@@ -41,7 +40,7 @@ pub fn new_lst_optimizer_app_custom(
         .with_asset_repository(asset_repository);
 
     let pool: lst_optimizer_client::pool::pool::MaxPool = MaxPool::new(
-        controller::ID,
+        controller_lib::program::localnet::ID,
         quoter_client,
         MaxPoolOptions {
             rpc_url: url.to_string(),

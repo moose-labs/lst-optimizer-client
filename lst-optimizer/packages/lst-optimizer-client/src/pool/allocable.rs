@@ -9,6 +9,7 @@ use lst_optimizer_std::{
     types::{
         amount_change::AmountChange,
         context::Context,
+        lamports_change::LamportsChange,
         pool_allocation::PoolAllocations,
         pool_allocation_changes::{
             PoolAllocationChanges, PoolAllocationLamportsChanges, PoolAssetChange,
@@ -70,7 +71,7 @@ impl PoolAllocable for MaxPool {
         }
 
         // Calculate allocation changes
-        let mut changes: HashMap<String, AmountChange> = HashMap::new();
+        let mut changes: HashMap<String, LamportsChange> = HashMap::new();
         for (mint, target_lamports) in target_lamports_per_symbol.iter() {
             let current_allocation = pool_allocations.get_pool_asset(mint);
             let target_lamports = *target_lamports;
@@ -82,10 +83,10 @@ impl PoolAllocable for MaxPool {
             // target_lamports > current_lamports (increase)
             if target_lamports > current_lamports {
                 let lamports_change = target_lamports - current_lamports;
-                changes.insert(mint.clone(), AmountChange::Increase(lamports_change));
+                changes.insert(mint.clone(), LamportsChange::Increase(lamports_change));
             } else if target_lamports < current_lamports {
                 let lamports_change = current_lamports - target_lamports;
-                changes.insert(mint.clone(), AmountChange::Decrease(lamports_change));
+                changes.insert(mint.clone(), LamportsChange::Decrease(lamports_change));
             }
         }
 
@@ -94,7 +95,7 @@ impl PoolAllocable for MaxPool {
         for asset in current_assets.iter() {
             let mint = &asset.mint;
             if !changes.contains_key(mint) {
-                changes.insert(mint.clone(), AmountChange::Decrease(asset.lamports));
+                changes.insert(mint.clone(), LamportsChange::Decrease(asset.lamports));
             }
         }
 
@@ -124,26 +125,31 @@ impl PoolAllocable for MaxPool {
         let mut asset_changes: Vec<PoolAssetChange> = vec![];
         for asset_lamports_change in changes.assets.iter() {
             let mint = &asset_lamports_change.mint;
-            let lamports_change = match asset_lamports_change.lamports {
-                AmountChange::Increase(amount) => amount,
-                AmountChange::Decrease(amount) => amount,
-            };
+            let lamports_change = asset_lamports_change.lamports.get_lamports();
 
             let known_asset = context.get_known_asset_from_mint(mint)?;
             let calculator_type = pool_to_calculator_type(&known_asset)?;
 
             if lamports_change > pool_options.minimum_rebalance_lamports {
-                let reserves_change_range = controller
+                let lst_change_range = controller
                     .convert_sol_to_lst(context.get_payer(), calculator_type, lamports_change)
                     .await?;
-                let reserves_change = reserves_change_range.get_min();
+                let lst_change = lst_change_range.get_min();
                 let asset_change = match asset_lamports_change.lamports {
-                    AmountChange::Increase(_) => {
-                        PoolAssetChange::new(mint, AmountChange::Increase(reserves_change))
-                    }
-                    AmountChange::Decrease(_) => {
-                        PoolAssetChange::new(mint, AmountChange::Decrease(reserves_change))
-                    }
+                    LamportsChange::Increase(_) => PoolAssetChange::new(
+                        mint,
+                        AmountChange::Increase {
+                            lamports: lamports_change,
+                            lst_amount: lst_change,
+                        },
+                    ),
+                    LamportsChange::Decrease(_) => PoolAssetChange::new(
+                        mint,
+                        AmountChange::Decrease {
+                            lamports: lamports_change,
+                            lst_amount: lst_change,
+                        },
+                    ),
                 };
                 asset_changes.push(asset_change);
             } else {
@@ -200,25 +206,25 @@ mod tests {
         assert_eq!(changes.assets.len(), 4);
         assert_eq!(
             changes.get_asset_lamports_changes("hsol").unwrap().lamports,
-            AmountChange::Decrease(400)
+            LamportsChange::Decrease(400)
         );
         assert_eq!(
             changes
                 .get_asset_lamports_changes("jitosol")
                 .unwrap()
                 .lamports,
-            AmountChange::Decrease(100)
+            LamportsChange::Decrease(100)
         );
         assert_eq!(
             changes
                 .get_asset_lamports_changes("jupsol")
                 .unwrap()
                 .lamports,
-            AmountChange::Increase(250)
+            LamportsChange::Increase(250)
         );
         assert_eq!(
             changes.get_asset_lamports_changes("inf").unwrap().lamports,
-            AmountChange::Increase(250)
+            LamportsChange::Increase(250)
         );
     }
 }

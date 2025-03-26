@@ -1,6 +1,8 @@
 use anyhow::Result;
 use fern::colors::{Color, ColoredLevelConfig};
 
+pub use log::{debug, error, info, trace, warn};
+
 pub fn setup_global_logger() -> Result<()> {
     let colors_line = ColoredLevelConfig::new()
         .error(Color::Red)
@@ -19,7 +21,7 @@ pub fn setup_global_logger() -> Result<()> {
                 message
             ))
         })
-        .level(log::LevelFilter::Debug)
+        .level(log::LevelFilter::Info)
         .chain(std::io::stdout())
         .chain(fern::log_file("runtime.log")?)
         .apply()?;

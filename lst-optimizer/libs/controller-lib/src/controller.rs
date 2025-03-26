@@ -1,5 +1,6 @@
 use anyhow::Result;
 use base64::Engine;
+use lst_optimizer_utils::logger::info;
 use solana_client::{
     nonblocking::rpc_client::RpcClient, rpc_config::RpcSimulateTransactionConfig,
     rpc_response::RpcSimulateTransactionResult,
@@ -13,8 +14,6 @@ use solana_sdk::{
 };
 use solana_sdk::{commitment_config::CommitmentConfig, signature::Signer};
 use solana_transaction_status::UiTransactionReturnData;
-
-solana_program::declare_id!("maXsoLmywA737Cr4onbYcCmLg32hXtGK3VLjEgg48Rv");
 
 pub struct ControllerClient {
     rpc_client: RpcClient,
@@ -49,7 +48,7 @@ impl ControllerClient {
         // Create base64 encoded transaction for debugging
         let tx_base64 =
             base64::prelude::BASE64_STANDARD.encode(bincode::serialize(&compiled_message)?);
-        println!("base64_transaction: {}", tx_base64);
+        info!("{}", tx_base64);
 
         let tx = VersionedTransaction::try_new(VersionedMessage::V0(compiled_message), &[payer])?;
         Ok(tx)

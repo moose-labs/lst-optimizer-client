@@ -1,7 +1,8 @@
 use anyhow::Result;
-use quoter_lib::typedefs::{QuoterClient, SwapInstructions, SwapMode};
+use quoter_lib::typedefs::{QuoterClient, SwapInstructions};
 use solana_client::nonblocking::rpc_client::RpcClient;
 use solana_sdk::instruction::Instruction;
+use solana_sdk::pubkey::Pubkey;
 
 pub struct MockableQuoterClient {
     rpc: RpcClient,
@@ -37,12 +38,12 @@ impl QuoterClient for MockableQuoterClient {
 
     async fn create_swap_instructions(
         &self,
-        _swapper: &solana_sdk::pubkey::Pubkey,
-        _src_mint: &solana_sdk::pubkey::Pubkey,
-        _dst_mint: &solana_sdk::pubkey::Pubkey,
+        _swapper: &Pubkey,
+        _receiver_token_account: &Pubkey,
+        _src_mint: &Pubkey,
+        _dst_mint: &Pubkey,
         _amount: u64,
         _min_amount_out: u64,
-        _swap_mode: SwapMode,
         _slippage_bps: Option<u16>,
     ) -> Result<SwapInstructions> {
         // This is a mock implementation, so we can just return a dummy transfer instruction

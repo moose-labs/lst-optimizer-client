@@ -1,8 +1,8 @@
 use core::time;
 
-use anyhow::{Context as _AnyhowContext, Result};
-use backoff::future::retry;
-use log::info;
+use anyhow::Result;
+
+use log::{error, info};
 use lst_optimizer_std::{
     allocator::{AllocationRatios, Allocator},
     fetcher::fetcher::Fetcher,
@@ -16,8 +16,7 @@ use lst_optimizer_std::{
 };
 
 use crate::{
-    allocator::ema::EmaAllocator, error::AppError, fetcher::apy::SanctumHistoricalApyFetcher,
-    pool::pool::MaxPool, typedefs::default_backoff,
+    allocator::ema::EmaAllocator, fetcher::apy::SanctumHistoricalApyFetcher, pool::pool::MaxPool,
 };
 
 pub struct OptimizerApp {
@@ -31,7 +30,10 @@ impl OptimizerApp {
 
     pub async fn keep_rebalance(&self, context: Context, interval: time::Duration) -> Result<()> {
         loop {
-            self.rebalance(&context).await?;
+            let res = self.rebalance(&context).await;
+            if let Err(e) = res {
+                info!("Failed to rebalance: {:?}", e);
+            }
             tokio::time::sleep(interval).await;
         }
     }
@@ -69,20 +71,19 @@ impl OptimizerApp {
 
     /// Retry rebalance pool asset change
     ///
-    pub async fn retry_rebalance_pool_asset_change(
+    pub async fn try_rebalance_pool_asset_change(
         &self,
         context: &Context,
         pool_asset_change: &PoolAssetChange,
     ) -> Result<()> {
-        retry(default_backoff(), async || {
-            let ret = self.pool.rebalance_asset(context, pool_asset_change).await;
-            match ret {
-                Ok(_) => Ok(()),
-                Err(e) => Err(backoff::Error::transient(e)),
-            }
-        })
-        .await
-        .context(AppError::FailedToRetryRebalancePoolAssetChange)
+        let ret = self.pool.rebalance_asset(context, pool_asset_change).await;
+        if let Err(e) = ret {
+            error!("Failed to rebalance pool asset change: {:?}", e);
+        }
+
+        tokio::time::sleep(time::Duration::from_secs(5)).await;
+
+        Ok(())
     }
 
     pub async fn rebalance(&self, context: &Context) -> Result<()> {
@@ -113,14 +114,10 @@ impl OptimizerApp {
         // Reducing first
         for pool_asset_change in &pool_allocation_changes.assets {
             match pool_asset_change.amount {
-                AmountChange::Increase(_) => {}
-                AmountChange::Decrease(_) => {
-                    let ret = self
-                        .retry_rebalance_pool_asset_change(context, pool_asset_change)
-                        .await;
-                    if let Err(e) = ret {
-                        info!("Failed to rebalance pool asset change: {:?}", e);
-                    }
+                AmountChange::Increase { .. } => {}
+                AmountChange::Decrease { .. } => {
+                    self.try_rebalance_pool_asset_change(context, pool_asset_change)
+                        .await?;
                 }
             }
         }
@@ -128,15 +125,11 @@ impl OptimizerApp {
         // Increasing
         for pool_asset_change in &pool_allocation_changes.assets {
             match pool_asset_change.amount {
-                AmountChange::Increase(_) => {
-                    let ret = self
-                        .retry_rebalance_pool_asset_change(context, pool_asset_change)
-                        .await;
-                    if let Err(e) = ret {
-                        info!("Failed to rebalance pool asset change: {:?}", e);
-                    }
+                AmountChange::Increase { .. } => {
+                    self.try_rebalance_pool_asset_change(context, pool_asset_change)
+                        .await?;
                 }
-                AmountChange::Decrease(_) => {}
+                AmountChange::Decrease { .. } => {}
             }
         }
 
