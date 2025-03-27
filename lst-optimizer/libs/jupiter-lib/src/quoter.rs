@@ -51,9 +51,9 @@ impl QuoterClient for JupiterQuoterClient {
             input_mint: src_mint.clone(),
             output_mint: dst_mint.clone(),
             amount,
-            slippage_bps: slippage_bps.unwrap_or(100),
-            only_direct_routes: Some(true),
-            max_accounts: Some(16),
+            slippage_bps: slippage_bps.unwrap_or(3000),
+            // only_direct_routes: Some(true),
+            // max_accounts: Some(32),
             swap_mode: Some(JupSwapMode::ExactIn),
             ..QuoteRequest::default()
         };
