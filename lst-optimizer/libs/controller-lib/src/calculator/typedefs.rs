@@ -7,6 +7,8 @@ use solana_sdk::{instruction::AccountMeta, pubkey::Pubkey};
 use spl_calculator_lib::SplLstSolCommonFreeArgsConst;
 use wsol_calculator_lib::WSOL_LST_SOL_COMMON_METAS;
 
+pub use s_controller_interface::errors::SControllerError;
+
 #[derive(Clone, Debug)]
 pub enum CalculatorType {
     Lido,

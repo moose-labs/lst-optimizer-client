@@ -32,7 +32,7 @@ impl OptimizerApp {
         loop {
             let res = self.rebalance(&context).await;
             if let Err(e) = res {
-                info!("Failed to rebalance: {:?}", e);
+                error!("Failed to rebalance: {:?}", e);
             }
             tokio::time::sleep(interval).await;
         }

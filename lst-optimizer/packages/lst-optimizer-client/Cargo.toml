@@ -21,6 +21,7 @@ serde = { workspace = true }
 backoff = { workspace = true }
 solana-client = { workspace = true }
 solana-sdk = { workspace = true }
+spl-associated-token-account = { workspace = true }
 spl-token = { workspace = true }
 reqwest = { workspace = true }
 clap = { workspace = true }

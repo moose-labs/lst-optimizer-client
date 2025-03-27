@@ -2909,6 +2909,7 @@ dependencies = [
  "serde",
  "solana-client",
  "solana-sdk",
+ "spl-associated-token-account",
  "spl-helper",
  "spl-token 8.0.0",
  "ta",
