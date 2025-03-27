@@ -1,0 +1,6 @@
+# ignore Rust related files
+target/
+test-ledger/
+
+# log
+*.log

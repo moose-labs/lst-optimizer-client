@@ -15,6 +15,7 @@ class Datapoint:
 class PlotData:
     name: str
     datapoints: list[Datapoint]
+    line: dict = None
 
 
 def plots(title: str, plot_datas: list[PlotData]):
@@ -32,7 +33,12 @@ def plots(title: str, plot_datas: list[PlotData]):
         descriptions = [x.description for x in plot_data.datapoints]
         fig.add_trace(
             go.Scatter(
-                x=epochs, y=y, mode="lines", name=plot_data.name, text=descriptions
+                x=epochs,
+                y=y,
+                mode="lines",
+                line=plot_data.line,
+                name=plot_data.name,
+                text=descriptions,
             ),
         )
 

@@ -1,0 +1,6 @@
+===============================================================================
+pubkey: CPk5V2ZqhLwYSguYT2dmrELuvNVskZhqMXJPSezusjQL
+===============================================================================
+Save this seed phrase and your BIP39 passphrase to recover your new keypair:
+burger fitness outside van churn sound they super erosion sadness start lottery
+===============================================================================

@@ -1,0 +1,16 @@
+[package]
+name = "jupiter-lib"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+thiserror = { workspace = true }
+
+solana-client = { workspace = true }
+solana-sdk = { workspace = true }
+
+quoter-lib = { workspace = true }
+
+jupiter-swap-api-client = { git = "https://github.com/moose-labs/jupiter-swap-api-client.git", package = "jupiter-swap-api-client", branch = "bump_sdk" }

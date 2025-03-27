@@ -1,0 +1,48 @@
+[package]
+name = "integration-tests"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+tokio = { workspace = true }
+reqwest = { workspace = true }
+
+quoter-lib = { workspace = true }
+controller-lib = { workspace = true }
+lst-optimizer-std = { workspace = true }
+lst-optimizer-utils = { workspace = true }
+lst-optimizer-client = { workspace = true }
+
+solana-client = { workspace = true }
+solana-program = { workspace = true }
+solana-sdk = { workspace = true }
+spl-token = { workspace = true }
+spl-associated-token-account = { workspace = true }
+solana-readonly-account = { workspace = true, features = ["solana-sdk"] }
+
+tester = { git = "https://github.com/moose-labs/s-controller-test", branch = "test_utils" }
+base-client = { git = "https://github.com/moose-labs/s-controller-test", branch = "test_utils" }
+moose-utils = { git = "https://github.com/moose-labs/s-controller-test", branch = "test_utils" }
+s-controller-client = { git = "https://github.com/moose-labs/s-controller-test", branch = "test_utils" }
+flat-fee-client = { git = "https://github.com/moose-labs/s-controller-test", branch = "test_utils" }
+marinade-calculator-client = { git = "https://github.com/moose-labs/s-controller-test", branch = "test_utils" }
+lido-calculator-client = { git = "https://github.com/moose-labs/s-controller-test", branch = "test_utils" }
+spl-calculator-client = { git = "https://github.com/moose-labs/s-controller-test", branch = "test_utils" }
+
+s-controller-lib = { git = "https://github.com/moose-labs/S", branch = "borsh" }
+lido-calculator-lib = { git = "https://github.com/moose-labs/S", branch = "borsh" }
+spl-calculator-lib = { git = "https://github.com/moose-labs/S", branch = "borsh" }
+marinade-calculator-lib = { git = "https://github.com/moose-labs/S", branch = "borsh" }
+wsol-calculator-lib = { git = "https://github.com/moose-labs/S", branch = "borsh" }
+
+lido-keys = { git = "https://github.com/igneous-labs/S" }
+marinade-keys = { git = "https://github.com/igneous-labs/S" }
+sanctum-spl-multi-stake-pool-keys = { git = "https://github.com/igneous-labs/S" }
+spl-stake-pool-keys = { git = "https://github.com/igneous-labs/S" }
+wsol-keys = { git = "https://github.com/igneous-labs/S" }
+sanctum-spl-stake-pool-keys = { git = "https://github.com/igneous-labs/S" }
+
+[dev-dependencies]
+serial_test = "3.2.0"

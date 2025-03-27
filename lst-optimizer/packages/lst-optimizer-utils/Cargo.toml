@@ -1,0 +1,12 @@
+[package]
+name = "lst-optimizer-utils"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = { workspace = true }
+fern = { workspace = true }
+humantime = { workspace = true }
+colored = { workspace = true }
+log = { workspace = true }
+cargo_metadata = "0.19.1"

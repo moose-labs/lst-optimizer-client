@@ -1,0 +1,29 @@
+[package]
+name = "lst-optimizer-client"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+lst-optimizer-std = { workspace = true }
+lst-optimizer-utils = { workspace = true }
+controller-lib = { workspace = true }
+quoter-lib = { workspace = true }
+jupiter-lib = { workspace = true }
+
+spl-helper = { workspace = true }
+rust_decimal = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+async-trait = { workspace = true }
+log = { workspace = true }
+serde = { workspace = true }
+backoff = { workspace = true }
+solana-client = { workspace = true }
+solana-sdk = { workspace = true }
+spl-associated-token-account = { workspace = true }
+spl-token = { workspace = true }
+reqwest = { workspace = true }
+clap = { workspace = true }
+
+ta = "0.5.0"

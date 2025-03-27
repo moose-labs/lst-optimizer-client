@@ -1,0 +1,6 @@
+=============================================================================
+pubkey: BG4gEQXRWBVJmcE56Jc6UoL8nUfujvRo6r4dJP8wSLsW
+=============================================================================
+Save this seed phrase and your BIP39 passphrase to recover your new keypair:
+present undo surround solve fade olive enact rally unveil awful stuff because
+=============================================================================

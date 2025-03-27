@@ -1,0 +1,16 @@
+[package]
+name = "lst-optimizer-std"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+rust_decimal = { workspace = true }
+thiserror = { workspace = true }
+serde = { workspace = true }
+
+lst-optimizer-utils = { workspace = true }
+
+solana-sdk = { workspace = true }
+toml = "0.8.20"
