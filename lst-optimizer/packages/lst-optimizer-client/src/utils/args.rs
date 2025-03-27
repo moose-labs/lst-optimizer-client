@@ -22,6 +22,11 @@ pub struct AppArgs {
 
     /// Minimum lamports to rebalance
     /// (default: 1_000_000_000)
-    #[arg(long, short, default_value_t = 1_000_000_000)]
+    #[arg(long, short = 'n', default_value_t = 1_000_000_000)]
     pub minimum_rebalance_lamports: u64,
+
+    /// Maximum lamports to rebalance
+    /// (default: 1_000_000_000_000)
+    #[arg(long, short = 'm', default_value_t = 1_000_000_000_000)]
+    pub maximum_rebalance_lamports: u64,
 }

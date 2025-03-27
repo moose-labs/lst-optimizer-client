@@ -60,6 +60,7 @@ impl PoolAllocable for MaxPool {
         pool_allocations: &PoolAllocations,
         new_allocation_ratios: &AllocationRatios,
     ) -> Result<PoolAllocationLamportsChanges> {
+        let pool_options = self.pool_options();
         let total_lamports = pool_allocations.get_total_lamports();
 
         let mut target_lamports_per_symbol: HashMap<String, u64> = HashMap::new();
@@ -81,11 +82,14 @@ impl PoolAllocable for MaxPool {
             };
 
             // target_lamports > current_lamports (increase)
+            let maximum_rebalance_lamports = pool_options.maximum_rebalance_lamports;
+            let mut lamports_change = current_lamports.abs_diff(target_lamports);
+            if lamports_change > maximum_rebalance_lamports {
+                lamports_change = maximum_rebalance_lamports;
+            }
             if target_lamports > current_lamports {
-                let lamports_change = target_lamports - current_lamports;
                 changes.insert(mint.clone(), LamportsChange::Increase(lamports_change));
             } else if target_lamports < current_lamports {
-                let lamports_change = current_lamports - target_lamports;
                 changes.insert(mint.clone(), LamportsChange::Decrease(lamports_change));
             }
         }
@@ -225,6 +229,49 @@ mod tests {
         assert_eq!(
             changes.get_asset_lamports_changes("inf").unwrap().lamports,
             LamportsChange::Increase(250)
+        );
+    }
+
+    #[tokio::test]
+    async fn test_maximum_rebalancing_lamports() {
+        let pool = MaxPool::new(
+            Pubkey::new_unique(),
+            Box::new(MockQuoterClient::new()),
+            MaxPoolOptions {
+                maximum_rebalance_lamports: 200,
+                ..Default::default()
+            },
+        );
+        let pool_allocations = PoolAllocations {
+            assets: vec![
+                PoolAsset::new("hsol", 700, 0),
+                PoolAsset::new("jitosol", 100, 0),
+            ],
+        };
+        let new_allocation_ratios = AllocationRatios::new(vec![
+            AllocationRatio::new("hsol", 5000),
+            AllocationRatio::new("jitosol", 5000),
+        ]);
+        let changes = pool
+            .get_allocation_lamports_changes(
+                &Context::default(),
+                &pool_allocations,
+                &new_allocation_ratios,
+            )
+            .await
+            .unwrap();
+
+        // should rebalance to 400 each
+        assert_eq!(
+            changes.get_asset_lamports_changes("hsol").unwrap().lamports,
+            LamportsChange::Decrease(200) // -300
+        );
+        assert_eq!(
+            changes
+                .get_asset_lamports_changes("jitosol")
+                .unwrap()
+                .lamports,
+            LamportsChange::Increase(200) // +300
         );
     }
 }

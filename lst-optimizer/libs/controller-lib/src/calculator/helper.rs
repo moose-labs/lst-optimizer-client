@@ -37,4 +37,18 @@ mod tests {
         assert_eq!(val.get_min(), 785018757);
         assert_eq!(val.get_max(), 785018761);
     }
+
+    #[test]
+    fn test_parse_u64_value_range_return_data_2() {
+        let data = UiTransactionReturnData {
+            program_id: String::new(),
+            data: (
+                "yBfAHgAAAADIF8AeAAAAAA==".to_string(),
+                UiReturnDataEncoding::Base64,
+            ),
+        };
+        let val = parse_u64_value_range_return_data(&data).unwrap();
+        assert_eq!(val.get_min(), 0);
+        assert_eq!(val.get_max(), 0);
+    }
 }

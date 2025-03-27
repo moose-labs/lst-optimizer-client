@@ -33,6 +33,7 @@ async fn main() {
         MaxPoolOptions {
             rpc_url,
             minimum_rebalance_lamports: args.minimum_rebalance_lamports,
+            maximum_rebalance_lamports: args.maximum_rebalance_lamports,
             ..Default::default()
         },
     );
