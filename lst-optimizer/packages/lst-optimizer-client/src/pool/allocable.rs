@@ -81,15 +81,17 @@ impl PoolAllocable for MaxPool {
                 None => 0,
             };
 
-            let current_lamports =
-                pool_options.deduct_reserves_lst_account_lamports(current_lamports);
-
             // target_lamports > current_lamports (increase)
             let maximum_rebalance_lamports = pool_options.maximum_rebalance_lamports;
             let mut lamports_change = current_lamports.abs_diff(target_lamports);
             if lamports_change > maximum_rebalance_lamports {
                 lamports_change = maximum_rebalance_lamports;
             }
+
+            // We simply deduct the minimum lamports from the lamports change
+            lamports_change =
+                pool_options.deduct_minimum_lamports_pool_reserves_account(lamports_change);
+
             if target_lamports > current_lamports {
                 changes.insert(mint.clone(), LamportsChange::Increase(lamports_change));
             } else if target_lamports < current_lamports {
