@@ -81,6 +81,9 @@ impl PoolAllocable for MaxPool {
                 None => 0,
             };
 
+            let current_lamports =
+                pool_options.deduct_reserves_lst_account_lamports(current_lamports);
+
             // target_lamports > current_lamports (increase)
             let maximum_rebalance_lamports = pool_options.maximum_rebalance_lamports;
             let mut lamports_change = current_lamports.abs_diff(target_lamports);
