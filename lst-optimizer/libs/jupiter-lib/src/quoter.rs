@@ -53,7 +53,7 @@ impl QuoterClient for JupiterQuoterClient {
             amount,
             slippage_bps: slippage_bps.unwrap_or(3000),
             // only_direct_routes: Some(true),
-            // max_accounts: Some(32),
+            max_accounts: Some(48),
             swap_mode: Some(JupSwapMode::ExactIn),
             ..QuoteRequest::default()
         };
